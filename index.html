@@ -273,9 +273,17 @@ footer{padding:1.8rem 5vw;border-top:1px solid var(--border);display:flex;align-
 
 <script>
 gsap.registerPlugin(ScrollTrigger);
-var categories=[{id:'ai-ad',name:'AI 광고 영상',thumb:'6U0aNE5UHlU'},{id:'brand-film',name:'브랜드 필름',thumb:'Lef23mcbrB0'},{id:'motion',name:'모션 그래픽',thumb:'8qrFOiRAWws'},{id:'sketch',name:'스케치영상',thumb:'VocixdTkET4'},{id:'youtube',name:'유튜브',thumb:'XlS5Cv6im0M'},{id:'sns',name:'SNS광고',thumb:'Woa4hq3fvxA'}];
-var projects=[{title:'AI 광고 영상 01',cat:'ai-ad',label:'AI 광고 영상',vid:'6U0aNE5UHlU',short:false},{title:'AI 광고 영상 02',cat:'ai-ad',label:'AI 광고 영상',vid:'7lbQ3XN-PtE',short:false},{title:'AI 광고 영상 03',cat:'ai-ad',label:'AI 광고 영상',vid:'AS4lqg5xAJY',short:false},{title:'AI 광고 영상 04',cat:'ai-ad',label:'AI 광고 영상',vid:'7vUSZ03JxL8',short:false},{title:'브랜드 필름 01',cat:'brand-film',label:'브랜드 필름',vid:'Lef23mcbrB0',short:false},{title:'브랜드 필름 02',cat:'brand-film',label:'브랜드 필름',vid:'3YoXd0UeupE',short:false},{title:'모션 그래픽 01',cat:'motion',label:'모션 그래픽',vid:'8qrFOiRAWws',short:false},{title:'모션 그래픽 02',cat:'motion',label:'모션 그래픽',vid:'8RcHchs-H4A',short:false},{title:'모션 그래픽 03',cat:'motion',label:'모션 그래픽',vid:'N-SCjG4Rh8Y',short:false},{title:'모션 그래픽 04',cat:'motion',label:'모션 그래픽',vid:'Z_tffw4Ud0c',short:false},{title:'모션 그래픽 05',cat:'motion',label:'모션 그래픽',vid:'17F_bv3kmZk',short:false},{title:'스케치 영상 01',cat:'sketch',label:'스케치영상',vid:'VocixdTkET4',short:false},{title:'스케치 영상 02',cat:'sketch',label:'스케치영상',vid:'iEp5d9LShB8',short:false},{title:'유튜브 영상 01',cat:'youtube',label:'유튜브',vid:'XlS5Cv6im0M',short:false},{title:'유튜브 영상 02',cat:'youtube',label:'유튜브',vid:'uQoM8WJ_yWc',short:false},{title:'SNS 광고 01',cat:'sns',label:'SNS광고',vid:'Woa4hq3fvxA',short:true},{title:'SNS 광고 02',cat:'sns',label:'SNS광고',vid:'Bo50t7arAsI',short:true},{title:'SNS 광고 03',cat:'sns',label:'SNS광고',vid:'DRu7VuSp7gg',short:true}];
-var catProjs=[],lbIdx=0;
+var categories=[],projects=[],catProjs=[],lbIdx=0;
+
+fetch('videos.json')
+  .then(function(r){return r.json()})
+  .then(function(data){
+    categories=data.categories;
+    projects=data.projects;
+    buildCatGrid();
+    setTimeout(observeRv,300);
+  })
+  .catch(function(e){console.error('videos.json 로드 실패:',e)});
 
 document.fonts.ready.then(function(){gsap.to('#ldf',{width:'100%',duration:.85,ease:'power2.inOut',onComplete:function(){gsap.to('#loader',{opacity:0,duration:.45,delay:.1,onComplete:function(){document.getElementById('loader').style.display='none';initHero()}})}})});
 
@@ -292,8 +300,7 @@ mobNav.querySelectorAll('a').forEach(function(a){a.addEventListener('click',func
 var rvObs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');rvObs.unobserve(e.target)}})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
 function observeRv(){document.querySelectorAll('.rv:not(.on),.rv-s:not(.on)').forEach(function(el){rvObs.observe(el)})}
 function buildCatGrid(){var g=document.getElementById('cat-grid');g.innerHTML='';categories.forEach(function(cat){var cnt=projects.filter(function(p){return p.cat===cat.id}).length,th='https://img.youtube.com/vi/'+cat.thumb+'/maxresdefault.jpg',c=document.createElement('div');c.className='cat-card rv-s';c.innerHTML='<img src="'+th+'" alt="'+cat.name+'" onerror="this.src=\'https://img.youtube.com/vi/'+cat.thumb+'/hqdefault.jpg\'"><div class="cat-overlay"><span class="cat-tag">'+cat.id.replace('-',' ')+'</span><div class="cat-name">'+cat.name+'</div><div class="cat-cnt">'+cnt+'개 영상</div></div>';c.addEventListener('click',function(){openCat(cat.id,cat.name)});g.appendChild(c)});observeRv()}
-buildCatGrid();
-setTimeout(observeRv,300);
+
 
 function openCat(id,name){catProjs=projects.filter(function(p){return p.cat===id});buildVidGrid(catProjs);document.getElementById('cat-grid').classList.add('hidden');document.getElementById('vid-wrap').classList.add('show');document.getElementById('wt').style.display='none';document.getElementById('back-btn').classList.add('show');document.getElementById('ctd').textContent=name;document.getElementById('ctd').classList.add('show');document.getElementById('vct').textContent=catProjs.length+'개 영상';document.getElementById('vct').classList.add('show');setTimeout(observeRv,100)}
 

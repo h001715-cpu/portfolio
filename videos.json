@@ -1,0 +1,30 @@
+{
+  "categories": [
+    { "id": "ai-ad",      "name": "AI 광고 영상", "thumb": "6U0aNE5UHlU" },
+    { "id": "brand-film", "name": "브랜드 필름",  "thumb": "Lef23mcbrB0" },
+    { "id": "motion",     "name": "모션 그래픽",  "thumb": "8qrFOiRAWws" },
+    { "id": "sketch",     "name": "스케치영상",   "thumb": "VocixdTkET4" },
+    { "id": "youtube",    "name": "유튜브",       "thumb": "XlS5Cv6im0M" },
+    { "id": "sns",        "name": "SNS광고",      "thumb": "Woa4hq3fvxA" }
+  ],
+  "projects": [
+    { "title": "AI 광고 영상 01", "cat": "ai-ad",      "label": "AI 광고 영상", "vid": "6U0aNE5UHlU",  "short": false },
+    { "title": "AI 광고 영상 02", "cat": "ai-ad",      "label": "AI 광고 영상", "vid": "7lbQ3XN-PtE",  "short": false },
+    { "title": "AI 광고 영상 03", "cat": "ai-ad",      "label": "AI 광고 영상", "vid": "AS4lqg5xAJY",  "short": false },
+    { "title": "AI 광고 영상 04", "cat": "ai-ad",      "label": "AI 광고 영상", "vid": "7vUSZ03JxL8",  "short": false },
+    { "title": "브랜드 필름 01",  "cat": "brand-film", "label": "브랜드 필름",  "vid": "Lef23mcbrB0",  "short": false },
+    { "title": "브랜드 필름 02",  "cat": "brand-film", "label": "브랜드 필름",  "vid": "3YoXd0UeupE",  "short": false },
+    { "title": "모션 그래픽 01",  "cat": "motion",     "label": "모션 그래픽",  "vid": "8qrFOiRAWws",  "short": false },
+    { "title": "모션 그래픽 02",  "cat": "motion",     "label": "모션 그래픽",  "vid": "8RcHchs-H4A",  "short": false },
+    { "title": "모션 그래픽 03",  "cat": "motion",     "label": "모션 그래픽",  "vid": "N-SCjG4Rh8Y",  "short": false },
+    { "title": "모션 그래픽 04",  "cat": "motion",     "label": "모션 그래픽",  "vid": "Z_tffw4Ud0c",  "short": false },
+    { "title": "모션 그래픽 05",  "cat": "motion",     "label": "모션 그래픽",  "vid": "17F_bv3kmZk",  "short": false },
+    { "title": "스케치 영상 01",  "cat": "sketch",     "label": "스케치영상",   "vid": "VocixdTkET4",  "short": false },
+    { "title": "스케치 영상 02",  "cat": "sketch",     "label": "스케치영상",   "vid": "iEp5d9LShB8",  "short": false },
+    { "title": "유튜브 영상 01",  "cat": "youtube",    "label": "유튜브",       "vid": "XlS5Cv6im0M",  "short": false },
+    { "title": "유튜브 영상 02",  "cat": "youtube",    "label": "유튜브",       "vid": "uQoM8WJ_yWc",  "short": false },
+    { "title": "SNS 광고 01",    "cat": "sns",        "label": "SNS광고",      "vid": "Woa4hq3fvxA",  "short": true  },
+    { "title": "SNS 광고 02",    "cat": "sns",        "label": "SNS광고",      "vid": "Bo50t7arAsI",  "short": true  },
+    { "title": "SNS 광고 03",    "cat": "sns",        "label": "SNS광고",      "vid": "DRu7VuSp7gg",  "short": true  }
+  ]
+}
