@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio Admin</title>
+    <title>Portfolio Visual Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -16,64 +16,91 @@
             --red-dim: rgba(230, 37, 37, 0.15);
             --red-hover: #ff3333;
         }
-        body {
-            margin: 0; padding: 0;
-            background: var(--bg); color: var(--text);
-            font-family: 'Pretendard', sans-serif;
-            -webkit-font-smoothing: antialiased;
-        }
-        .container {
-            max-width: 800px; margin: 0 auto; padding: 3rem 2rem;
-        }
-        h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem; }
+        body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; -webkit-font-smoothing: antialiased; padding-bottom: 80px;}
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem 2rem 5rem; }
+        h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; margin: 0;}
         
-        .box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; margin-bottom: 2.5rem; }
+        .box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; margin-bottom: 2rem; }
         .box h2 { font-size: 1.2rem; margin-top: 0; margin-bottom: 1.5rem; color: var(--text); }
         
         label { display: block; font-size: 0.85rem; color: var(--text2); margin-bottom: 0.5rem; font-family: 'Pretendard', sans-serif;}
         input[type="text"], input[type="password"], textarea {
             width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: var(--text); 
-            padding: 0.8rem 1rem; font-size: 1rem; font-family: 'Pretendard', sans-serif; border-radius: 4px; margin-bottom: 1.5rem;
+            padding: 0.8rem 1rem; font-size: 1rem; font-family: 'Pretendard', sans-serif; border-radius: 4px; margin-bottom: 1rem;
             transition: border-color 0.3s;
         }
         input:focus, textarea:focus { outline: none; border-color: var(--red); }
-        textarea { resize: vertical; min-height: 80px; }
         
-        button {
-            background: var(--text); color: var(--bg); border: none; padding: 0.8rem 1.5rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; border-radius: 4px; transition: all 0.3s;
-        }
+        button { background: var(--text); color: var(--bg); border: none; padding: 0.8rem 1.5rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; border-radius: 4px; transition: all 0.3s; }
         button:hover { background: #e0e0e0; }
         button.primary { background: var(--red); color: white; width: 100%; }
         button.primary:hover { background: var(--red-hover); box-shadow: 0 0 15px rgba(230,37,37,0.4); }
         button.sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
-        button.danger { background: transparent; border: 1px solid var(--border); color: var(--text2); }
-        button.danger:hover {; color: var(--red); background: var(--red-dim); }
+        button.danger { background: transparent; border: 1px solid var(--border); color: var(--text2); width: auto; }
+        button.danger:hover { color: var(--red); background: var(--red-dim); border-color: var(--red);}
 
-        .role-list { display: grid; gap: 1rem; margin-top: 1.5rem; }
-        .role-item { background: rgba(0,0,0,0.4); border: 1px solid var(--border); padding: 1rem; border-radius: 4px; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
-        .role-info .vid { font-family: 'Space Grotesk', sans-serif; color: var(--red); font-size: 0.85rem; margin-bottom: 0.4rem; }
-        .role-info .desc { font-size: 0.95rem; color: var(--text); line-height: 1.5; white-space: pre-wrap; word-break: break-all;}
-        
-        .loading { display: none; text-align: center; padding: 2rem; color: var(--text2); }
         .error { color: var(--red); font-size: 0.9rem; margin-top: 0.5rem; }
         
         #auth-section, #editor-section { display: none; }
         #auth-section.active, #editor-section.active { display: block; }
+        
+        /* Category Tabs */
+        .tabs { display: flex; gap: 0.5rem; overflow-x: auto; margin-bottom: 2rem; padding-bottom: 0.5rem;}
+        .tab-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text2); padding: 0.6rem 1.2rem; border-radius: 30px; white-space: nowrap;}
+        .tab-btn.active { background: var(--red); color: white; border-color: var(--red); }
+        .tab-btn:hover:not(.active) { background: #222; border-color: #555; }
+        
+        /* Video Grid */
+        #cat-title { font-size: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--red); padding-left: 10px;}
+        .vid-grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+        .vid-card { background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; }
+        .vid-thumb { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border-bottom: 1px solid var(--border);}
+        .vid-thumb img { position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover; }
+        .vid-info { padding: 1rem; flex: 1; display:flex; flex-direction:column; }
+        .vid-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;}
+        .vid-role-area { padding: 1rem; background: var(--surface); border-top: 1px solid var(--border); margin-top: auto;}
+        .vid-role-area textarea { margin-bottom: 0; min-height: 80px; font-size: 0.9rem; background: rgba(0,0,0,0.3);}
+        
+        /* Fixed Save Panel */
+        .fixed-save {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(26,26,26,0.95); border-top: 1px solid var(--border);
+            padding: 1rem 2rem; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+            display: none;
+        }
+        .fixed-save.active { display: flex; }
+        
+        .loader-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; display: none; align-items: center; justify-content: center; flex-direction: column;
+        }
+        .loader-overlay p { color: white; font-size: 1.2rem; margin-top: 1rem; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--red); border-radius: 50%; animation: spin 1s infinite linear; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .fixed-save { flex-direction: column; gap:1rem; text-align:center; padding: 1rem; }
+            .fixed-save p { font-size: 0.8rem; }
+            .fixed-save button.primary { width: 100%; font-size: 1rem; padding: 0.8rem;}
+            body { padding-bottom: 140px; }
+        }
     </style>
 </head>
 <body>
 
+<div class="loader-overlay" id="loader"><div class="spinner"></div><p id="loader-msg">로딩 중...</p></div>
+
 <div class="container">
-    <h1>ADMIN DASHBOARD</h1>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem;">
+        <h1>VISUAL ADMIN</h1>
+        <button id="logout-btn" class="sm danger" style="display:none;" onclick="logout()">토큰 삭제 (로그아웃)</button>
+    </div>
     
     <!-- Auth Section -->
     <div id="auth-section" class="active">
         <div class="box">
             <h2>GitHub 연동 설정</h2>
             <p style="color:var(--text2); font-size:0.95rem; line-height:1.6; margin-bottom:1.5rem;">
-                본인만 접근할 수 있는 관리자 화면입니다.<br>
-                GitHub에서 발급받은 <strong>Personal Access Token (클래식)</strong>을 로컬 브라우저에 저장하여 로그인합니다. (서버 전송 없음)<br><br>
-                <span>※ 발급받으신 토큰은 `repo` 권한이 반드시 체크되어 있어야 합니다.</span>
+                GitHub에서 발급받은 <strong>Personal Access Token (클래식)</strong>을 로컬 브라우저에 저장하여 로그인합니다.<br>
+                <span>※ `repo` 권한이 반드시 체크되어 있어야 합니다.</span>
             </p>
             <label>GitHub Personal Access Token 입력</label>
             <input type="password" id="gh-token" placeholder="ghp_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
@@ -84,53 +111,29 @@
 
     <!-- Editor Section -->
     <div id="editor-section">
-        <div class="box">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 1rem;">
-                <h2>현재 커스텀 설명 관리</h2>
-                <button class="sm danger" onclick="logout()">토큰 삭제 (로그아웃)</button>
-            </div>
-            
-            <p style="color:var(--text2); font-size:0.9rem; margin-bottom:1.5rem; line-height:1.5;">
-                남의 채널 영상이나 유튜브 설명을 바꾸지 않고 포트폴리오에서만 설명을 숨기거나 변경하고 싶을 때 여기에 등록하세요.<br>
-                등록된 영상 아이디는 유튜브 설명 대신 여기서 적은 내용이 우선적으로 보여집니다!
-            </p>
-            
-            <div style="background: rgba(0,0,0,0.5); padding: 1.5rem; border: 1px solid var(--border); border-radius:4px;">
-                <label>추가하시겠습니까? 유튜브 영상 ID 입력 (도메인 뒤 v= 뒷부분 11자리)</label>
-                <input type="text" id="new-vid" placeholder="예: XlS5Cv6im0M">
-                
-                <label>내 역할 및 상세 설명 입력 (줄바꿈 허용)</label>
-                <textarea id="new-desc" placeholder="팀 작업을 완료했습니다. 애프터이펙트를 활용..."></textarea>
-                
-                <button onclick="addRole()">목록에 임시 추가하기 ↓</button>
-            </div>
-
-            <!-- List -->
-            <div class="role-list" id="role-list"></div>
-        </div>
-        
-        <div style="text-align: right; background: var(--surface); padding: 2rem; border-radius: 8px; border: 1px solid var(--border);">
-            <p style="color:var(--text2); font-size:0.9rem; margin-bottom:1.5rem; text-align: left;">
-                ★ <strong>임시 추가</strong>된 사항을 실제 사이트에 반영하려면 꼭 아래 저장 버튼을 클릭해주세요. 클릭 후 <strong>5~10초 뒤에 포트폴리오 사이트에 알아서 완전 배포</strong>됩니다.
-            </p>
-            <button class="primary" style="font-size: 1.1rem; padding: 1.2rem; margin-top:0.5rem;" onclick="saveToGithub()">🚀 GitHub에 밀어넣기 및 메인 사이트 자동반영 시작</button>
-        </div>
+        <div class="tabs" id="cat-tabs"></div>
+        <h2 id="cat-title">카테고리를 선택해주세요</h2>
+        <div class="vid-grid" id="vid-grid"></div>
     </div>
-    
-    <div id="loading" class="loading"></div>
+</div>
+
+<div class="fixed-save" id="fixed-save">
+    <p>★ 수정한 메모는 <strong>'GitHub에 덮어쓰기'</strong> 버튼을 눌러야 메인 사이트에 반영됩니다 (약 5초 소요)</p>
+    <button class="primary" style="width:auto; padding:0.8rem 2rem;" onclick="saveToGithub()">🚀 변경사항 모아서 GitHub에 덮어쓰기 완료</button>
 </div>
 
 <script>
-    // 본인의 레포지토리 정보를 적어주세요.
     const REPO_OWNER = 'h001715-cpu';
     const REPO_NAME = 'portfolio';
     const FILE_PATH = 'videos.json';
     
     let ghToken = localStorage.getItem('ghToken') || '';
     let fileSha = '';
-    let videoData = null;
+    let videoData = null; // videos.json parsed object
+    let categories = [];
+    let YT_API_KEY = '';
 
-    // Base64 UTF-8 Encoding/Decoding for proper Korean characters
+    // 한글 등 유니코드 지원 Base64
     function b64DecodeUnicode(str) {
         return decodeURIComponent(atob(str).split('').map(function(c) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
@@ -138,22 +141,19 @@
     }
     function b64EncodeUnicode(str) {
         return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
-            function toSolidBytes(match, p1) {
-                return String.fromCharCode('0x' + p1);
-        }));
+            function toSolidBytes(match, p1) { return String.fromCharCode('0x' + p1); }));
     }
 
     if (ghToken) {
-        // 이미 토큰이 브라우저에 있다면 바로 로드
         document.getElementById('gh-token').value = ghToken;
         fetchData();
     }
 
     function showLoading(msg) { 
-        var l = document.getElementById('loading');
+        var l = document.getElementById('loader');
         if(msg) {
-            l.style.display = 'block';
-            l.innerText = msg;
+            document.getElementById('loader-msg').innerText = msg;
+            l.style.display = 'flex';
         } else {
             l.style.display = 'none';
         }
@@ -161,10 +161,7 @@
     
     function login() {
         const val = document.getElementById('gh-token').value.trim();
-        if(!val) {
-            alert('토큰을 입력해주세요!');
-            return;
-        }
+        if(!val) return alert('토큰을 입력해주세요!');
         ghToken = val;
         localStorage.setItem('ghToken', ghToken);
         fetchData();
@@ -174,33 +171,38 @@
         localStorage.removeItem('ghToken');
         ghToken = '';
         document.getElementById('gh-token').value = '';
+        document.getElementById('logout-btn').style.display = 'none';
         document.getElementById('editor-section').classList.remove('active');
+        document.getElementById('fixed-save').classList.remove('active');
         document.getElementById('auth-section').classList.add('active');
     }
 
-    // GitHub 레포지토리에서 바로 videos.json 가져오기
     async function fetchData() {
         document.getElementById('auth-error').textContent = '';
-        showLoading("서버리스 통신 중... videos.json을 가져옵니다!");
+        showLoading("GitHub 서버에서 videos.json 연동 중...");
         try {
             const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}?t=${new Date().getTime()}`, {
                 headers: { 'Authorization': `token ${ghToken}` }
             });
-            if (!res.ok) throw new Error('인증 실패 혹은 저장소를 찾을 수 없습니다. 발급받은 토큰이 이 레포지토리에 접근 가능한지 확인해주세요.');
+            if (!res.ok) throw new Error('인증 실패 혹은 저장소를 찾을 수 없습니다.');
             
             const data = await res.json();
             fileSha = data.sha;
-            
-            const jsonStr = b64DecodeUnicode(data.content.replace(/\n/g, ''));
-            videoData = JSON.parse(jsonStr);
-            console.log("로드된 데이터:", videoData);
+            videoData = JSON.parse(b64DecodeUnicode(data.content.replace(/\n/g, '')));
             
             if(!videoData.roles) videoData.roles = {};
+            YT_API_KEY = videoData.apiKey;
+            categories = videoData.categories || [];
             
             document.getElementById('auth-section').classList.remove('active');
             document.getElementById('editor-section').classList.add('active');
+            document.getElementById('logout-btn').style.display = 'inline-block';
+            document.getElementById('fixed-save').classList.add('active');
             
-            renderRoles();
+            renderTabs();
+            // 기본으로 첫 번째 탭 열기
+            if(categories.length > 0) openCat(categories[0].id);
+            
             showLoading(false);
         } catch(err) {
             console.error(err);
@@ -210,67 +212,95 @@
         }
     }
 
-    // 화면(DOM)에 렌더링
-    function renderRoles() {
-        const list = document.getElementById('role-list');
-        list.innerHTML = '';
-        const roles = videoData.roles;
+    function renderTabs() {
+        const t = document.getElementById('cat-tabs');
+        t.innerHTML = '';
+        categories.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = 'tab-btn';
+            btn.id = 'tab-' + cat.id;
+            btn.innerText = cat.name;
+            btn.onclick = () => openCat(cat.id);
+            t.appendChild(btn);
+        });
+    }
+
+    async function openCat(id) {
+        const cat = categories.find(c => c.id === id);
+        if(!cat) return;
         
-        for (const vid in roles) {
-            // EXAMPLE_ID_HERE는 사용자가 지울수 있게 처리. 렌더링은 하되 보기좋게
-            const el = document.createElement('div');
-            el.className = 'role-item';
-            el.innerHTML = `
-                <div class="role-info">
-                    <div class="vid">🎯 영상ID: <strong>${vid}</strong></div>
-                    <div class="desc">${roles[vid]}</div>
-                </div>
-                <button class="sm danger" onclick="deleteRole('${vid}')">아이템 숨기기(메모리 삭제)</button>
-            `;
-            list.appendChild(el);
+        // Tab UI update
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + id).classList.add('active');
+        document.getElementById('cat-title').innerText = cat.name + " 카테고리 영상 스튜디오";
+        
+        const g = document.getElementById('vid-grid');
+        g.innerHTML = '<p style="color:var(--text2)">유튜브 영상 배열 불러오는 중...</p>';
+        
+        try {
+            const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${cat.playlistId}&key=${YT_API_KEY}`;
+            const r = await (await fetch(url)).json();
+            if(r.error) throw new Error(r.error.message);
+            
+            const validItems = (r.items||[]).filter(i => {
+                const t = i.snippet?.title;
+                return i.snippet?.resourceId?.videoId && t !== 'Deleted video' && t !== 'Private video' && t !== '삭제된 동영상' && t !== '비공개 동영상';
+            });
+            
+            g.innerHTML = '';
+            if(validItems.length === 0) {
+                g.innerHTML = '<p style="color:var(--text2)">이 플레이리스트에 표시할 영상이 없습니다.</p>';
+                return;
+            }
+            
+            validItems.forEach(item => {
+                const vid = item.snippet.resourceId.videoId;
+                const title = item.snippet.title;
+                const savedRole = videoData.roles[vid] || '';
+                
+                const card = document.createElement('div');
+                card.className = 'vid-card';
+                card.innerHTML = `
+                    <div class="vid-thumb">
+                        <img src="https://img.youtube.com/vi/${vid}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${vid}/hqdefault.jpg'">
+                    </div>
+                    <div class="vid-info">
+                        <div class="vid-title" title="${title}">${title}</div>
+                        <div style="font-size:0.75rem; color:var(--text2); margin-top:0.2rem;">ID: ${vid}</div>
+                    </div>
+                    <div class="vid-role-area">
+                        <label>이 영상의 커스텀 설명 덮어쓰기</label>
+                        <textarea placeholder="유튜브 설명 대신 이 내용이 노출됩니다. (비워두면 유튜브 설명 표시)" oninput="updateRole('${vid}', this.value)">${savedRole}</textarea>
+                    </div>
+                `;
+                g.appendChild(card);
+            });
+        } catch(e) {
+            g.innerHTML = `<p style="color:var(--red)">영상을 불러오지 못했습니다: ${e.message}</p>`;
         }
     }
 
-    // 임시 추가 (아직 커밋 안됨)
-    function addRole() {
-        const vid = document.getElementById('new-vid').value.trim();
-        const desc = document.getElementById('new-desc').value.trim();
-        if(!vid || !desc) {
-            alert('영상 ID와 설명을 모두 빈칸 없이 작성해주세요.');
-            return;
-        }
-        videoData.roles[vid] = desc;
-        document.getElementById('new-vid').value = '';
-        document.getElementById('new-desc').value = '';
-        renderRoles();
-    }
-
-    // 임시 삭제 (아직 커밋 안됨)
-    function deleteRole(vid) {
-        if(confirm(`[ ${vid} ] 이 커스텀 설명을 목록에서 정말 제외시킬까요?\n(하단 배포 버튼을 눌러야 완전 삭제가 반영됩니다.)`)) {
+    // Textarea oninput event
+    function updateRole(vid, val) {
+        if(!val.trim()) {
             delete videoData.roles[vid];
-            renderRoles();
+        } else {
+            videoData.roles[vid] = val;
         }
     }
 
-    // 가장 중요한! 편집된 json을 다시 깃허브에 푸쉬(Commit)하는 기능!
     async function saveToGithub() {
         if(!videoData) return;
-        showLoading("GitHub 원격 저장소에 새로운 videos.json 코드를 밀어넣는 중입니다...");
+        showLoading("GitHub 원격 저장소에 새로운 코드를 덮어쓰고 있습니다! (Vercel 배포 트리거)");
         try {
             const jsonStr = JSON.stringify(videoData, null, 2);
-            const encodedContent = b64EncodeUnicode(jsonStr);
-            
             const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
                 method: 'PUT',
-                headers: {
-                    'Authorization': `token ${ghToken}`,
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Authorization': `token ${ghToken}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    message: 'Admin Panel Update: Custom Roles override modified 🔥',
-                    content: encodedContent,
-                    sha: fileSha // 필수로 들어가야하는 덮어쓰기 식별자
+                    message: 'Admin Panel Update: Custom Roles using Visual Editor',
+                    content: b64EncodeUnicode(jsonStr),
+                    sha: fileSha
                 })
             });
             
@@ -280,15 +310,16 @@
             }
             
             const newData = await res.json();
-            fileSha = newData.content.sha; // 새 sha를 가지고 있어야 연속 저장 가능
+            fileSha = newData.content.sha;
             
             showLoading(false);
-            alert('🎉 성공적으로 깃허브에 최신 업데이트가 저장되었습니다!\n\n현재 Vercel 로봇이 바뀐 파일을 감지하고 사이트를 다시 깎고 있습니다. 약 5~10초 후 메인 사이트(도메인)에 접속하셔서 새로고침을 해서 확인해보세요!!');
+            alert('🎉 성공적으로 깃허브 저장 & 배포 지시가 완료되었습니다!\n\nVercel이 변경된 파일을 감지하여 배포 중이므로, 약 5~10초 후 메인 사이트(포트폴리오 도메인)에 접속하여 확인해보세요!');
         } catch(err) {
             alert('오류가 발생했습니다: ' + err.message);
             showLoading(false);
         }
     }
 </script>
+
 </body>
 </html>
