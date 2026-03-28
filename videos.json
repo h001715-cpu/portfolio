@@ -67,7 +67,8 @@
     "DRu7VuSp7gg": "ROLE : 편집 / 자막 디자인 / 모션디자인",
     "Bo50t7arAsI": "ROLE : 편집 / 자막 디자인 / 모션디자인",
     "Woa4hq3fvxA": "ROLE : 기획 / 편집 / 모션디자인",
-    "AIHelUnH0bI": "ROLE : 편집 / 자막 디자인 / 모션디자인"
+    "AIHelUnH0bI": "ROLE : 편집 / 자막 디자인 / 모션디자인",
+    "Gqegk5psVP0": "ROLE : 색보정 / 편집 / 모션 그래픽"
   },
   "sortOrder": {
     "ai-ad": [
@@ -94,6 +95,13 @@
       "Bo50t7arAsI",
       "AIHelUnH0bI",
       "DRu7VuSp7gg"
+    ],
+    "youtube": [
+      "Gqegk5psVP0",
+      "TpBP4R73rBM",
+      "58oOw6L9K34",
+      "uQoM8WJ_yWc",
+      "XlS5Cv6im0M"
     ]
   }
 }
