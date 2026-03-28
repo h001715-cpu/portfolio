@@ -3,7 +3,14 @@
   "profilePosition": "50% 22%",
   "roles": {
     "EXAMPLE_ID_HERE": "이곳에 [영상 ID : 내가 한 역할 설명] 을 추가하시면 유튜브 설명 대신 이 설명이 우선적으로 노출됩니다!",
-    "XzzpdcjjzR8": " ROLE"
+    "XzzpdcjjzR8": " ROLE : 장면 디자인 / 모션 디자인",
+    "BxmnVg4tCF0": " ROLE : 장면 디자인 / 모션 디자인",
+    "afP7hYb7E4U": " ROLE : 장면 디자인 / 모션 디자인",
+    "YoINOQoeO8g": " ROLE : 장면 디자인 / 모션 디자인",
+    "ye087Tycn28": " ROLE : 장면 디자인 / 모션 디자인",
+    "PbMKTfQbGow": " ROLE : 장면 디자인 / 모션 디자인",
+    "iFUmjq_Gi3g": " ROLE : 장면 디자인 / 모션 디자인",
+    "8qrFOiRAWws": " ROLE : 기획 / 장면 디자인 / 모션 디자인"
   },
   "categories": [
     {
@@ -62,5 +69,17 @@
       "type": "planning",
       "items": []
     }
-  ]
+  ],
+  "sortOrder": {
+    "motion": [
+      "8qrFOiRAWws",
+      "XzzpdcjjzR8",
+      "BxmnVg4tCF0",
+      "afP7hYb7E4U",
+      "YoINOQoeO8g",
+      "ye087Tycn28",
+      "PbMKTfQbGow",
+      "iFUmjq_Gi3g"
+    ]
+  }
 }
