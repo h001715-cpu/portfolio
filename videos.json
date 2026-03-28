@@ -21,7 +21,15 @@
     "zpMNWbGpda4": "ROLE : 기획 / 편집 / 후보정 / 자막 및 모션 디자인",
     "5a1TBtJX2Y0": "ROLE : 기획 / 촬영 / 편집 / 후보정 / 자막 및 모션 디자인",
     "Lef23mcbrB0": "ROLE : 기획 / 편집 / 후보정 / 자막 및 모션 디자인",
-    "3YoXd0UeupE": "ROLE : 기획 / 촬영 / 편집 / 후보정 / 자막 및 모션 디자인"
+    "3YoXd0UeupE": "ROLE : 기획 / 촬영 / 편집 / 후보정 / 자막 및 모션 디자인",
+    "1ca4xUIDInE": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인",
+    "LZHPmL2maQQ": "ROLE :  촬영 / 편집 / 후보정 / 자막 및 모션 디자인",
+    "LAepL0ZMmL4": "ROLE :  촬영 / 편집 / 후보정 / 자막 및 모션 디자인",
+    "TpBP4R73rBM": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인",
+    "XlS5Cv6im0M": "ROLE :  기획 / 출연자 섭외 / 촬영 / 편집 / 후보정 / 자막 및 모션 디자인 / 썸네일 디자인",
+    "Gqegk5psVP0": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
+    "58oOw6L9K34": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
+    "uQoM8WJ_yWc": "ROLE :  촬영 / 편집 / 후보정 / 자막 및 모션 디자인 "
   },
   "categories": [
     {
@@ -106,6 +114,13 @@
       "5a1TBtJX2Y0",
       "Lef23mcbrB0",
       "3YoXd0UeupE"
+    ],
+    "youtube": [
+      "XlS5Cv6im0M",
+      "Gqegk5psVP0",
+      "uQoM8WJ_yWc",
+      "TpBP4R73rBM",
+      "58oOw6L9K34"
     ]
   }
 }
