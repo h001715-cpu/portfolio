@@ -149,12 +149,12 @@ footer{padding:1.8rem 5vw;border-top:1px solid var(--border);display:flex;align-
 .ft-lnks{display:flex;gap:1.5rem;list-style:none}
 .ft-lnks a{font-family:'Space Grotesk',sans-serif;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);text-decoration:none;transition:color .3s}
 .ft-lnks a:hover{color:var(--text)}
-#lb{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.96);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;padding:2rem}
+#lb{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.96);display:flex;flex-direction:column;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;padding:4rem 2rem;overflow-y:auto;}
 #lb.on{opacity:1;visibility:visible}
-.lb-in{width:100%;max-width:980px;transform:translateY(22px);transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.lb-in{width:100%;max-width:980px;margin:auto;flex-shrink:0;transform:translateY(22px);transition:transform .5s cubic-bezier(.16,1,.3,1)}
 #lb.on .lb-in{transform:none}
 .lb-vid{position:relative;padding-bottom:56.25%;background:#000;overflow:hidden;border-radius:2px}
-.lb-vid.short{padding-bottom:177.78%;max-width:340px;margin:0 auto}
+.lb-vid.short{padding-bottom:0;width:100%;max-width:40vh;aspect-ratio:9/16;margin:0 auto}
 .lb-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
 .lb-info{margin-top:1.2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
 #lb-title{font-size:1.1rem;font-weight:600;color:var(--text)}
@@ -281,6 +281,22 @@ a, button, .cat-card, .vid-item, .ptab, .burger, .back-btn, input, textarea, .lb
 <script>
 gsap.registerPlugin(ScrollTrigger);
 var categories=[],catProjs=[],lbIdx=0,YT_API_KEY='',customRoles={},customOrder={};
+history.replaceState({view:'home'}, '', location.pathname);
+window.addEventListener('popstate', function(e){
+    var s = e.state;
+    if(!s || s.view==='home'){
+        document.getElementById('vid-wrap').classList.remove('show');
+        document.getElementById('cat-grid').classList.remove('hidden');
+        document.getElementById('wt').style.display='';
+        document.getElementById('back-btn').classList.remove('show');
+        document.getElementById('ctd').classList.remove('show');
+        document.getElementById('vct').classList.remove('show');
+        if(typeof closeLb === 'function') closeLb();
+    }else if(s.view==='cat'){
+        if(typeof closeLb === 'function') closeLb();
+        openCat(s.id, s.name, true);
+    }
+});
 
 fetch('videos.json')
   .then(function(r){return r.json()})
@@ -311,11 +327,11 @@ function observeRv(){document.querySelectorAll('.rv:not(.on),.rv-s:not(.on)').fo
 function buildCatGrid(){var g=document.getElementById('cat-grid');g.innerHTML='';categories.forEach(function(cat){var c=document.createElement('div');c.className='cat-card rv-s';c.innerHTML='<img src="" alt="'+cat.name+'" style="background:#1a1a1a;"><div class="cat-overlay"><span class="cat-tag">'+cat.id.replace('-',' ')+'</span><div class="cat-name">'+cat.name+'</div></div>';c.addEventListener('click',function(){openCat(cat.id,cat.name)});g.appendChild(c);var url='https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=10&playlistId='+cat.playlistId+'&key='+YT_API_KEY;fetch(url).then(function(r){return r.json()}).then(function(data){if(data.items){var v=data.items.filter(function(i){return i.snippet&&i.snippet.resourceId&&i.snippet.resourceId.videoId&&i.snippet.title!=='Deleted video'&&i.snippet.title!=='Private video'&&i.snippet.title!=='삭제된 동영상'&&i.snippet.title!=='비공개 동영상'});if(v.length>0){var vid=v[0].snippet.resourceId.videoId;var img=c.querySelector('img');img.src='https://img.youtube.com/vi/'+vid+'/maxresdefault.jpg';img.onerror=function(){this.src='https://img.youtube.com/vi/'+vid+'/hqdefault.jpg'}}}})});observeRv()}
 
 
-function openCat(id,name){var cat=categories.find(function(c){return c.id===id});document.getElementById('cat-grid').classList.add('hidden');document.getElementById('vid-wrap').classList.add('show');document.getElementById('wt').style.display='none';document.getElementById('back-btn').classList.add('show');document.getElementById('ctd').textContent=name;document.getElementById('ctd').classList.add('show');document.getElementById('vct').textContent='불러오는 중...';document.getElementById('vct').classList.add('show');var url='https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId='+cat.playlistId+'&key='+YT_API_KEY;fetch(url).then(function(r){return r.json()}).then(function(data){if(data.error){console.error('YouTube API 오류:',data.error);document.getElementById('vct').textContent='로드 실패';return}catProjs=(data.items||[]).filter(function(item){return item.snippet&&item.snippet.resourceId&&item.snippet.resourceId.videoId&&item.snippet.title!=='Deleted video'&&item.snippet.title!=='Private video'&&item.snippet.title!=='삭제된 동영상'&&item.snippet.title!=='비공개 동영상'}).map(function(item){var sns=id==='sns';var vid=item.snippet.resourceId.videoId;return{title:item.snippet.title,cat:id,label:name,vid:vid,short:sns,desc:customRoles[vid]||item.snippet.description}});var savedOrder=customOrder[id]||[];if(savedOrder.length>0){catProjs.sort(function(a,b){var idxA=savedOrder.indexOf(a.vid);var idxB=savedOrder.indexOf(b.vid);if(idxA===-1)idxA=9999;if(idxB===-1)idxB=9999;return idxA-idxB})}document.getElementById('vct').textContent=catProjs.length+'개 영상';buildVidGrid(catProjs);setTimeout(observeRv,100)}).catch(function(e){console.error('fetch 오류:',e);document.getElementById('vct').textContent='로드 실패'})}
+function openCat(id,name,fromState){if(!fromState)history.pushState({view:'cat',id:id,name:name},'','#'+id);var cat=categories.find(function(c){return c.id===id});document.getElementById('cat-grid').classList.add('hidden');document.getElementById('vid-wrap').classList.add('show');document.getElementById('wt').style.display='none';document.getElementById('back-btn').classList.add('show');document.getElementById('ctd').textContent=name;document.getElementById('ctd').classList.add('show');document.getElementById('vct').textContent='불러오는 중...';document.getElementById('vct').classList.add('show');var url='https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId='+cat.playlistId+'&key='+YT_API_KEY;fetch(url).then(function(r){return r.json()}).then(function(data){if(data.error){console.error('YouTube API 오류:',data.error);document.getElementById('vct').textContent='로드 실패';return}catProjs=(data.items||[]).filter(function(item){return item.snippet&&item.snippet.resourceId&&item.snippet.resourceId.videoId&&item.snippet.title!=='Deleted video'&&item.snippet.title!=='Private video'&&item.snippet.title!=='삭제된 동영상'&&item.snippet.title!=='비공개 동영상'}).map(function(item){var sns=id==='sns';var vid=item.snippet.resourceId.videoId;return{title:item.snippet.title,cat:id,label:name,vid:vid,short:sns,desc:customRoles[vid]||item.snippet.description}});var savedOrder=customOrder[id]||[];if(savedOrder.length>0){catProjs.sort(function(a,b){var idxA=savedOrder.indexOf(a.vid);var idxB=savedOrder.indexOf(b.vid);if(idxA===-1)idxA=9999;if(idxB===-1)idxB=9999;return idxA-idxB})}document.getElementById('vct').textContent=catProjs.length+'개 영상';buildVidGrid(catProjs);setTimeout(observeRv,100)}).catch(function(e){console.error('fetch 오류:',e);document.getElementById('vct').textContent='로드 실패'})}
 
 function buildVidGrid(list){var g=document.getElementById('vid-grid');g.innerHTML='';list.forEach(function(p,i){var th='https://img.youtube.com/vi/'+p.vid+'/maxresdefault.jpg',el=document.createElement('div');el.className='vid-item rv-s'+(p.short?' short':'');var dsc=p.desc?'<div class="vid-desc">'+p.desc.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>':'';el.innerHTML='<div class="vid-thumb-box"><img src="'+th+'" alt="'+p.title+'" loading="lazy" onerror="this.src=\'https://img.youtube.com/vi/'+p.vid+'/hqdefault.jpg\'"><div class="play-ic"><svg width="16" height="16" viewBox="0 0 16 16" fill="white"><path d="M5 3l9 5-9 5V3z"/></svg></div></div><div class="vid-info-box"><div class="vid-ttl">'+p.title+'</div>'+dsc+'</div>';(function(idx){el.addEventListener('click',function(){openLb(idx)})})(i);g.appendChild(el)})}
 
-document.getElementById('back-btn').addEventListener('click',function(){document.getElementById('vid-wrap').classList.remove('show');document.getElementById('cat-grid').classList.remove('hidden');document.getElementById('wt').style.display='';document.getElementById('back-btn').classList.remove('show');document.getElementById('ctd').classList.remove('show');document.getElementById('vct').classList.remove('show');observeRv()});
+document.getElementById('back-btn').addEventListener('click',function(){history.back()});
 
 var lb=document.getElementById('lb'),lbVid=document.getElementById('lb-vid'),lbTitle=document.getElementById('lb-title'),lbCat=document.getElementById('lb-cat'),lbDesc=document.getElementById('lb-desc');
 function openLb(i){lbIdx=i;var p=catProjs[i];lbTitle.textContent=p.title;lbCat.textContent=p.label;lbDesc.textContent=p.desc;lbVid.className=p.short?'lb-vid short':'lb-vid';lbVid.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+p.vid+'?autoplay=1&rel=0&playsinline=1&enablejsapi=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';lb.classList.add('on');document.body.classList.add('lock')}
