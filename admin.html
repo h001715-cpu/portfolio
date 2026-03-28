@@ -112,7 +112,19 @@
 
     <!-- Editor Section -->
     <div id="editor-section">
-        <div class="tabs" id="cat-tabs"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:1rem;">
+            <div class="tabs" id="cat-tabs" style="margin-bottom:0; padding-bottom:0; border:none; flex:1;"></div>
+            <button class="sm" style="background:#222; border:1px solid #444; color:var(--text2);" onclick="toggleCatEdit()">✏ 카테고리명 수정</button>
+        </div>
+        
+        <div id="cat-edit-panel" style="display:none; background:rgba(0,0,0,0.5); border:1px solid var(--border); padding:1.5rem; border-radius:6px; margin-bottom:2rem;">
+            <h3 style="margin-top:0; font-size:1rem; margin-bottom:1.5rem; color:var(--red);">고정 카테고리 이름 변경</h3>
+            <div id="cat-edit-list"></div>
+            <div style="text-align:right; margin-top:1rem;">
+                <button class="sm primary" style="width:auto; padding:0.6rem 1.2rem;" onclick="applyCatNames()">이름 적용하기</button>
+            </div>
+        </div>
+
         <h2 id="cat-title">카테고리를 선택해주세요</h2>
         <div class="vid-grid" id="vid-grid"></div>
     </div>
@@ -225,6 +237,43 @@
             btn.onclick = () => openCat(cat.id);
             t.appendChild(btn);
         });
+        if(currentCatId) {
+            const act = document.getElementById('tab-' + currentCatId);
+            if(act) act.classList.add('active');
+        }
+    }
+
+    function toggleCatEdit() {
+        const p = document.getElementById('cat-edit-panel');
+        if(p.style.display === 'none' || p.style.display === '') {
+            const list = document.getElementById('cat-edit-list');
+            list.innerHTML = '';
+            categories.forEach(cat => {
+                list.innerHTML += `<div style="margin-bottom:0.8rem; display:flex; gap:1rem; align-items:center;">
+                    <span style="color:var(--text2); width:120px; font-size:0.85rem; font-family:'Space Grotesk',sans-serif;">ID: ${cat.id}</span>
+                    <input type="text" id="cat-input-${cat.id}" value="${cat.name.replace(/"/g, '&quot;')}" style="margin-bottom:0; background:rgba(255,255,255,0.05);">
+                </div>`;
+            });
+            p.style.display = 'block';
+        } else {
+            p.style.display = 'none';
+        }
+    }
+
+    function applyCatNames() {
+        categories.forEach(cat => {
+            const val = document.getElementById('cat-input-' + cat.id).value.trim();
+            if(val) cat.name = val;
+        });
+        videoData.categories = categories; // 객체 업데이트
+        renderTabs();
+        document.getElementById('cat-edit-panel').style.display = 'none';
+        
+        if(currentCatId) {
+            const cat = categories.find(c => c.id === currentCatId);
+            document.getElementById('cat-title').innerText = cat.name + " 카테고리 영상 스튜디오";
+        }
+        alert('이름이 수정되었습니다! 화면 하단의 [🚀 덮어쓰기] 버튼을 누르시면 실제 홈페이지에 최종 반영됩니다.');
     }
 
     async function openCat(id) {
