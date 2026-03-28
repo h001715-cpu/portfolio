@@ -12,10 +12,10 @@
     "iFUmjq_Gi3g": " ROLE : 장면 디자인 / 모션 디자인",
     "8qrFOiRAWws": " ROLE : 기획 / 장면 디자인 / 모션 디자인",
     "_1MmhUkNDu0": "ROLE : 기획 / AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING",
-    "4CRpNu_7W50": "ROLE : 기획 / AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING",
+    "4CRpNu_7W50": "ROLE : 기획 / AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 자막 및 모션 디자인\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING",
     "qFIoYNS8XNk": "※초반 그래픽을 AI 그래픽으로 제작 \nROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING",
-    "7vUSZ03JxL8": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING / VEO",
-    "AS4lqg5xAJY": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING / 미드저니 애니메이트",
+    "7vUSZ03JxL8": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 자막 및 모션 디자인\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING / VEO",
+    "AS4lqg5xAJY": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 자막 및 모션 디자인\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING / 미드저니 애니메이트",
     "6U0aNE5UHlU": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING / SORA",
     "DeeUPKJycjI": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING",
     "zpMNWbGpda4": "ROLE : 기획 / 편집 / 후보정 / 자막 및 모션 디자인",
@@ -33,7 +33,8 @@
     "AIHelUnH0bI": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
     "DRu7VuSp7gg": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
     "Bo50t7arAsI": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
-    "Woa4hq3fvxA": "ROLE :  기획 / 편집 / 후보정 / 자막 및 모션 디자인 "
+    "Woa4hq3fvxA": "ROLE :  기획 / 편집 / 후보정 / 자막 및 모션 디자인 ",
+    "DpO-VPC_mm4": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 자막 및 모션 디자인\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING"
   },
   "categories": [
     {
@@ -107,11 +108,12 @@
     "ai-ad": [
       "4CRpNu_7W50",
       "_1MmhUkNDu0",
-      "qFIoYNS8XNk",
       "7vUSZ03JxL8",
+      "DpO-VPC_mm4",
       "AS4lqg5xAJY",
       "6U0aNE5UHlU",
-      "DeeUPKJycjI"
+      "DeeUPKJycjI",
+      "qFIoYNS8XNk"
     ],
     "brand-film": [
       "zpMNWbGpda4",
