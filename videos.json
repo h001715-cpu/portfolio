@@ -17,7 +17,11 @@
     "7vUSZ03JxL8": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING / VEO",
     "AS4lqg5xAJY": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING / 미드저니 애니메이트",
     "6U0aNE5UHlU": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING / SORA",
-    "DeeUPKJycjI": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING"
+    "DeeUPKJycjI": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING",
+    "zpMNWbGpda4": "ROLE : 기획 / 편집 / 후보정 / 자막 및 모션 디자인",
+    "5a1TBtJX2Y0": "ROLE : 기획 / 촬영 / 편집 / 후보정 / 자막 및 모션 디자인",
+    "Lef23mcbrB0": "ROLE : 기획 / 편집 / 후보정 / 자막 및 모션 디자인",
+    "3YoXd0UeupE": "ROLE : 기획 / 촬영 / 편집 / 후보정 / 자막 및 모션 디자인"
   },
   "categories": [
     {
@@ -96,6 +100,12 @@
       "AS4lqg5xAJY",
       "6U0aNE5UHlU",
       "DeeUPKJycjI"
+    ],
+    "brand-film": [
+      "zpMNWbGpda4",
+      "5a1TBtJX2Y0",
+      "Lef23mcbrB0",
+      "3YoXd0UeupE"
     ]
   }
 }
