@@ -44,9 +44,12 @@ nav.sc{background:rgba(8,8,8,.9);backdrop-filter:blur(14px);padding:1rem 5vw;bor
 .mob-nav{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3rem;opacity:0;pointer-events:none;transition:opacity .35s}
 .mob-nav.open{opacity:1;pointer-events:all}
 .mob-nav a{font-size:2rem;font-weight:700;color:var(--text);text-decoration:none}
-.hero{min-height:100vh;display:grid;grid-template-columns:55fr 45fr;overflow:hidden}
-.hero-left{display:flex;flex-direction:column;justify-content:center;padding:9rem 4vw 5rem 7vw;position:relative;z-index:2}
-.hero-left::before{content:'';position:absolute;top:30%;left:-5%;width:55vw;height:55vw;background:radial-gradient(circle,rgba(192,0,26,.07) 0%,transparent 65%);pointer-events:none;z-index:-1}
+.hero{min-height:100vh;position:relative;overflow:hidden;display:flex;align-items:center}
+.hero-bg{position:absolute;inset:0;z-index:1}
+.hero-bg video{width:100%;height:100%;object-fit:cover;filter:brightness(0.55) contrast(1.05)}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to top, rgba(8,8,8,0.85) 0%, transparent 45%), linear-gradient(to right, rgba(8,8,8,0.6) 0%, transparent 100%);z-index:2}
+.hero-left{padding:0 5vw 0 7vw;position:relative;z-index:3;max-width:1100px;width:100%}
+.hero-left::before{content:'';position:absolute;top:30%;left:-10%;width:60vw;height:60vw;background:radial-gradient(circle,rgba(192,0,26,0.08) 0%,transparent 70%);pointer-events:none;z-index:-1}
 .hero-eyebrow{font-family:'Space Grotesk',sans-serif;font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;color:var(--red);margin-bottom:1.8rem;opacity:0}
 .hl-wrap{overflow:hidden}
 .hl-line{display:block;font-family:'KBL점프체','Black Han Sans','Noto Sans KR',sans-serif;font-size:clamp(2rem,4.2vw,4.8rem);font-weight:900;line-height:1.12;letter-spacing:-.02em;color:var(--text);transform:translateY(110%)}
@@ -59,11 +62,6 @@ nav.sc{background:rgba(8,8,8,.9);backdrop-filter:blur(14px);padding:1rem 5vw;bor
 .hero-scroll-wrap{margin-top:2.8rem;display:flex;align-items:center;gap:.8rem;opacity:0}
 .hs-lbl{font-family:'Space Grotesk',sans-serif;font-size:.62rem;letter-spacing:.25em;text-transform:uppercase;color:var(--text3)}
 .hs-line{width:36px;height:1px;background:linear-gradient(to right,var(--red),transparent);animation:hspulse 2s ease-in-out infinite}
-@keyframes hspulse{0%,100%{opacity:.6;transform:scaleX(1)}50%{opacity:1;transform:scaleX(1.3)}}
-.hero-right{position:relative;overflow:hidden}
-.hero-right::before{content:'';position:absolute;top:0;left:0;width:30%;height:100%;background:linear-gradient(to right,var(--bg) 0%,transparent 100%);z-index:2;pointer-events:none}
-.hero-right::after{content:'';position:absolute;bottom:0;left:0;right:0;height:25%;background:linear-gradient(to top,var(--bg) 0%,transparent 100%);z-index:2;pointer-events:none}
-.hero-photo{width:100%;height:100%;object-fit:cover;object-position:50% 8%;display:block;filter:brightness(.88) contrast(1.04)}
 section{padding:7rem 5vw}
 .sec-label{display:block;font-family:'Space Grotesk',sans-serif;font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;color:var(--red);margin-bottom:.9rem}
 .sec-title{font-family:'KBL점프체','Black Han Sans','Noto Sans KR',sans-serif;font-size:clamp(1.8rem,3.5vw,3rem);font-weight:900;line-height:1.1;letter-spacing:-.01em;color:var(--text)}
@@ -121,8 +119,8 @@ section{padding:7rem 5vw}
 .stn em{color:var(--red);font-style:normal}
 .stl{font-size:.78rem;color:var(--text2);font-weight:300;margin-top:.35rem}
 .ab-vis{position:relative}
-.ab-box{aspect-ratio:4/5;background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden}
-.ab-mono{font-family:'Space Grotesk',sans-serif;font-size:7rem;font-weight:700;color:rgba(192,0,26,.12);letter-spacing:-.05em;user-select:none}
+.ab-box{aspect-ratio:4/5;background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--border)}
+.ab-photo{width:100%;height:100%;object-fit:cover;filter:grayscale(0.1) contrast(1.05)}
 .ab-line{position:absolute;left:-1.2rem;top:2rem;width:3px;height:55%;background:linear-gradient(to bottom,var(--red),transparent)}
 #services{border-bottom:1px solid var(--border)}
 .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:3rem}
@@ -165,7 +163,7 @@ footer{padding:1.8rem 5vw;border-top:1px solid var(--border);display:flex;align-
 .lb-pr{left:1rem}.lb-nx{right:1rem}
 .lb-nav-btn:hover{border-color:var(--red);color:var(--text);background:var(--red-dim)}
 .lb-desc{margin-top:1rem;font-size:0.85rem;color:var(--text2);line-height:1.6;white-space:pre-wrap;max-height:150px;overflow-y:auto;padding-right:1rem;}
-@media(max-width:1024px){.hero{grid-template-columns:1fr}.hero-right{display:none}.hero-left{padding:9rem 6vw 5rem;min-height:100vh}.cat-grid{grid-template-columns:repeat(2,1fr)}.vid-grid{grid-template-columns:repeat(2,1fr)}.svc-grid{grid-template-columns:repeat(2,1fr)}.ab-wrap{grid-template-columns:1fr;gap:3rem}.ab-vis{display:none}}
+@media(max-width:1024px){.hero-left{padding:9rem 6vw 5rem}.cat-grid{grid-template-columns:repeat(2,1fr)}.vid-grid{grid-template-columns:repeat(2,1fr)}.svc-grid{grid-template-columns:repeat(2,1fr)}.ab-wrap{grid-template-columns:1fr;gap:3rem}.ab-vis{display:block;max-width:400px;margin:1rem auto 0}}
 @media(max-width:768px){section{padding:4.5rem 5vw}.nv-pill,.nv-ext{display:none}.burger{display:flex}.cat-grid,.vid-grid{grid-template-columns:1fr}.vid-item.short{aspect-ratio:16/9;grid-row:span 1}.svc-grid{grid-template-columns:1fr}.lb-nav-btn{display:none}}
 @media(max-width:480px){.stats{grid-template-columns:1fr}footer{flex-direction:column;align-items:center;text-align:center}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -200,6 +198,12 @@ a, button, .cat-card, .vid-item, .ptab, .burger, .back-btn, input, textarea, .lb
 </div>
 
 <section class="hero" id="home">
+  <div class="hero-bg">
+    <video autoplay muted loop playsinline poster="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBAUEBAYFBQUGBgYHCQ4JCQgICRINDQoOFRIWFhUSFBQXGiEcFxgfGRQUHScdHyIjJSUlFhwpLCgkKyEkJST/2wBDAQYGBgkICREJCREkGBQYJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCT/wAARCAgzBXgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBIRH04HE7E.../9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBAUEBAYFBQUGBgYHCQ4JCQgICRINDQoOFRIWFhUSFBQXGiEcFxgfGRQUHScdHyIjJSUlFhwpLCgkKyEkJST/2wBDAQYGBgkICREJCREkGBQYJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCT/wAARCAgzBXgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBIRH04HE7E...">
+      <source src="assets/highlight.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+  </div>
   <div class="hero-left">
     <div class="hero-eyebrow" id="h-ey">Video Director &amp; Motion Designer</div>
     <div class="hl-wrap"><span class="hl-line" id="hl1">의미를 담아내는 것에</span></div>
@@ -237,7 +241,7 @@ a, button, .cat-card, .vid-item, .ptab, .burger, .back-btn, input, textarea, .lb
         <div class="rv"><div class="stn">∞</div><div class="stl">크리에이티브</div></div>
       </div>
     </div>
-    <div class="ab-vis rv-s"><div class="ab-box"><div class="ab-mono">HTM</div></div><div class="ab-line"></div></div>
+    <div class="ab-vis rv-s"><div class="ab-box"><img src="assets/profile.jpg" alt="Han Taemin" class="ab-photo"></div><div class="ab-line"></div></div>
   </div>
 </section>
 
@@ -352,7 +356,7 @@ document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cur.
 document.querySelectorAll('a,button,.cat-card,.vid-item').forEach(function(el){el.addEventListener('mouseenter',function(){cur.classList.add('big');curR.classList.add('big')});el.addEventListener('mouseleave',function(){cur.classList.remove('big');curR.classList.remove('big')})});
 
 gsap.to('.hero-left',{yPercent:-12,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
-gsap.to('.hero-right',{yPercent:-6,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
+gsap.to('.hero-bg',{yPercent:-15,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
 </script>
 </body>
 </html>
