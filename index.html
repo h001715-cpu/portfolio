@@ -167,6 +167,10 @@ footer{padding:1.8rem 5vw;border-top:1px solid var(--border);display:flex;align-
 @media(max-width:768px){section{padding:4.5rem 5vw}.nv-pill,.nv-ext{display:none}.burger{display:flex}.cat-grid,.vid-grid{grid-template-columns:1fr}.vid-item.short{aspect-ratio:16/9;grid-row:span 1}.svc-grid{grid-template-columns:1fr}.lb-nav-btn{display:none}}
 @media(max-width:480px){.stats{grid-template-columns:1fr}footer{flex-direction:column;align-items:center;text-align:center}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+/* Restore default cursors */
+* { cursor: auto !important; }
+a, button, .cat-card, .vid-item, .ptab, .burger, .back-btn, input, textarea, .lb-x, .lb-nav-btn { cursor: pointer !important; }
+#cur, #cur-r { display: none !important; }
 </style>
 </head>
 <body>
