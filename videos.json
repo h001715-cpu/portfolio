@@ -1,17 +1,59 @@
 {
   "apiKey": "AIzaSyB9wUTn0_jelh-ifVUGJzEJEM-IVi4LMes",
-  "profilePosition": "50% 50%",
+  "profilePosition": "50% 54%",
   "roles": {
     "EXAMPLE_ID_HERE": "이곳에 [영상 ID : 내가 한 역할 설명] 을 추가하시면 유튜브 설명 대신 이 설명이 우선적으로 노출됩니다!"
   },
   "categories": [
-    { "id": "ai-ad",      "name": "AI 광고 영상", "playlistId": "PLmtMXxa-X5LOoF9lgqsTcpLvB1i7cPTr1", "thumb": "6U0aNE5UHlU" },
-    { "id": "brand-film", "name": "브랜드 필름",  "playlistId": "PLmtMXxa-X5LOBKuTEDk1xfeEZ9X7C8iF1", "thumb": "Lef23mcbrB0" },
-    { "id": "motion",     "name": "모션 그래픽",  "playlistId": "PLmtMXxa-X5LP6y5_Zla5kjHCwJPoD1RRx", "thumb": "8qrFOiRAWws" },
-    { "id": "sketch",     "name": "스케치영상",   "playlistId": "PLmtMXxa-X5LOXL0ynNWX6JSkrb_2bDQBs", "thumb": "VocixdTkET4" },
-    { "id": "youtube",    "name": "유튜브",       "playlistId": "PLmtMXxa-X5LPTjy8L1gmGzbcdRXa_3prv", "thumb": "XlS5Cv6im0M" },
-    { "id": "sns",        "name": "SNS광고",      "playlistId": "PLmtMXxa-X5LNUBSYSq6N9u1x9KCn4vArF", "thumb": "Woa4hq3fvxA" },
-    { "id": "design",    "name": "디자인",       "type": "design",   "thumb": "", "items": [] },
-    { "id": "planning",  "name": "기획안",       "type": "planning", "thumb": "", "items": [] }
+    {
+      "id": "ai-ad",
+      "name": "AI 광고 영상",
+      "playlistId": "PLmtMXxa-X5LOoF9lgqsTcpLvB1i7cPTr1",
+      "thumb": "6U0aNE5UHlU"
+    },
+    {
+      "id": "brand-film",
+      "name": "브랜드 필름",
+      "playlistId": "PLmtMXxa-X5LOBKuTEDk1xfeEZ9X7C8iF1",
+      "thumb": "Lef23mcbrB0"
+    },
+    {
+      "id": "motion",
+      "name": "모션 그래픽",
+      "playlistId": "PLmtMXxa-X5LP6y5_Zla5kjHCwJPoD1RRx",
+      "thumb": "8qrFOiRAWws"
+    },
+    {
+      "id": "sketch",
+      "name": "스케치영상",
+      "playlistId": "PLmtMXxa-X5LOXL0ynNWX6JSkrb_2bDQBs",
+      "thumb": "VocixdTkET4"
+    },
+    {
+      "id": "youtube",
+      "name": "유튜브",
+      "playlistId": "PLmtMXxa-X5LPTjy8L1gmGzbcdRXa_3prv",
+      "thumb": "XlS5Cv6im0M"
+    },
+    {
+      "id": "sns",
+      "name": "SNS광고",
+      "playlistId": "PLmtMXxa-X5LNUBSYSq6N9u1x9KCn4vArF",
+      "thumb": "Woa4hq3fvxA"
+    },
+    {
+      "id": "design",
+      "name": "디자인",
+      "type": "design",
+      "thumb": "",
+      "items": []
+    },
+    {
+      "id": "planning",
+      "name": "기획안",
+      "type": "planning",
+      "thumb": "",
+      "items": []
+    }
   ]
 }
