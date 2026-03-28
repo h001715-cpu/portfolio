@@ -62,6 +62,17 @@
         .vid-role-area { padding: 1rem; background: var(--surface); border-top: 1px solid var(--border); margin-top: auto;}
         .vid-role-area textarea { margin-bottom: 0; height: 140px; min-height: 100px; font-size: 0.9rem; background: rgba(0,0,0,0.3); padding: 0.8rem; line-height: 1.6; resize: vertical; box-sizing: border-box;}
         
+        /* Design Item Editor */
+        .design-item-card { background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; display: flex; gap: 0; margin-bottom: 1rem; }
+        .design-item-card .di-preview { width: 140px; flex-shrink: 0; background: #000; position: relative; }
+        .design-item-card .di-preview img { width: 100%; height: 100%; object-fit: cover; display: block; min-height: 100px; }
+        .design-item-card .di-fields { flex: 1; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .design-item-card .di-fields input, .design-item-card .di-fields textarea { margin-bottom: 0; font-size: 0.88rem; padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.05); }
+        .design-item-card .di-fields textarea { height: 70px; resize: vertical; }
+        .design-item-card .di-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.3rem; }
+        .add-design-btn { width: 100%; padding: 1rem; background: rgba(255,255,255,0.04); border: 1px dashed var(--border); border-radius: 6px; color: var(--text2); font-size: 0.95rem; cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; }
+        .add-design-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-dim); }
+
         /* Fixed Save Panel */
         .fixed-save {
             position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(26,26,26,0.95); border-top: 1px solid var(--border);
@@ -121,7 +132,7 @@
             <h3 style="margin-top:0; font-size:1rem; margin-bottom:1.5rem; color:var(--red);">고정 카테고리 이름 변경</h3>
             <div id="cat-edit-list"></div>
             <div style="text-align:right; margin-top:1rem;">
-                <button class="sm primary" style="width:auto; padding:0.6rem 1.2rem;" onclick="applyCatNames()">이름 적용하기</button>
+                <button class="sm primary" style="width:auto; padding:0.6rem 1.2rem;" onclick="applyCatNames()">적용하기</button>
             </div>
         </div>
 
@@ -249,9 +260,29 @@
             const list = document.getElementById('cat-edit-list');
             list.innerHTML = '';
             categories.forEach(cat => {
-                list.innerHTML += `<div style="margin-bottom:0.8rem; display:flex; gap:1rem; align-items:center;">
-                    <span style="color:var(--text2); width:120px; font-size:0.85rem; font-family:'Space Grotesk',sans-serif;">ID: ${cat.id}</span>
-                    <input type="text" id="cat-input-${cat.id}" value="${cat.name.replace(/"/g, '&quot;')}" style="margin-bottom:0; background:rgba(255,255,255,0.05);">
+                const thumbId = cat.thumb || '';
+                list.innerHTML += `
+                <div style="margin-bottom:1.8rem; padding-bottom:1.8rem; border-bottom:1px solid var(--border);">
+                    <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1rem;">
+                        <span style="color:var(--text2); width:120px; font-size:0.85rem; font-family:'Space Grotesk',sans-serif; flex-shrink:0;">ID: ${cat.id}</span>
+                        <div style="flex:1;">
+                            <label style="margin-bottom:0.3rem;">카테고리 이름</label>
+                            <input type="text" id="cat-input-${cat.id}" value="${cat.name.replace(/"/g, '&quot;')}" style="margin-bottom:0; background:rgba(255,255,255,0.05);">
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:1.5rem; align-items:flex-start;">
+                        <div style="flex:1;">
+                            <label style="margin-bottom:0.3rem;">썸네일 유튜브 영상 ID <span style="color:var(--text2); font-size:0.75rem;">(비워두면 플레이리스트 첫 영상 자동 사용)</span></label>
+                            <input type="text" id="thumb-input-${cat.id}" value="${thumbId}" placeholder="예: dQw4w9WgXcQ" style="margin-bottom:0; background:rgba(255,255,255,0.05);" oninput="previewThumb('${cat.id}')">
+                        </div>
+                        <div style="flex-shrink:0; width:160px;">
+                            <label style="margin-bottom:0.3rem;">미리보기</label>
+                            <div style="position:relative; width:160px; padding-bottom:90px; background:#000; border:1px solid var(--border); border-radius:4px; overflow:hidden;">
+                                <img id="thumb-preview-${cat.id}" src="${thumbId ? 'https://img.youtube.com/vi/'+thumbId+'/mqdefault.jpg' : ''}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; ${thumbId ? '' : 'display:none;'}">
+                                <span id="thumb-empty-${cat.id}" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:0.7rem; color:var(--text2); text-align:center; ${thumbId ? 'display:none;' : ''}">미리보기 없음</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>`;
             });
             p.style.display = 'block';
@@ -262,30 +293,59 @@
 
     function applyCatNames() {
         categories.forEach(cat => {
-            const val = document.getElementById('cat-input-' + cat.id).value.trim();
-            if(val) cat.name = val;
+            const nameVal = document.getElementById('cat-input-' + cat.id).value.trim();
+            if(nameVal) cat.name = nameVal;
+            const thumbVal = document.getElementById('thumb-input-' + cat.id).value.trim();
+            if(thumbVal) {
+                cat.thumb = thumbVal;
+            } else {
+                delete cat.thumb;
+            }
         });
-        videoData.categories = categories; // 객체 업데이트
+        videoData.categories = categories;
         renderTabs();
         document.getElementById('cat-edit-panel').style.display = 'none';
-        
+
         if(currentCatId) {
             const cat = categories.find(c => c.id === currentCatId);
             document.getElementById('cat-title').innerText = cat.name + " 카테고리 영상 스튜디오";
         }
-        alert('이름이 수정되었습니다! 화면 하단의 [🚀 덮어쓰기] 버튼을 누르시면 실제 홈페이지에 최종 반영됩니다.');
+        alert('적용되었습니다! 화면 하단의 [🚀 덮어쓰기] 버튼을 누르시면 실제 홈페이지에 최종 반영됩니다.');
+    }
+
+    function previewThumb(catId) {
+        const val = document.getElementById('thumb-input-' + catId).value.trim();
+        const img = document.getElementById('thumb-preview-' + catId);
+        const empty = document.getElementById('thumb-empty-' + catId);
+        if(val) {
+            img.src = 'https://img.youtube.com/vi/' + val + '/mqdefault.jpg';
+            img.style.display = '';
+            empty.style.display = 'none';
+        } else {
+            img.src = '';
+            img.style.display = 'none';
+            empty.style.display = '';
+        }
     }
 
     async function openCat(id) {
         currentCatId = id;
         const cat = categories.find(c => c.id === id);
         if(!cat) return;
-        
+
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('tab-' + id).classList.add('active');
-        document.getElementById('cat-title').innerText = cat.name + " 카테고리 영상 스튜디오";
-        
+        document.getElementById('cat-title').innerText = cat.name + " 카테고리";
+
         const g = document.getElementById('vid-grid');
+
+        // 디자인/기획안 타입 분기
+        if(cat.type === 'design' || cat.type === 'planning') {
+            renderDesignEditor(cat);
+            return;
+        }
+
+        document.getElementById('cat-title').innerText = cat.name + " 카테고리 영상 스튜디오";
         g.innerHTML = '<p style="color:var(--text2)">유튜브 영상 배열 불러오는 중...</p>';
         
         try {
@@ -371,6 +431,75 @@
         }
     }
     
+    function renderDesignEditor(cat) {
+        if(!cat.items) cat.items = [];
+        const g = document.getElementById('vid-grid');
+        g.innerHTML = '';
+
+        function buildCard(item, idx) {
+            const card = document.createElement('div');
+            card.className = 'design-item-card';
+            card.innerHTML = `
+                <div class="di-preview">
+                    <img src="${item.img || ''}" onerror="this.style.display='none'" style="${item.img ? '' : 'display:none;'}">
+                </div>
+                <div class="di-fields">
+                    <label style="margin-bottom:0.2rem; font-size:0.78rem;">제목</label>
+                    <input type="text" value="${(item.title||'').replace(/"/g,'&quot;')}" placeholder="작품 제목" oninput="updateDesignItem('${cat.id}',${idx},'title',this.value)">
+                    <label style="margin-bottom:0.2rem; font-size:0.78rem;">이미지 URL <span style="color:var(--text2); font-size:0.72rem;">(GitHub raw 또는 외부 이미지 링크)</span></label>
+                    <input type="text" value="${(item.img||'').replace(/"/g,'&quot;')}" placeholder="https://..." oninput="updateDesignItem('${cat.id}',${idx},'img',this.value); previewDesignImg(this, ${idx})">
+                    <label style="margin-bottom:0.2rem; font-size:0.78rem;">설명 <span style="color:var(--text2); font-size:0.72rem;">(선택)</span></label>
+                    <textarea placeholder="작품 설명을 입력하세요" oninput="updateDesignItem('${cat.id}',${idx},'desc',this.value)">${(item.desc||'').replace(/</g,'&lt;')}</textarea>
+                    <label style="margin-bottom:0.2rem; font-size:0.78rem;">파일 링크 <span style="color:var(--text2); font-size:0.72rem;">(선택 - PDF, 구글드라이브 등)</span></label>
+                    <input type="text" value="${(item.link||'').replace(/"/g,'&quot;')}" placeholder="https://..." oninput="updateDesignItem('${cat.id}',${idx},'link',this.value)">
+                    <div class="di-actions">
+                        <button class="sm danger" onclick="removeDesignItem('${cat.id}',${idx})">삭제</button>
+                    </div>
+                </div>
+            `;
+            // preview img on load
+            const imgInput = card.querySelectorAll('input')[1];
+            const previewImg = card.querySelector('.di-preview img');
+            imgInput._preview = previewImg;
+            return card;
+        }
+
+        cat.items.forEach((item, idx) => g.appendChild(buildCard(item, idx)));
+
+        const addBtn = document.createElement('button');
+        addBtn.className = 'add-design-btn';
+        addBtn.textContent = '+ 새 작품 추가';
+        addBtn.onclick = () => {
+            cat.items.push({ title: '', img: '', desc: '', link: '' });
+            videoData.categories = categories;
+            renderDesignEditor(cat);
+        };
+        g.appendChild(addBtn);
+    }
+
+    function updateDesignItem(catId, idx, field, value) {
+        const cat = categories.find(c => c.id === catId);
+        if(!cat || !cat.items || !cat.items[idx]) return;
+        cat.items[idx][field] = value;
+        videoData.categories = categories;
+    }
+
+    function previewDesignImg(input, idx) {
+        const previewImg = input._preview || input.closest('.design-item-card').querySelector('.di-preview img');
+        if(!previewImg) return;
+        const val = input.value.trim();
+        if(val) { previewImg.style.display = ''; previewImg.src = val; }
+        else { previewImg.style.display = 'none'; }
+    }
+
+    function removeDesignItem(catId, idx) {
+        const cat = categories.find(c => c.id === catId);
+        if(!cat || !cat.items) return;
+        cat.items.splice(idx, 1);
+        videoData.categories = categories;
+        renderDesignEditor(cat);
+    }
+
     function updateSortOrder() {
         if(!videoData.sortOrder) videoData.sortOrder = {};
         const g = document.getElementById('vid-grid');
