@@ -53,7 +53,8 @@
         /* Video Grid */
         #cat-title { font-size: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--red); padding-left: 10px;}
         .vid-grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-        .vid-card { background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; }
+        .vid-card { background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s;}
+        .vid-card.dragging { opacity: 0.4; transform: scale(0.98); }
         .vid-thumb { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border-bottom: 1px solid var(--border);}
         .vid-thumb img { position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover; }
         .vid-info { padding: 1rem; flex: 1; display:flex; flex-direction:column; }
@@ -132,6 +133,7 @@
     let videoData = null; // videos.json parsed object
     let categories = [];
     let YT_API_KEY = '';
+    let currentCatId = '';
 
     // 한글 등 유니코드 지원 Base64
     function b64DecodeUnicode(str) {
@@ -226,10 +228,10 @@
     }
 
     async function openCat(id) {
+        currentCatId = id;
         const cat = categories.find(c => c.id === id);
         if(!cat) return;
         
-        // Tab UI update
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('tab-' + id).classList.add('active');
         document.getElementById('cat-title').innerText = cat.name + " 카테고리 영상 스튜디오";
@@ -242,9 +244,19 @@
             const r = await (await fetch(url)).json();
             if(r.error) throw new Error(r.error.message);
             
-            const validItems = (r.items||[]).filter(i => {
+            let validItems = (r.items||[]).filter(i => {
                 const t = i.snippet?.title;
                 return i.snippet?.resourceId?.videoId && t !== 'Deleted video' && t !== 'Private video' && t !== '삭제된 동영상' && t !== '비공개 동영상';
+            });
+            
+            // 기존에 저장된 순서가 있으면 우선 적용
+            const savedOrder = videoData.sortOrder && videoData.sortOrder[id] ? videoData.sortOrder[id] : [];
+            validItems.sort((a,b) => {
+                let idxA = savedOrder.indexOf(a.snippet.resourceId.videoId);
+                let idxB = savedOrder.indexOf(b.snippet.resourceId.videoId);
+                if(idxA === -1) idxA = 9999;
+                if(idxB === -1) idxB = 9999;
+                return idxA - idxB;
             });
             
             g.innerHTML = '';
@@ -260,7 +272,12 @@
                 
                 const card = document.createElement('div');
                 card.className = 'vid-card';
+                card.draggable = true;
+                card.dataset.vid = vid;
                 card.innerHTML = `
+                    <div class="drag-handle" style="background:var(--border); color:var(--text); text-align:center; padding:0.5rem; font-size:0.8rem; cursor:grab; font-weight:600;">
+                        ↕ 위아래로 당겨서 순서 변경 ↕
+                    </div>
                     <div class="vid-thumb">
                         <img src="https://img.youtube.com/vi/${vid}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${vid}/hqdefault.jpg'">
                     </div>
@@ -270,14 +287,47 @@
                     </div>
                     <div class="vid-role-area">
                         <label>이 영상의 커스텀 설명 덮어쓰기</label>
-                        <textarea placeholder="유튜브 설명 대신 이 내용이 노출됩니다. (비워두면 유튜브 설명 표시)" oninput="updateRole('${vid}', this.value)">${savedRole}</textarea>
+                        <textarea placeholder="유튜브 설명 대신 이 내용이 노출됩니다." oninput="updateRole('${vid}', this.value)">${savedRole}</textarea>
                     </div>
                 `;
+                
+                // Drag Events
+                card.addEventListener('dragstart', () => { card.classList.add('dragging'); });
+                card.addEventListener('dragend', () => {
+                    card.classList.remove('dragging');
+                    updateSortOrder();
+                });
+                
                 g.appendChild(card);
             });
+            
+            // Grid에 Drag Over 이벤트 부여
+            g.addEventListener('dragover', e => {
+                e.preventDefault();
+                const draggingItem = g.querySelector('.dragging');
+                if(!draggingItem) return;
+                
+                const siblings = [...g.querySelectorAll('.vid-card:not(.dragging)')];
+                const nextSibling = siblings.find(sib => {
+                    const box = sib.getBoundingClientRect();
+                    // 대략적인 중심점 비교
+                    const offset = e.clientY - box.top - box.height / 2;
+                    return offset < 0;
+                });
+                if(nextSibling) g.insertBefore(draggingItem, nextSibling);
+                else g.appendChild(draggingItem);
+            });
+            
         } catch(e) {
             g.innerHTML = `<p style="color:var(--red)">영상을 불러오지 못했습니다: ${e.message}</p>`;
         }
+    }
+    
+    function updateSortOrder() {
+        if(!videoData.sortOrder) videoData.sortOrder = {};
+        const g = document.getElementById('vid-grid');
+        const order = [...g.querySelectorAll('.vid-card')].map(c => c.dataset.vid);
+        videoData.sortOrder[currentCatId] = order;
     }
 
     // Textarea oninput event
