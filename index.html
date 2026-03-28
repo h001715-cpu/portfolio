@@ -73,9 +73,9 @@ section{padding:7rem 5vw}
 .rv-s.on{opacity:1;transform:none}
 #works{padding-top:5rem}
 .works-top{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:3rem;gap:2rem;flex-wrap:wrap}
-.back-btn{display:none;align-items:center;gap:.6rem;font-size:.9rem;font-weight:600;color:#fff;background:var(--red);border:none;cursor:none;padding:.55rem 1.2rem .55rem .9rem;border-radius:2px;letter-spacing:.02em;transition:background .25s,transform .2s}
-.back-btn.show{display:inline-flex}
-.back-btn:hover{background:#a3001a;transform:translateX(-2px)}
+.back-btn{display:none;align-items:center;gap:.6rem;font-size:1rem;font-weight:600;color:#fff;background:var(--red);border:none;padding:.75rem 1.6rem .75rem 1.3rem;border-radius:50px;letter-spacing:.02em;box-shadow:0 4px 20px rgba(192,0,26,0.5);transition:background .25s,transform .3s,opacity .3s;position:fixed;bottom:2.5rem;left:50%;transform:translate(-50%,20px);z-index:1100;opacity:0;}
+.back-btn.show{display:inline-flex;transform:translate(-50%,0);opacity:1;}
+.back-btn:hover{background:#a3001a;transform:translate(-50%,-2px);box-shadow:0 6px 24px rgba(192,0,26,0.6);}
 .back-btn svg{transition:transform .3s}
 .back-btn:hover svg{transform:translateX(-4px)}
 .cat-title-d{font-family:'KBL점프체','Black Han Sans',sans-serif;font-size:clamp(1.4rem,2.8vw,2.2rem);font-weight:900;color:var(--text);display:none}
