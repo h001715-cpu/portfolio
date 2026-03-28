@@ -327,6 +327,7 @@ fetch('videos.json')
     categories=data.categories;
     customRoles=data.roles||{};
     customOrder=data.sortOrder||{};
+    if(data.profilePosition){var p=document.querySelector('.ab-photo');if(p)p.style.objectPosition=data.profilePosition;}
     buildCatGrid();
     setTimeout(observeRv,300);
   })
