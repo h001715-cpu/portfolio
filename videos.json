@@ -2,7 +2,8 @@
   "apiKey": "AIzaSyB9wUTn0_jelh-ifVUGJzEJEM-IVi4LMes",
   "profilePosition": "50% 22%",
   "roles": {
-    "EXAMPLE_ID_HERE": "이곳에 [영상 ID : 내가 한 역할 설명] 을 추가하시면 유튜브 설명 대신 이 설명이 우선적으로 노출됩니다!"
+    "EXAMPLE_ID_HERE": "이곳에 [영상 ID : 내가 한 역할 설명] 을 추가하시면 유튜브 설명 대신 이 설명이 우선적으로 노출됩니다!",
+    "XzzpdcjjzR8": " ROLE"
   },
   "categories": [
     {
@@ -52,7 +53,8 @@
           "desc": "",
           "link": ""
         }
-      ]
+      ],
+      "thumb": "https://github.com/h001715-cpu/portfolio/blob/main/%ED%95%98%EC%8A%B9%EC%A7%84-%EC%9C%A0%ED%8A%9C%EB%B8%8C-%EC%B1%84%EB%84%90%EC%95%84%ED%8A%B8_230407.png?raw=true"
     },
     {
       "id": "planning",
