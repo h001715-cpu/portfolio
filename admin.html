@@ -71,6 +71,8 @@ button.danger:hover{color:var(--red);background:var(--red-dim);border-color:var(
 .career-card .cf-desc{grid-column:1/-1}
 .career-card .cf-desc textarea{width:100%;box-sizing:border-box;margin-bottom:0;font-size:.88rem;padding:.5rem .7rem;height:56px;resize:vertical;background:rgba(0,0,0,.5);border:1px solid var(--border);color:var(--text);font-family:'Pretendard',sans-serif;border-radius:4px}
 .career-card .cf-desc textarea:focus{outline:none;border-color:var(--red)}
+.drag-handle{cursor:grab;color:var(--text2);font-size:1.2rem;padding:.2rem .4rem;align-self:center;flex-shrink:0;user-select:none}
+.drag-handle:active{cursor:grabbing}
 /* Fixed Save */
 .fixed-save{position:fixed;bottom:0;left:0;width:100%;background:rgba(26,26,26,.97);border-top:1px solid var(--border);padding:1rem 2rem;box-sizing:border-box;display:none;justify-content:space-between;align-items:center;z-index:1000}
 .fixed-save.active{display:flex}
@@ -335,7 +337,10 @@ function renderCareerAdmin(){
   (videoData.career||[]).forEach((item,idx)=>{
     const card=document.createElement('div');
     card.className='career-card';
+    card.draggable=true;
+    card.dataset.idx=idx;
     card.innerHTML=`
+      <div class="drag-handle">☰</div>
       <div class="cf">
         <input type="text" value="${(item.year||'').replace(/"/g,'&quot;')}" placeholder="연도" oninput="updateCareerField(${idx},'year',this.value)">
         <input type="text" value="${(item.company||'').replace(/"/g,'&quot;')}" placeholder="회사/소속" oninput="updateCareerField(${idx},'company',this.value)">
@@ -343,8 +348,20 @@ function renderCareerAdmin(){
         <div class="cf-desc"><textarea placeholder="설명 (선택)" oninput="updateCareerField(${idx},'desc',this.value)">${(item.desc||'').replace(/</g,'&lt;')}</textarea></div>
       </div>
       <button class="sm danger" onclick="removeCareerItem(${idx})">삭제</button>`;
+    card.addEventListener('dragstart',()=>card.classList.add('dragging'));
+    card.addEventListener('dragend',()=>{card.classList.remove('dragging');syncCareerOrder();});
+    card.addEventListener('dragover',e=>{e.preventDefault();const drag=document.querySelector('.dragging');if(drag&&drag!==card){const box=card.getBoundingClientRect();const after=(e.clientY>box.top+box.height/2);card.parentNode.insertBefore(drag,after?card.nextSibling:card);}});
     list.appendChild(card);
   });
+}
+
+function syncCareerOrder(){
+  const list=document.getElementById('career-list-admin');
+  const cards=[...list.querySelectorAll('.career-card')];
+  const snap=videoData.career.slice();
+  videoData.career=cards.map(c=>snap[parseInt(c.dataset.idx)]).filter(Boolean);
+  renderCareerAdmin();
+  markDirty();
 }
 
 function updateCareerField(idx,field,val){
