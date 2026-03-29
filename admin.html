@@ -73,6 +73,24 @@ button.danger:hover{color:var(--red);background:var(--red-dim);border-color:var(
 .career-card .cf-desc textarea:focus{outline:none;border-color:var(--red)}
 .drag-handle{cursor:grab;color:var(--text2);font-size:1.2rem;padding:.2rem .4rem;align-self:center;flex-shrink:0;user-select:none}
 .drag-handle:active{cursor:grabbing}
+/* Page Text Editor Visual */
+.pe-section{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1.2rem}
+.pe-section-header{display:flex;align-items:center;gap:.8rem;padding:1rem 1.2rem;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);border-left:3px solid var(--sc,var(--red))}
+.pe-icon{font-size:1.3rem;flex-shrink:0}
+.pe-sec-name{font-weight:700;font-size:.95rem;color:var(--text)}
+.pe-sec-desc{font-size:.75rem;color:var(--text2);margin-top:.15rem}
+.pe-body{display:grid;grid-template-columns:200px 1fr;gap:0}
+.pe-preview{background:rgba(255,255,255,.02);border-right:1px solid var(--border);border:1px solid transparent;padding:.8rem;display:flex;align-items:center;justify-content:center;min-height:100px}
+.pe-mockup-nav{width:100%;display:flex;align-items:center;justify-content:space-between;background:#1a1a1a;border-radius:4px;padding:.4rem .6rem;border:1px solid #2a2a2a}
+.pe-fields{padding:1rem;display:flex;flex-direction:column;gap:.6rem;border-left:1px solid var(--border)}
+.pe-field{display:flex;flex-direction:column;gap:.3rem}
+.pe-field label{font-size:.78rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.pe-pos{font-size:.68rem;font-weight:400;color:var(--text2);background:rgba(255,255,255,.06);border-radius:3px;padding:.1rem .4rem;border-left:2px solid var(--red)}
+.pe-field input,.pe-field textarea{margin-bottom:0;font-size:.88rem;padding:.55rem .75rem}
+.pe-hi{display:inline-block;border-bottom:1.5px solid var(--hc,#fff);padding-bottom:1px;cursor:pointer;transition:background .2s}
+.pe-hi:hover{background:rgba(255,255,255,.07);border-radius:2px}
+.pe-stat-group input{margin-bottom:0;font-size:.82rem;padding:.45rem .6rem}
+@media(max-width:900px){.pe-body{grid-template-columns:1fr}.pe-preview{border-right:none;border-bottom:1px solid var(--border);min-height:70px}.pe-fields{border-left:none}}
 /* Fixed Save */
 .fixed-save{position:fixed;bottom:0;left:0;width:100%;background:rgba(26,26,26,.97);border-top:1px solid var(--border);padding:1rem 2rem;box-sizing:border-box;display:none;justify-content:space-between;align-items:center;z-index:1000}
 .fixed-save.active{display:flex}
@@ -173,55 +191,157 @@ input[type=range]{width:100%;height:4px;accent-color:var(--red);cursor:pointer;m
     <!-- Page Text Editor (맨 하단) -->
     <div class="box" id="text-editor-box" style="display:none;margin-top:2rem">
       <h2>✏ 페이지 텍스트 편집</h2>
-      <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.5rem">여기서 수정 후 하단 [🚀 GitHub 덮어쓰기]를 누르면 실제 사이트에 반영됩니다.</p>
+      <p style="color:var(--text2);font-size:.85rem;margin-bottom:2rem">각 섹션 카드에서 직접 수정하세요. 우측 미리보기로 어디에 표시되는 텍스트인지 확인할 수 있습니다.</p>
 
-      <div style="font-size:.8rem;color:var(--red);font-weight:600;margin-bottom:.8rem;letter-spacing:.1em">NAV</div>
-      <div class="text-field-group">
-        <div class="tf"><label>이름 (Nav)</label><input type="text" id="pc-navName"></div>
-        <div class="tf"><label>직함 (Nav 서브)</label><input type="text" id="pc-navRole"></div>
+      <!-- NAV -->
+      <div class="pe-section">
+        <div class="pe-section-header" style="--sc:#6c63ff">
+          <span class="pe-icon">🔲</span>
+          <div><div class="pe-sec-name">NAV 바</div><div class="pe-sec-desc">화면 상단 고정 네비게이션</div></div>
+        </div>
+        <div class="pe-body">
+          <div class="pe-preview" style="border-color:#6c63ff22">
+            <div class="pe-mockup-nav">
+              <div style="display:flex;flex-direction:column;gap:2px">
+                <span class="pe-hi" data-for="pc-navName" style="--hc:#6c63ff">이름</span>
+                <span class="pe-hi" data-for="pc-navRole" style="--hc:#6c63ff;font-size:.55rem">직함/역할</span>
+              </div>
+              <div style="display:flex;gap:6px;font-size:.55rem;color:#555">
+                <span>Works</span><span>About</span><span>Contact</span>
+              </div>
+            </div>
+          </div>
+          <div class="pe-fields">
+            <div class="pe-field"><label>이름<span class="pe-pos">← 좌상단 로고</span></label><input type="text" id="pc-navName"></div>
+            <div class="pe-field"><label>직함/역할<span class="pe-pos">← 이름 아래 작은 글씨</span></label><input type="text" id="pc-navRole"></div>
+          </div>
+        </div>
       </div>
 
-      <div style="font-size:.8rem;color:var(--red);font-weight:600;margin-bottom:.8rem;letter-spacing:.1em;margin-top:1rem">HERO</div>
-      <div class="text-field-group">
-        <div class="tf"><label>상단 태그라인</label><input type="text" id="pc-heroEyebrow"></div>
-        <div class="tf"><label>큰 글씨 1줄</label><input type="text" id="pc-heroLine1"></div>
-        <div class="tf"><label>큰 글씨 2줄</label><input type="text" id="pc-heroLine2"></div>
-      </div>
-      <div class="tf"><label>서브 텍스트 (HTML 가능)</label><textarea id="pc-heroSub" style="height:60px"></textarea></div>
-
-      <div style="font-size:.8rem;color:var(--red);font-weight:600;margin-bottom:.8rem;letter-spacing:.1em;margin-top:1rem">ABOUT</div>
-      <div class="tf single"><label>제목 (줄바꿈: \n)</label><textarea id="pc-aboutTitle" style="height:80px"></textarea></div>
-      <div class="tf single"><label>단락 1 (HTML 가능)</label><textarea id="pc-aboutP1" style="height:80px"></textarea></div>
-      <div class="tf single"><label>단락 2 (HTML 가능)</label><textarea id="pc-aboutP2" style="height:70px"></textarea></div>
-
-      <div style="font-size:.8rem;color:var(--red);font-weight:600;margin-bottom:.8rem;letter-spacing:.1em;margin-top:1rem">STATS (숫자 + 접미사 + 라벨)</div>
-      <div class="text-field-group">
-        <div class="tf"><label>Stat 1 숫자</label><input type="text" id="pc-stat1Num"></div>
-        <div class="tf"><label>Stat 1 접미사</label><input type="text" id="pc-stat1Suf"></div>
-        <div class="tf"><label>Stat 1 라벨</label><input type="text" id="pc-stat1Label"></div>
-        <div class="tf"><label>Stat 2 숫자</label><input type="text" id="pc-stat2Num"></div>
-        <div class="tf"><label>Stat 2 접미사</label><input type="text" id="pc-stat2Suf"></div>
-        <div class="tf"><label>Stat 2 라벨</label><input type="text" id="pc-stat2Label"></div>
-        <div class="tf"><label>Stat 3 숫자</label><input type="text" id="pc-stat3Num"></div>
-        <div class="tf"><label>Stat 3 접미사</label><input type="text" id="pc-stat3Suf"></div>
-        <div class="tf"><label>Stat 3 라벨</label><input type="text" id="pc-stat3Label"></div>
-        <div class="tf"><label>Stat 4 숫자</label><input type="text" id="pc-stat4Num"></div>
-        <div class="tf"><label>Stat 4 접미사</label><input type="text" id="pc-stat4Suf"></div>
-        <div class="tf"><label>Stat 4 라벨</label><input type="text" id="pc-stat4Label"></div>
+      <!-- HERO -->
+      <div class="pe-section">
+        <div class="pe-section-header" style="--sc:#e62525">
+          <span class="pe-icon">🎬</span>
+          <div><div class="pe-sec-name">HERO 섹션</div><div class="pe-sec-desc">메인 화면 — 배경 영상 위 텍스트</div></div>
+        </div>
+        <div class="pe-body">
+          <div class="pe-preview" style="border-color:#e6252522;background:rgba(230,37,37,.04)">
+            <div style="text-align:center;padding:.5rem">
+              <span class="pe-hi" data-for="pc-heroEyebrow" style="--hc:#e62525;font-size:.5rem;letter-spacing:.15em">EYEBROW TAG</span>
+              <div class="pe-hi" data-for="pc-heroLine1" style="--hc:#e62525;font-size:.95rem;font-weight:900;margin:.2rem 0 0">BIG LINE 1</div>
+              <div class="pe-hi" data-for="pc-heroLine2" style="--hc:#e62525;font-size:.95rem;font-weight:900;margin:0 0 .3rem">BIG LINE 2</div>
+              <div class="pe-hi" data-for="pc-heroSub" style="--hc:#e62525;font-size:.55rem;color:#aaa">서브 텍스트</div>
+            </div>
+          </div>
+          <div class="pe-fields">
+            <div class="pe-field"><label>상단 빨간 태그<span class="pe-pos">← 큰 제목 위 작은 레드 텍스트</span></label><input type="text" id="pc-heroEyebrow"></div>
+            <div class="pe-field"><label>큰 제목 1줄<span class="pe-pos">← 화면 중앙 대형 폰트 첫째 줄</span></label><input type="text" id="pc-heroLine1"></div>
+            <div class="pe-field"><label>큰 제목 2줄<span class="pe-pos">← 화면 중앙 대형 폰트 둘째 줄</span></label><input type="text" id="pc-heroLine2"></div>
+            <div class="pe-field"><label>서브 설명 텍스트<span class="pe-pos">← 제목 아래 작은 설명 (HTML 가능)</span></label><textarea id="pc-heroSub" style="height:56px"></textarea></div>
+          </div>
+        </div>
       </div>
 
-      <div style="font-size:.8rem;color:var(--red);font-weight:600;margin-bottom:.8rem;letter-spacing:.1em;margin-top:1rem">CONTACT</div>
-      <div class="text-field-group">
-        <div class="tf"><label>이메일</label><input type="text" id="pc-contactEmail"></div>
-        <div class="tf"><label>전화번호</label><input type="text" id="pc-contactPhone"></div>
+      <!-- ABOUT -->
+      <div class="pe-section">
+        <div class="pe-section-header" style="--sc:#00b488">
+          <span class="pe-icon">👤</span>
+          <div><div class="pe-sec-name">ABOUT 섹션</div><div class="pe-sec-desc">소개 텍스트 &amp; 통계</div></div>
+        </div>
+        <div class="pe-body">
+          <div class="pe-preview" style="border-color:#00b48822">
+            <div style="font-size:.55rem;line-height:1.6;padding:.3rem">
+              <div class="pe-hi" data-for="pc-aboutTitle" style="--hc:#00b488;font-weight:900;font-size:.7rem;line-height:1.3;margin-bottom:.3rem">제목<br>여러줄</div>
+              <div class="pe-hi" data-for="pc-aboutP1" style="--hc:#00b488;color:#aaa;margin-bottom:.2rem">단락 1 텍스트...</div>
+              <div class="pe-hi" data-for="pc-aboutP2" style="--hc:#00b488;color:#aaa;margin-bottom:.4rem">단락 2 텍스트...</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+                <div style="text-align:center"><span class="pe-hi" data-for="pc-stat1Num" style="--hc:#00b488;font-weight:900">20+</span><br><span class="pe-hi" data-for="pc-stat1Label" style="--hc:#00b488;color:#777;font-size:.45rem">라벨</span></div>
+                <div style="text-align:center"><span class="pe-hi" data-for="pc-stat2Num" style="--hc:#00b488;font-weight:900">6+</span><br><span class="pe-hi" data-for="pc-stat2Label" style="--hc:#00b488;color:#777;font-size:.45rem">라벨</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="pe-fields">
+            <div class="pe-field"><label>소개 제목<span class="pe-pos">← 큰 제목 (줄바꿈 \n 사용)</span></label><textarea id="pc-aboutTitle" style="height:72px"></textarea></div>
+            <div class="pe-field"><label>소개 단락 1<span class="pe-pos">← 첫 번째 설명 단락 (HTML 가능)</span></label><textarea id="pc-aboutP1" style="height:64px"></textarea></div>
+            <div class="pe-field"><label>소개 단락 2<span class="pe-pos">← 두 번째 설명 단락 (HTML 가능)</span></label><textarea id="pc-aboutP2" style="height:64px"></textarea></div>
+            <div style="background:rgba(0,180,136,.06);border:1px solid rgba(0,180,136,.2);border-radius:6px;padding:1rem;margin-top:.5rem">
+              <div style="font-size:.78rem;color:#00b488;font-weight:600;margin-bottom:.8rem">📊 통계 4개 (숫자 + 접미사 + 라벨)</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+                <div class="pe-stat-group">
+                  <div style="font-size:.7rem;color:var(--text2);margin-bottom:.4rem">Stat 1</div>
+                  <div style="display:flex;gap:.4rem"><input type="text" id="pc-stat1Num" placeholder="숫자" style="flex:1;font-weight:700"><input type="text" id="pc-stat1Suf" placeholder="접미사" style="width:50px"></div>
+                  <input type="text" id="pc-stat1Label" placeholder="라벨 텍스트" style="margin-top:.3rem">
+                </div>
+                <div class="pe-stat-group">
+                  <div style="font-size:.7rem;color:var(--text2);margin-bottom:.4rem">Stat 2</div>
+                  <div style="display:flex;gap:.4rem"><input type="text" id="pc-stat2Num" placeholder="숫자" style="flex:1;font-weight:700"><input type="text" id="pc-stat2Suf" placeholder="접미사" style="width:50px"></div>
+                  <input type="text" id="pc-stat2Label" placeholder="라벨 텍스트" style="margin-top:.3rem">
+                </div>
+                <div class="pe-stat-group">
+                  <div style="font-size:.7rem;color:var(--text2);margin-bottom:.4rem">Stat 3</div>
+                  <div style="display:flex;gap:.4rem"><input type="text" id="pc-stat3Num" placeholder="숫자" style="flex:1;font-weight:700"><input type="text" id="pc-stat3Suf" placeholder="접미사" style="width:50px"></div>
+                  <input type="text" id="pc-stat3Label" placeholder="라벨 텍스트" style="margin-top:.3rem">
+                </div>
+                <div class="pe-stat-group">
+                  <div style="font-size:.7rem;color:var(--text2);margin-bottom:.4rem">Stat 4</div>
+                  <div style="display:flex;gap:.4rem"><input type="text" id="pc-stat4Num" placeholder="숫자" style="flex:1;font-weight:700"><input type="text" id="pc-stat4Suf" placeholder="접미사" style="width:50px"></div>
+                  <input type="text" id="pc-stat4Label" placeholder="라벨 텍스트" style="margin-top:.3rem">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="tf single"><label>연락 안내 문구</label><textarea id="pc-contactLead" style="height:60px"></textarea></div>
 
-      <div style="font-size:.8rem;color:var(--red);font-weight:600;margin-bottom:.8rem;letter-spacing:.1em;margin-top:1rem">FOOTER</div>
-      <div class="text-field-group">
-        <div class="tf"><label>이름</label><input type="text" id="pc-footerName"></div>
-        <div class="tf"><label>연도</label><input type="text" id="pc-footerYear"></div>
+      <!-- CONTACT -->
+      <div class="pe-section">
+        <div class="pe-section-header" style="--sc:#f5a623">
+          <span class="pe-icon">📬</span>
+          <div><div class="pe-sec-name">CONTACT 팝업 &amp; 섹션</div><div class="pe-sec-desc">연락하기 버튼 클릭 시 나타나는 팝업 + 하단 Contact 섹션</div></div>
+        </div>
+        <div class="pe-body">
+          <div class="pe-preview" style="border-color:#f5a62322">
+            <div style="background:#111;border:1px solid #333;border-radius:6px;padding:.6rem;font-size:.55rem;margin:.2rem">
+              <div style="color:#e62525;font-size:.45rem;letter-spacing:.1em">CONTACT</div>
+              <div class="pe-hi" data-for="pc-contactLead" style="--hc:#f5a623;color:#aaa;margin:.2rem 0">"함께 만들어요" 설명 문구</div>
+              <div style="display:flex;gap:.4rem;align-items:center;padding:.3rem 0;border-top:1px solid #333">
+                <span>✉</span>
+                <span class="pe-hi" data-for="pc-contactEmail" style="--hc:#f5a623;color:#eee">이메일 주소</span>
+              </div>
+              <div style="display:flex;gap:.4rem;align-items:center;padding:.3rem 0;border-top:1px solid #333">
+                <span>📞</span>
+                <span class="pe-hi" data-for="pc-contactPhone" style="--hc:#f5a623;color:#eee">전화번호</span>
+              </div>
+            </div>
+          </div>
+          <div class="pe-fields">
+            <div class="pe-field"><label>이메일 주소<span class="pe-pos">← 팝업 이메일 + 복사 버튼</span></label><input type="text" id="pc-contactEmail"></div>
+            <div class="pe-field"><label>전화번호<span class="pe-pos">← 팝업 전화번호 + 복사 버튼</span></label><input type="text" id="pc-contactPhone"></div>
+            <div class="pe-field"><label>안내 문구<span class="pe-pos">← 팝업 + Contact 섹션 설명 텍스트</span></label><textarea id="pc-contactLead" style="height:56px"></textarea></div>
+          </div>
+        </div>
       </div>
+
+      <!-- FOOTER -->
+      <div class="pe-section">
+        <div class="pe-section-header" style="--sc:#888">
+          <span class="pe-icon">📄</span>
+          <div><div class="pe-sec-name">FOOTER</div><div class="pe-sec-desc">페이지 최하단 저작권 표시</div></div>
+        </div>
+        <div class="pe-body">
+          <div class="pe-preview" style="border-color:#88888822">
+            <div style="font-size:.55rem;color:#555;text-align:center;padding:.4rem">
+              © <span class="pe-hi" data-for="pc-footerYear" style="--hc:#888">2025</span>
+              <span class="pe-hi" data-for="pc-footerName" style="--hc:#888">Han Taemin</span>. All rights reserved.
+            </div>
+          </div>
+          <div class="pe-fields">
+            <div class="pe-field"><label>이름<span class="pe-pos">← © 옆 이름</span></label><input type="text" id="pc-footerName"></div>
+            <div class="pe-field"><label>연도<span class="pe-pos">← © 옆 연도</span></label><input type="text" id="pc-footerYear"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </div><!-- /editor-section -->
