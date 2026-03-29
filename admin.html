@@ -133,8 +133,43 @@ input[type=range]{width:100%;height:4px;accent-color:var(--red);cursor:pointer;m
       </div>
     </div>
 
-    <!-- Page Text Editor -->
-    <div class="box" id="text-editor-box" style="display:none">
+    <!-- Video Grid -->
+    <h2 id="cat-title">카테고리를 선택해주세요</h2>
+    <div class="vid-grid" id="vid-grid"></div>
+
+    <!-- Career Editor -->
+    <div class="box" id="career-box" style="display:none;margin-top:2rem">
+      <h2>📋 이력 편집 (About 섹션)</h2>
+      <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.5rem">연도, 회사/소속, 직책/역할, 설명을 입력하세요.</p>
+      <div id="career-list-admin"></div>
+      <button class="add-design-btn" onclick="addCareerItem()">+ 이력 추가</button>
+    </div>
+
+    <!-- Profile Crop with Zoom -->
+    <div class="box" id="profile-crop-box" style="display:none;margin-top:2rem">
+      <h2>📷 프로필 사진 위치 &amp; 확대 설정</h2>
+      <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.5rem">사진을 드래그해서 위치를 조정하고, 슬라이더로 확대할 수 있습니다.</p>
+      <div class="crop-wrap">
+        <div class="crop-frame" id="crop-frame">
+          <div class="crop-bg" id="crop-bg" style="background-image:url('assets/profile.jpg')"></div>
+          <div class="crop-hint">드래그로 위치 조정</div>
+        </div>
+        <div class="crop-info">
+          <div class="crop-pos-display">위치: <span id="pos-display">50% 50%</span></div>
+          <div class="crop-pos-display" style="margin-top:-.5rem">확대: <span id="zoom-display">100%</span></div>
+          <div class="zoom-row">
+            <span style="font-size:.75rem;color:var(--text2)">1x</span>
+            <input type="range" id="zoom-slider" min="100" max="300" value="100" oninput="onZoomSlider(this.value)">
+            <span style="font-size:.75rem;color:var(--text2)">3x</span>
+          </div>
+          <button class="sm danger" onclick="setPosDirect(50,50,1)" style="width:auto">↺ 초기화</button>
+          <p style="font-size:.8rem;color:var(--text2);line-height:1.6;margin:0">조정 후 하단의 <strong style="color:var(--text)">🚀 GitHub 덮어쓰기</strong> 버튼을 눌러야 반영됩니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Text Editor (맨 하단) -->
+    <div class="box" id="text-editor-box" style="display:none;margin-top:2rem">
       <h2>✏ 페이지 텍스트 편집</h2>
       <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.5rem">여기서 수정 후 하단 [🚀 GitHub 덮어쓰기]를 누르면 실제 사이트에 반영됩니다.</p>
 
@@ -187,41 +222,6 @@ input[type=range]{width:100%;height:4px;accent-color:var(--red);cursor:pointer;m
       </div>
     </div>
 
-    <!-- Video Grid -->
-    <h2 id="cat-title">카테고리를 선택해주세요</h2>
-    <div class="vid-grid" id="vid-grid"></div>
-
-    <!-- Career Editor -->
-    <div class="box" id="career-box" style="display:none;margin-top:2rem">
-      <h2>📋 이력 편집 (About 섹션)</h2>
-      <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.5rem">연도, 회사/소속, 직책/역할, 설명을 입력하세요.</p>
-      <div id="career-list-admin"></div>
-      <button class="add-design-btn" onclick="addCareerItem()">+ 이력 추가</button>
-    </div>
-
-    <!-- Profile Crop with Zoom (bottom) -->
-    <div class="box" id="profile-crop-box" style="display:none;margin-top:2rem">
-      <h2>📷 프로필 사진 위치 &amp; 확대 설정</h2>
-      <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.5rem">사진을 드래그해서 위치를 조정하고, 슬라이더로 확대할 수 있습니다.</p>
-      <div class="crop-wrap">
-        <div class="crop-frame" id="crop-frame">
-          <div class="crop-bg" id="crop-bg" style="background-image:url('assets/profile.jpg')"></div>
-          <div class="crop-hint">드래그로 위치 조정</div>
-        </div>
-        <div class="crop-info">
-          <div class="crop-pos-display">위치: <span id="pos-display">50% 50%</span></div>
-          <div class="crop-pos-display" style="margin-top:-.5rem">확대: <span id="zoom-display">100%</span></div>
-          <div class="zoom-row">
-            <span style="font-size:.75rem;color:var(--text2)">1x</span>
-            <input type="range" id="zoom-slider" min="100" max="300" value="100" oninput="onZoomSlider(this.value)">
-            <span style="font-size:.75rem;color:var(--text2)">3x</span>
-          </div>
-          <button class="sm danger" onclick="setPosDirect(50,50,1)" style="width:auto">↺ 초기화</button>
-          <p style="font-size:.8rem;color:var(--text2);line-height:1.6;margin:0">조정 후 하단의 <strong style="color:var(--text)">🚀 GitHub 덮어쓰기</strong> 버튼을 눌러야 반영됩니다.</p>
-        </div>
-      </div>
-    </div>
-
   </div><!-- /editor-section -->
 </div>
 
@@ -246,6 +246,19 @@ let isDirty=false;
 
 function b64Dec(str){return decodeURIComponent(atob(str).split('').map(c=>'%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)).join(''))}
 function b64Enc(str){return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,(m,p1)=>String.fromCharCode('0x'+p1)))}
+
+// 구글 드라이브 공유 링크를 직접 이미지 URL로 변환
+function convertDriveUrl(url){
+  if(!url)return url;
+  // 이미 변환된 URL이거나 드라이브 URL이 아니면 그대로 반환
+  var idMatch = url.match(/[?&]id=([^&]+)/) || url.match(/\/file\/d\/([^/?]+)/) || url.match(/\/folders\/([^/?]+)/);
+  if(url.includes('drive.google.com/thumbnail')||url.includes('lh3.googleusercontent'))return url;
+  if(!url.includes('drive.google.com'))return url;
+  if(idMatch&&idMatch[1]){
+    return 'https://drive.google.com/thumbnail?id='+idMatch[1]+'&sz=w1200';
+  }
+  return url;
+}
 
 function markDirty(){
   isDirty=true;
@@ -382,7 +395,12 @@ function toggleCatEdit(){
 }
 
 function previewThumb(catId){const val=document.getElementById('thumb-input-'+catId).value.trim();const img=document.getElementById('thumb-preview-'+catId);const empty=document.getElementById('thumb-empty-'+catId);if(val){img.src='https://img.youtube.com/vi/'+val+'/mqdefault.jpg';img.style.display='';if(empty)empty.style.display='none';}else{img.src='';img.style.display='none';if(empty)empty.style.display='';}}
-function previewThumbImg(catId){const val=document.getElementById('thumbimg-input-'+catId).value.trim();const img=document.getElementById('thumbimg-preview-'+catId);if(img){img.src=val;img.style.display=val?'':'none';}}
+function previewThumbImg(catId){
+  const rawVal=document.getElementById('thumbimg-input-'+catId).value.trim();
+  const converted=convertDriveUrl(rawVal);
+  const img=document.getElementById('thumbimg-preview-'+catId);
+  if(img){img.src=converted;img.style.display=converted?'':'none';}
+}
 
 function applyCatNames(){
   categories.forEach(cat=>{
@@ -391,7 +409,7 @@ function applyCatNames(){
     const isDesign=cat.type==='design'||cat.type==='planning';
     if(isDesign){
       const ti=document.getElementById('thumbimg-input-'+cat.id);
-      if(ti)cat.thumbImg=ti.value.trim();
+      if(ti)cat.thumbImg=convertDriveUrl(ti.value.trim());
     }else{
       const ti=document.getElementById('thumb-input-'+cat.id);
       if(ti){const v=ti.value.trim();if(v)cat.thumb=v;else delete cat.thumb;}
