@@ -1,677 +1,580 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio Visual Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #111111;
-            --surface: #1a1a1a;
-            --border: #333333;
-            --text: #ffffff;
-            --text2: #aaaaaa;
-            --red: #e62525;
-            --red-dim: rgba(230, 37, 37, 0.15);
-            --red-hover: #ff3333;
-        }
-        body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; -webkit-font-smoothing: antialiased; padding-bottom: 80px;}
-        .container { max-width: 1000px; margin: 0 auto; padding: 2rem 2rem 5rem; }
-        h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; margin: 0;}
-        
-        .box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; margin-bottom: 2rem; }
-        .box h2 { font-size: 1.2rem; margin-top: 0; margin-bottom: 1.5rem; color: var(--text); }
-        
-        label { display: block; font-size: 0.85rem; color: var(--text2); margin-bottom: 0.5rem; font-family: 'Pretendard', sans-serif;}
-        input[type="text"], input[type="password"], textarea {
-            width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: var(--text); 
-            padding: 0.8rem 1rem; font-size: 1rem; font-family: 'Pretendard', sans-serif; border-radius: 4px; margin-bottom: 1rem;
-            transition: border-color 0.3s;
-        }
-        input:focus, textarea:focus { outline: none; border-color: var(--red); }
-        
-        button { background: var(--text); color: var(--bg); border: none; padding: 0.8rem 1.5rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; border-radius: 4px; transition: all 0.3s; }
-        button:hover { background: #e0e0e0; }
-        button.primary { background: var(--red); color: white; width: 100%; }
-        button.primary:hover { background: var(--red-hover); box-shadow: 0 0 15px rgba(230,37,37,0.4); }
-        button.sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
-        button.danger { background: transparent; border: 1px solid var(--border); color: var(--text2); width: auto; }
-        button.danger:hover { color: var(--red); background: var(--red-dim); border-color: var(--red);}
-
-        .error { color: var(--red); font-size: 0.9rem; margin-top: 0.5rem; }
-        
-        #auth-section, #editor-section { display: none; }
-        #auth-section.active, #editor-section.active { display: block; }
-        
-        /* Category Tabs */
-        .tabs { display: flex; gap: 0.5rem; overflow-x: auto; margin-bottom: 2rem; padding-bottom: 0.5rem;}
-        .tab-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text2); padding: 0.6rem 1.2rem; border-radius: 30px; white-space: nowrap;}
-        .tab-btn.active { background: var(--red); color: white; border-color: var(--red); }
-        .tab-btn:hover:not(.active) { background: #222; border-color: #555; }
-        
-        /* Video Grid */
-        #cat-title { font-size: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--red); padding-left: 10px;}
-        .vid-grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-        .vid-card { background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s;}
-        .vid-card.dragging { opacity: 0.4; transform: scale(0.98); }
-        .vid-thumb { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border-bottom: 1px solid var(--border);}
-        .vid-thumb img { position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover; }
-        .vid-info { padding: 1rem; flex: 1; display:flex; flex-direction:column; }
-        .vid-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;}
-        .vid-role-area { padding: 1rem; background: var(--surface); border-top: 1px solid var(--border); margin-top: auto;}
-        .vid-role-area textarea { margin-bottom: 0; height: 140px; min-height: 100px; font-size: 0.9rem; background: rgba(0,0,0,0.3); padding: 0.8rem; line-height: 1.6; resize: vertical; box-sizing: border-box;}
-        
-        /* Profile Crop */
-        .crop-wrap { display: flex; gap: 2.5rem; align-items: flex-start; flex-wrap: wrap; }
-        .crop-frame {
-            width: 200px; height: 250px; overflow: hidden; position: relative;
-            border: 2px solid var(--red); border-radius: 6px; background: #000;
-            cursor: grab; user-select: none; flex-shrink: 0;
-        }
-        .crop-frame:active { cursor: grabbing; }
-        .crop-frame img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; display: block; pointer-events: none; }
-        .crop-hint {
-            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.45); color: #fff; font-size: 0.78rem; text-align: center;
-            opacity: 1; transition: opacity 0.3s; pointer-events: none; padding: 1rem; line-height: 1.5;
-        }
-        .crop-frame.dragging .crop-hint, .crop-frame.moved .crop-hint { opacity: 0; }
-        .crop-info { flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 1rem; justify-content: center; }
-        .crop-pos-display { font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; color: var(--text2); }
-        .crop-pos-display span { color: var(--red); }
-
-        /* Design Item Editor */
-        .design-item-card { background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; display: flex; gap: 0; margin-bottom: 1rem; }
-        .design-item-card .di-preview { width: 140px; flex-shrink: 0; background: #000; position: relative; }
-        .design-item-card .di-preview img { width: 100%; height: 100%; object-fit: cover; display: block; min-height: 100px; }
-        .design-item-card .di-fields { flex: 1; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
-        .design-item-card .di-fields input, .design-item-card .di-fields textarea { margin-bottom: 0; font-size: 0.88rem; padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.05); }
-        .design-item-card .di-fields textarea { height: 70px; resize: vertical; }
-        .design-item-card .di-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.3rem; }
-        .add-design-btn { width: 100%; padding: 1rem; background: rgba(255,255,255,0.04); border: 1px dashed var(--border); border-radius: 6px; color: var(--text2); font-size: 0.95rem; cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; }
-        .add-design-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-dim); }
-
-        /* Fixed Save Panel */
-        .fixed-save {
-            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(26,26,26,0.95); border-top: 1px solid var(--border);
-            padding: 1rem 2rem; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; z-index: 1000;
-            display: none;
-        }
-        .fixed-save.active { display: flex; }
-        
-        .loader-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; display: none; align-items: center; justify-content: center; flex-direction: column;
-        }
-        .loader-overlay p { color: white; font-size: 1.2rem; margin-top: 1rem; }
-        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--red); border-radius: 50%; animation: spin 1s infinite linear; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        @media (max-width: 768px) {
-            .fixed-save { flex-direction: column; gap:1rem; text-align:center; padding: 1rem; }
-            .fixed-save p { font-size: 0.8rem; }
-            .fixed-save button.primary { width: 100%; font-size: 1rem; padding: 0.8rem;}
-            body { padding-bottom: 140px; }
-        }
-    </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Visual Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#111;--surface:#1a1a1a;--border:#333;--text:#fff;--text2:#aaa;--red:#e62525;--red-dim:rgba(230,37,37,.15);--red-hover:#ff3333}
+body{margin:0;padding:0 0 120px;background:var(--bg);color:var(--text);font-family:'Pretendard',sans-serif;-webkit-font-smoothing:antialiased}
+.container{max-width:1000px;margin:0 auto;padding:2rem 2rem 5rem}
+h1{font-family:'Space Grotesk',sans-serif;font-size:2rem;margin:0}
+.box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:2rem;margin-bottom:2rem}
+.box h2{font-size:1.2rem;margin-top:0;margin-bottom:1.5rem}
+label{display:block;font-size:.85rem;color:var(--text2);margin-bottom:.5rem}
+input[type=text],input[type=password],textarea{width:100%;box-sizing:border-box;background:rgba(0,0,0,.5);border:1px solid var(--border);color:var(--text);padding:.8rem 1rem;font-size:1rem;font-family:'Pretendard',sans-serif;border-radius:4px;margin-bottom:1rem;transition:border-color .3s}
+input:focus,textarea:focus{outline:none;border-color:var(--red)}
+button{background:var(--text);color:var(--bg);border:none;padding:.8rem 1.5rem;font-size:.95rem;font-weight:600;cursor:pointer;border-radius:4px;transition:all .3s}
+button:hover{background:#e0e0e0}
+button.primary{background:var(--red);color:#fff;width:100%}
+button.primary:hover{background:var(--red-hover);box-shadow:0 0 15px rgba(230,37,37,.4)}
+button.sm{padding:.4rem .8rem;font-size:.8rem}
+button.danger{background:transparent;border:1px solid var(--border);color:var(--text2);width:auto}
+button.danger:hover{color:var(--red);background:var(--red-dim);border-color:var(--red)}
+.error{color:var(--red);font-size:.9rem;margin-top:.5rem}
+#auth-section,#editor-section{display:none}
+#auth-section.active,#editor-section.active{display:block}
+.tabs{display:flex;gap:.5rem;overflow-x:auto;margin-bottom:2rem;padding-bottom:.5rem}
+.tab-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:.6rem 1.2rem;border-radius:30px;white-space:nowrap}
+.tab-btn.active{background:var(--red);color:#fff;border-color:var(--red)}
+.tab-btn:hover:not(.active){background:#222;border-color:#555}
+#cat-title{font-size:1.5rem;margin-bottom:1.5rem;border-left:4px solid var(--red);padding-left:10px}
+.vid-grid{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.vid-card{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;transition:transform .2s}
+.vid-card.dragging{opacity:.4;transform:scale(.98)}
+.vid-thumb{position:relative;width:100%;padding-bottom:56.25%;background:#000;border-bottom:1px solid var(--border)}
+.vid-thumb img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
+.vid-info{padding:1rem;flex:1;display:flex;flex-direction:column}
+.vid-title{font-size:1rem;font-weight:600;margin-bottom:.5rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vid-role-area{padding:1rem;background:var(--surface);border-top:1px solid var(--border);margin-top:auto}
+.vid-role-area textarea{margin-bottom:0;height:140px;min-height:100px;font-size:.9rem;background:rgba(0,0,0,.3);padding:.8rem;line-height:1.6;resize:vertical;box-sizing:border-box}
+/* Profile Crop */
+.crop-wrap{display:flex;gap:2.5rem;align-items:flex-start;flex-wrap:wrap}
+.crop-frame{width:200px;height:250px;overflow:hidden;position:relative;border:2px solid var(--red);border-radius:6px;background:#000;cursor:grab;user-select:none;flex-shrink:0}
+.crop-frame:active{cursor:grabbing}
+.crop-bg{position:absolute;inset:0;background-size:cover;background-position:50% 50%;transform-origin:50% 50%;transition:background-position .05s}
+.crop-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);color:#fff;font-size:.78rem;text-align:center;opacity:1;transition:opacity .3s;pointer-events:none;padding:1rem;line-height:1.5}
+.crop-frame.moved .crop-hint{opacity:0}
+.crop-info{flex:1;min-width:180px;display:flex;flex-direction:column;gap:1rem}
+.crop-pos-display{font-family:'Space Grotesk',sans-serif;font-size:.85rem;color:var(--text2)}
+.crop-pos-display span{color:var(--red)}
+/* Design Items */
+.design-item-card{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:6px;overflow:hidden;display:flex;margin-bottom:1rem}
+.design-item-card .di-preview{width:140px;flex-shrink:0;background:#000;position:relative;min-height:100px}
+.design-item-card .di-preview img{width:100%;height:100%;object-fit:cover;display:block}
+.design-item-card .di-fields{flex:1;padding:1rem;display:flex;flex-direction:column;gap:.5rem}
+.design-item-card .di-fields input,.design-item-card .di-fields textarea{margin-bottom:0;font-size:.88rem;padding:.6rem .8rem;background:rgba(255,255,255,.05)}
+.design-item-card .di-fields textarea{height:70px;resize:vertical}
+.design-item-card .di-actions{display:flex;justify-content:flex-end;gap:.5rem;margin-top:.3rem}
+.add-design-btn{width:100%;padding:1rem;background:rgba(255,255,255,.04);border:1px dashed var(--border);border-radius:6px;color:var(--text2);font-size:.95rem;cursor:pointer;transition:all .2s;margin-top:.5rem}
+.add-design-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-dim)}
+/* Page Text Editor */
+.text-field-group{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.text-field-group.single{grid-template-columns:1fr}
+.text-field-group .tf{display:flex;flex-direction:column}
+.text-field-group .tf label{font-size:.78rem}
+.text-field-group .tf input,.text-field-group .tf textarea{margin-bottom:0}
+/* Career */
+.career-card{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:6px;padding:1rem;margin-bottom:.8rem;display:flex;gap:1rem;align-items:flex-start}
+.career-card .cf{flex:1;display:grid;grid-template-columns:80px 1fr 1fr;gap:.5rem}
+.career-card .cf input{margin-bottom:0;font-size:.88rem;padding:.5rem .7rem}
+.career-card .cf-desc{grid-column:1/-1}
+.career-card .cf-desc textarea{width:100%;box-sizing:border-box;margin-bottom:0;font-size:.88rem;padding:.5rem .7rem;height:56px;resize:vertical;background:rgba(0,0,0,.5);border:1px solid var(--border);color:var(--text);font-family:'Pretendard',sans-serif;border-radius:4px}
+.career-card .cf-desc textarea:focus{outline:none;border-color:var(--red)}
+/* Fixed Save */
+.fixed-save{position:fixed;bottom:0;left:0;width:100%;background:rgba(26,26,26,.97);border-top:1px solid var(--border);padding:1rem 2rem;box-sizing:border-box;display:none;justify-content:space-between;align-items:center;z-index:1000}
+.fixed-save.active{display:flex}
+.unsaved-badge{background:var(--red);color:#fff;font-size:.72rem;padding:.2rem .5rem;border-radius:3px;margin-left:.5rem;font-weight:700}
+/* Loader */
+.loader-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:2000;display:none;align-items:center;justify-content:center;flex-direction:column}
+.loader-overlay p{color:#fff;font-size:1.2rem;margin-top:1rem}
+.spinner{width:40px;height:40px;border:4px solid rgba(255,255,255,.1);border-top-color:var(--red);border-radius:50%;animation:spin 1s infinite linear}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Zoom slider */
+input[type=range]{width:100%;height:4px;accent-color:var(--red);cursor:pointer;margin:0}
+.zoom-row{display:flex;align-items:center;gap:.8rem}
+.zoom-row input[type=range]{flex:1}
+.zoom-val{font-family:'Space Grotesk',sans-serif;font-size:.82rem;color:var(--red);width:42px;text-align:right}
+/* Drive */
+.drive-row{display:flex;gap:.8rem;align-items:center}
+.drive-row input{flex:1;margin-bottom:0}
+@media(max-width:768px){
+  .fixed-save{flex-direction:column;gap:1rem;text-align:center;padding:1rem}
+  .text-field-group{grid-template-columns:1fr}
+  .career-card .cf{grid-template-columns:60px 1fr}
+  body{padding-bottom:160px}
+}
+</style>
 </head>
 <body>
-
 <div class="loader-overlay" id="loader"><div class="spinner"></div><p id="loader-msg">로딩 중...</p></div>
 
 <div class="container">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem;">
-        <h1>VISUAL ADMIN</h1>
-        <button id="logout-btn" class="sm danger" style="display:none;" onclick="logout()">토큰 삭제 (로그아웃)</button>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;border-bottom:2px solid var(--border);padding-bottom:1rem">
+    <h1>VISUAL ADMIN</h1>
+    <button id="logout-btn" class="sm danger" style="display:none" onclick="logout()">토큰 삭제 (로그아웃)</button>
+  </div>
+
+  <!-- Auth -->
+  <div id="auth-section" class="active">
+    <div class="box">
+      <h2>GitHub 연동 설정</h2>
+      <p style="color:var(--text2);font-size:.95rem;line-height:1.6;margin-bottom:1.5rem">GitHub Personal Access Token (클래식, repo 권한)을 입력하세요.</p>
+      <label>GitHub Personal Access Token</label>
+      <input type="password" id="gh-token" placeholder="ghp_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
+      <div id="auth-error" class="error"></div>
+      <br><button class="primary" onclick="login()">데이터 불러오기 (로그인)</button>
     </div>
-    
-    <!-- Auth Section -->
-    <div id="auth-section" class="active">
-        <div class="box">
-            <h2>GitHub 연동 설정</h2>
-            <p style="color:var(--text2); font-size:0.95rem; line-height:1.6; margin-bottom:1.5rem;">
-                GitHub에서 발급받은 <strong>Personal Access Token (클래식)</strong>을 로컬 브라우저에 저장하여 로그인합니다.<br>
-                <span>※ `repo` 권한이 반드시 체크되어 있어야 합니다.</span>
-            </p>
-            <label>GitHub Personal Access Token 입력</label>
-            <input type="password" id="gh-token" placeholder="ghp_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
-            <div id="auth-error" class="error"></div>
-            <br><button class="primary" onclick="login()">데이터 불러오기 (로그인)</button>
-        </div>
+  </div>
+
+  <!-- Editor -->
+  <div id="editor-section">
+    <!-- Category Tabs -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:1rem">
+      <div class="tabs" id="cat-tabs" style="margin-bottom:0;padding-bottom:0;flex:1"></div>
+      <button class="sm" style="background:#222;border:1px solid #444;color:var(--text2)" onclick="toggleCatEdit()">✏ 카테고리명 수정</button>
     </div>
 
-    <!-- Editor Section -->
-    <div id="editor-section">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:1rem;">
-            <div class="tabs" id="cat-tabs" style="margin-bottom:0; padding-bottom:0; border:none; flex:1;"></div>
-            <button class="sm" style="background:#222; border:1px solid #444; color:var(--text2);" onclick="toggleCatEdit()">✏ 카테고리명 수정</button>
-        </div>
-        
-        <div id="cat-edit-panel" style="display:none; background:rgba(0,0,0,0.5); border:1px solid var(--border); padding:1.5rem; border-radius:6px; margin-bottom:2rem;">
-            <h3 style="margin-top:0; font-size:1rem; margin-bottom:1.5rem; color:var(--red);">고정 카테고리 이름 변경</h3>
-            <div id="cat-edit-list"></div>
-            <div style="text-align:right; margin-top:1rem;">
-                <button class="sm primary" style="width:auto; padding:0.6rem 1.2rem;" onclick="applyCatNames()">적용하기</button>
-            </div>
-        </div>
-
-        <!-- Profile Crop Editor -->
-        <div class="box" id="profile-crop-box" style="display:none; margin-bottom:2rem;">
-            <h2 style="margin-bottom:0.5rem;">📷 프로필 사진 표시 영역 설정</h2>
-            <p style="color:var(--text2); font-size:0.85rem; margin-bottom:1.5rem;">사진을 드래그해서 보이는 영역을 조정하세요</p>
-            <div class="crop-wrap">
-                <div class="crop-frame" id="crop-frame">
-                    <img id="profile-crop-img" src="assets/profile.jpg" alt="profile">
-                    <div class="crop-hint">사진을 드래그해서<br>위치를 조정하세요</div>
-                </div>
-                <div class="crop-info">
-                    <div class="crop-pos-display">현재 위치: <span id="pos-display">50% 50%</span></div>
-                    <button class="sm danger" onclick="setPosDirect(50,50)" style="width:auto;">↺ 중앙으로 초기화</button>
-                    <p style="font-size:0.8rem; color:var(--text2); line-height:1.6; margin:0;">
-                        위치 조정 후 하단의<br>
-                        <strong style="color:var(--text)">🚀 GitHub 덮어쓰기</strong> 버튼을<br>눌러야 실제 사이트에 반영돼요.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <h2 id="cat-title">카테고리를 선택해주세요</h2>
-        <div class="vid-grid" id="vid-grid"></div>
+    <div id="cat-edit-panel" style="display:none;background:rgba(0,0,0,.5);border:1px solid var(--border);padding:1.5rem;border-radius:6px;margin-bottom:2rem">
+      <h3 style="margin-top:0;font-size:1rem;margin-bottom:1.5rem;color:var(--red)">고정 카테고리 이름 변경</h3>
+      <div id="cat-edit-list"></div>
+      <div style="text-align:right;margin-top:1rem">
+        <button class="sm primary" style="width:auto;padding:.6rem 1.2rem" onclick="applyCatNames()">적용하기</button>
+      </div>
     </div>
+
+    <!-- Page Text Editor -->
+    <div class="box" id="text-editor-box" style="display:none">
+      <h2>✏ 페이지 텍스트 편집</h2>
+      <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.5rem">여기서 수정 후 하단 [🚀 GitHub 덮어쓰기]를 누르면 실제 사이트에 반영됩니다.</p>
+
+      <div style="font-size:.8rem;color:var(--red);font-weight:600;margin-bottom:.8rem;letter-spacing:.1em">NAV</div>
+      <div class="text-field-group">
+        <div class="tf"><label>이름 (Nav)</label><input type="text" id="pc-navName"></div>
+        <div class="tf"><label>직함 (Nav 서브)</label><input type="text" id="pc-navRole"></div>
+      </div>
+
+      <div style="font-size:.8rem;color:var(--red);font-weight:600;margin-bottom:.8rem;letter-spacing:.1em;margin-top:1rem">HERO</div>
+      <div class="text-field-group">
+        <div class="tf"><label>상단 태그라인</label><input type="text" id="pc-heroEyebrow"></div>
+        <div class="tf"><label>큰 글씨 1줄</label><input type="text" id="pc-heroLine1"></div>
+        <div class="tf"><label>큰 글씨 2줄</label><input type="text" id="pc-heroLine2"></div>
+      </div>
+      <div class="tf"><label>서브 텍스트 (HTML 가능)</label><textarea id="pc-heroSub" style="height:60px"></textarea></div>
+
+      <div style="font-size:.8rem;color:var(--red);font-weight:600;margin-bottom:.8rem;letter-spacing:.1em;margin-top:1rem">ABOUT</div>
+      <div class="tf single"><label>제목 (줄바꿈: \n)</label><textarea id="pc-aboutTitle" style="height:80px"></textarea></div>
+      <div class="tf single"><label>단락 1 (HTML 가능)</label><textarea id="pc-aboutP1" style="height:80px"></textarea></div>
+      <div class="tf single"><label>단락 2 (HTML 가능)</label><textarea id="pc-aboutP2" style="height:70px"></textarea></div>
+
+      <div style="font-size:.8rem;color:var(--red);font-weight:600;margin-bottom:.8rem;letter-spacing:.1em;margin-top:1rem">STATS (숫자 + 접미사 + 라벨)</div>
+      <div class="text-field-group">
+        <div class="tf"><label>Stat 1 숫자</label><input type="text" id="pc-stat1Num"></div>
+        <div class="tf"><label>Stat 1 접미사</label><input type="text" id="pc-stat1Suf"></div>
+        <div class="tf"><label>Stat 1 라벨</label><input type="text" id="pc-stat1Label"></div>
+        <div class="tf"><label>Stat 2 숫자</label><input type="text" id="pc-stat2Num"></div>
+        <div class="tf"><label>Stat 2 접미사</label><input type="text" id="pc-stat2Suf"></div>
+        <div class="tf"><label>Stat 2 라벨</label><input type="text" id="pc-stat2Label"></div>
+        <div class="tf"><label>Stat 3 숫자</label><input type="text" id="pc-stat3Num"></div>
+        <div class="tf"><label>Stat 3 접미사</label><input type="text" id="pc-stat3Suf"></div>
+        <div class="tf"><label>Stat 3 라벨</label><input type="text" id="pc-stat3Label"></div>
+        <div class="tf"><label>Stat 4 숫자</label><input type="text" id="pc-stat4Num"></div>
+        <div class="tf"><label>Stat 4 접미사</label><input type="text" id="pc-stat4Suf"></div>
+        <div class="tf"><label>Stat 4 라벨</label><input type="text" id="pc-stat4Label"></div>
+      </div>
+
+      <div style="font-size:.8rem;color:var(--red);font-weight:600;margin-bottom:.8rem;letter-spacing:.1em;margin-top:1rem">CONTACT</div>
+      <div class="text-field-group">
+        <div class="tf"><label>이메일</label><input type="text" id="pc-contactEmail"></div>
+        <div class="tf"><label>전화번호</label><input type="text" id="pc-contactPhone"></div>
+      </div>
+      <div class="tf single"><label>연락 안내 문구</label><textarea id="pc-contactLead" style="height:60px"></textarea></div>
+
+      <div style="font-size:.8rem;color:var(--red);font-weight:600;margin-bottom:.8rem;letter-spacing:.1em;margin-top:1rem">FOOTER</div>
+      <div class="text-field-group">
+        <div class="tf"><label>이름</label><input type="text" id="pc-footerName"></div>
+        <div class="tf"><label>연도</label><input type="text" id="pc-footerYear"></div>
+      </div>
+    </div>
+
+    <!-- Video Grid -->
+    <h2 id="cat-title">카테고리를 선택해주세요</h2>
+    <div class="vid-grid" id="vid-grid"></div>
+
+    <!-- Career Editor -->
+    <div class="box" id="career-box" style="display:none;margin-top:2rem">
+      <h2>📋 이력 편집 (About 섹션)</h2>
+      <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.5rem">연도, 회사/소속, 직책/역할, 설명을 입력하세요.</p>
+      <div id="career-list-admin"></div>
+      <button class="add-design-btn" onclick="addCareerItem()">+ 이력 추가</button>
+    </div>
+
+    <!-- Profile Crop with Zoom (bottom) -->
+    <div class="box" id="profile-crop-box" style="display:none;margin-top:2rem">
+      <h2>📷 프로필 사진 위치 &amp; 확대 설정</h2>
+      <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.5rem">사진을 드래그해서 위치를 조정하고, 슬라이더로 확대할 수 있습니다.</p>
+      <div class="crop-wrap">
+        <div class="crop-frame" id="crop-frame">
+          <div class="crop-bg" id="crop-bg" style="background-image:url('assets/profile.jpg')"></div>
+          <div class="crop-hint">드래그로 위치 조정</div>
+        </div>
+        <div class="crop-info">
+          <div class="crop-pos-display">위치: <span id="pos-display">50% 50%</span></div>
+          <div class="crop-pos-display" style="margin-top:-.5rem">확대: <span id="zoom-display">100%</span></div>
+          <div class="zoom-row">
+            <span style="font-size:.75rem;color:var(--text2)">1x</span>
+            <input type="range" id="zoom-slider" min="100" max="300" value="100" oninput="onZoomSlider(this.value)">
+            <span style="font-size:.75rem;color:var(--text2)">3x</span>
+          </div>
+          <button class="sm danger" onclick="setPosDirect(50,50,1)" style="width:auto">↺ 초기화</button>
+          <p style="font-size:.8rem;color:var(--text2);line-height:1.6;margin:0">조정 후 하단의 <strong style="color:var(--text)">🚀 GitHub 덮어쓰기</strong> 버튼을 눌러야 반영됩니다.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /editor-section -->
 </div>
 
 <div class="fixed-save" id="fixed-save">
-    <p>★ 수정한 메모는 <strong>'GitHub에 덮어쓰기'</strong> 버튼을 눌러야 메인 사이트에 반영됩니다 (약 5초 소요)</p>
-    <button class="primary" style="width:auto; padding:0.8rem 2rem;" onclick="saveToGithub()">🚀 변경사항 모아서 GitHub에 덮어쓰기 완료</button>
+  <p>★ <strong>'GitHub에 덮어쓰기'</strong> 버튼을 눌러야 메인 사이트에 반영됩니다 (약 5초 소요)<span class="unsaved-badge" id="unsaved-badge" style="display:none">미저장</span></p>
+  <button class="primary" style="width:auto;padding:.8rem 2rem" onclick="saveToGithub()">🚀 GitHub에 덮어쓰기</button>
 </div>
 
 <script>
-    const REPO_OWNER = 'h001715-cpu';
-    const REPO_NAME = 'portfolio';
-    const FILE_PATH = 'videos.json';
-    
-    let ghToken = localStorage.getItem('ghToken') || '';
-    let fileSha = '';
-    let videoData = null; // videos.json parsed object
-    let categories = [];
-    let YT_API_KEY = '';
-    let currentCatId = '';
+const REPO_OWNER='h001715-cpu';
+const REPO_NAME='portfolio';
+const FILE_PATH='videos.json';
 
-    // 한글 등 유니코드 지원 Base64
-    function b64DecodeUnicode(str) {
-        return decodeURIComponent(atob(str).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
+let ghToken=localStorage.getItem('ghToken')||'';
+let fileSha='';
+let videoData=null;
+let categories=[];
+let YT_API_KEY='';
+let currentCatId='';
+let cropX=50,cropY=50,cropZoom=1;
+let isDirty=false;
+
+function b64Dec(str){return decodeURIComponent(atob(str).split('').map(c=>'%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)).join(''))}
+function b64Enc(str){return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,(m,p1)=>String.fromCharCode('0x'+p1)))}
+
+function markDirty(){
+  isDirty=true;
+  document.getElementById('unsaved-badge').style.display='';
+  try{localStorage.setItem('adminDraft',JSON.stringify(videoData));localStorage.setItem('adminDraftTime',Date.now());}catch(e){}
+}
+
+window.addEventListener('beforeunload',function(e){if(isDirty){e.preventDefault();e.returnValue='저장되지 않은 변경사항이 있습니다.';}});
+
+if(ghToken){document.getElementById('gh-token').value=ghToken;fetchData();}
+
+function showLoading(msg){var l=document.getElementById('loader');if(msg){document.getElementById('loader-msg').innerText=msg;l.style.display='flex';}else{l.style.display='none';}}
+function login(){const val=document.getElementById('gh-token').value.trim();if(!val)return alert('토큰을 입력해주세요!');ghToken=val;localStorage.setItem('ghToken',ghToken);fetchData();}
+function logout(){localStorage.removeItem('ghToken');ghToken='';isDirty=false;document.getElementById('gh-token').value='';document.getElementById('logout-btn').style.display='none';document.getElementById('editor-section').classList.remove('active');document.getElementById('fixed-save').classList.remove('active');document.getElementById('auth-section').classList.add('active');}
+
+async function fetchData(){
+  document.getElementById('auth-error').textContent='';
+  showLoading('GitHub 서버에서 videos.json 연동 중...');
+  try{
+    const res=await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}?t=${Date.now()}`,{headers:{'Authorization':`token ${ghToken}`}});
+    if(!res.ok)throw new Error('인증 실패 혹은 저장소를 찾을 수 없습니다.');
+    const data=await res.json();
+    fileSha=data.sha;
+    videoData=JSON.parse(b64Dec(data.content.replace(/\n/g,'')));
+    if(!videoData.roles)videoData.roles={};
+    if(!videoData.pageContent)videoData.pageContent={};
+    if(!videoData.career)videoData.career=[];
+    YT_API_KEY=videoData.apiKey;
+    categories=videoData.categories||[];
+    document.getElementById('auth-section').classList.remove('active');
+    document.getElementById('editor-section').classList.add('active');
+    document.getElementById('logout-btn').style.display='inline-block';
+    document.getElementById('fixed-save').classList.add('active');
+    renderTabs();
+    initTextEditor();
+    initCareerEditor();
+    initProfileCrop();
+    document.getElementById('text-editor-box').style.display='block';
+    document.getElementById('career-box').style.display='block';
+    if(categories.length>0)openCat(categories[0].id);
+    showLoading(false);
+  }catch(err){
+    document.getElementById('auth-error').textContent=err.message;
+    logout();showLoading(false);
+  }
+}
+
+// ── Text Editor ──────────────────────────────────────────────────────────────
+function initTextEditor(){
+  const pc=videoData.pageContent||{};
+  const fields=['navName','navRole','heroEyebrow','heroLine1','heroLine2','heroSub','aboutTitle','aboutP1','aboutP2',
+    'stat1Num','stat1Suf','stat1Label','stat2Num','stat2Suf','stat2Label',
+    'stat3Num','stat3Suf','stat3Label','stat4Num','stat4Suf','stat4Label',
+    'contactEmail','contactPhone','contactLead','footerName','footerYear'];
+  fields.forEach(f=>{
+    const el=document.getElementById('pc-'+f);
+    if(el){
+      el.value=pc[f]||'';
+      el.addEventListener('input',()=>{
+        if(!videoData.pageContent)videoData.pageContent={};
+        videoData.pageContent[f]=el.value;
+        markDirty();
+      });
     }
-    function b64EncodeUnicode(str) {
-        return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
-            function toSolidBytes(match, p1) { return String.fromCharCode('0x' + p1); }));
+  });
+}
+
+// ── Career Editor ─────────────────────────────────────────────────────────────
+function initCareerEditor(){renderCareerAdmin();}
+
+function renderCareerAdmin(){
+  const list=document.getElementById('career-list-admin');
+  list.innerHTML='';
+  (videoData.career||[]).forEach((item,idx)=>{
+    const card=document.createElement('div');
+    card.className='career-card';
+    card.innerHTML=`
+      <div class="cf">
+        <input type="text" value="${(item.year||'').replace(/"/g,'&quot;')}" placeholder="연도" oninput="updateCareerField(${idx},'year',this.value)">
+        <input type="text" value="${(item.company||'').replace(/"/g,'&quot;')}" placeholder="회사/소속" oninput="updateCareerField(${idx},'company',this.value)">
+        <input type="text" value="${(item.role||'').replace(/"/g,'&quot;')}" placeholder="직책/역할" oninput="updateCareerField(${idx},'role',this.value)">
+        <div class="cf-desc"><textarea placeholder="설명 (선택)" oninput="updateCareerField(${idx},'desc',this.value)">${(item.desc||'').replace(/</g,'&lt;')}</textarea></div>
+      </div>
+      <button class="sm danger" onclick="removeCareerItem(${idx})">삭제</button>`;
+    list.appendChild(card);
+  });
+}
+
+function updateCareerField(idx,field,val){
+  if(!videoData.career[idx])return;
+  videoData.career[idx][field]=val;
+  markDirty();
+}
+
+function addCareerItem(){
+  videoData.career.push({year:'',company:'',role:'',desc:''});
+  renderCareerAdmin();markDirty();
+}
+
+function removeCareerItem(idx){
+  videoData.career.splice(idx,1);
+  renderCareerAdmin();markDirty();
+}
+
+// ── Category Tabs ─────────────────────────────────────────────────────────────
+function renderTabs(){
+  const t=document.getElementById('cat-tabs');t.innerHTML='';
+  categories.forEach(cat=>{
+    const btn=document.createElement('button');
+    btn.className='tab-btn';btn.id='tab-'+cat.id;btn.innerText=cat.name;
+    btn.onclick=()=>openCat(cat.id);t.appendChild(btn);
+  });
+  if(currentCatId){const act=document.getElementById('tab-'+currentCatId);if(act)act.classList.add('active');}
+}
+
+function toggleCatEdit(){
+  const p=document.getElementById('cat-edit-panel');
+  if(p.style.display==='none'||p.style.display===''){
+    const list=document.getElementById('cat-edit-list');list.innerHTML='';
+    categories.forEach(cat=>{
+      const thumbId=cat.thumb||'';const thumbImg=cat.thumbImg||'';
+      const isDesign=cat.type==='design'||cat.type==='planning';
+      list.innerHTML+=`<div style="margin-bottom:1.8rem;padding-bottom:1.8rem;border-bottom:1px solid var(--border)">
+        <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem">
+          <span style="color:var(--text2);width:90px;font-size:.82rem;font-family:'Space Grotesk',sans-serif;flex-shrink:0">ID: ${cat.id}</span>
+          <div style="flex:1"><label style="margin-bottom:.3rem">카테고리 이름</label><input type="text" id="cat-input-${cat.id}" value="${cat.name.replace(/"/g,'&quot;')}" style="margin-bottom:0;background:rgba(255,255,255,.05)"></div>
+        </div>
+        ${isDesign?`<div><label style="margin-bottom:.3rem">썸네일 이미지 URL <span style="color:var(--text2);font-size:.72rem">(직접 이미지 URL — GitHub raw, Imgur 등)</span></label><div style="display:flex;gap:.8rem;align-items:center"><input type="text" id="thumbimg-input-${cat.id}" value="${thumbImg}" placeholder="https://..." style="flex:1;margin-bottom:0;background:rgba(255,255,255,.05)" oninput="previewThumbImg('${cat.id}')"><img id="thumbimg-preview-${cat.id}" src="${thumbImg||''}" style="width:80px;height:45px;object-fit:cover;border-radius:3px;border:1px solid var(--border);background:#000;${thumbImg?'':'display:none'}"></div></div>`
+        :`<div style="display:flex;gap:1.5rem;align-items:flex-start"><div style="flex:1"><label style="margin-bottom:.3rem">썸네일 유튜브 영상 ID <span style="color:var(--text2);font-size:.72rem">(비워두면 플레이리스트 첫 영상)</span></label><input type="text" id="thumb-input-${cat.id}" value="${thumbId}" placeholder="예: dQw4w9WgXcQ" style="margin-bottom:0;background:rgba(255,255,255,.05)" oninput="previewThumb('${cat.id}')"></div><div style="flex-shrink:0;width:120px"><label style="margin-bottom:.3rem">미리보기</label><div style="position:relative;width:120px;padding-bottom:67px;background:#000;border:1px solid var(--border);border-radius:4px;overflow:hidden"><img id="thumb-preview-${cat.id}" src="${thumbId?'https://img.youtube.com/vi/'+thumbId+'/mqdefault.jpg':''}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;${thumbId?'':'display:none'}"><span id="thumb-empty-${cat.id}" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.65rem;color:var(--text2);text-align:center;${thumbId?'display:none':''}">미리보기 없음</span></div></div></div>`}
+      </div>`;
+    });
+    p.style.display='block';
+  }else{p.style.display='none';}
+}
+
+function previewThumb(catId){const val=document.getElementById('thumb-input-'+catId).value.trim();const img=document.getElementById('thumb-preview-'+catId);const empty=document.getElementById('thumb-empty-'+catId);if(val){img.src='https://img.youtube.com/vi/'+val+'/mqdefault.jpg';img.style.display='';if(empty)empty.style.display='none';}else{img.src='';img.style.display='none';if(empty)empty.style.display='';}}
+function previewThumbImg(catId){const val=document.getElementById('thumbimg-input-'+catId).value.trim();const img=document.getElementById('thumbimg-preview-'+catId);if(img){img.src=val;img.style.display=val?'':'none';}}
+
+function applyCatNames(){
+  categories.forEach(cat=>{
+    const nameInput=document.getElementById('cat-input-'+cat.id);
+    if(nameInput){const n=nameInput.value.trim();if(n)cat.name=n;}
+    const isDesign=cat.type==='design'||cat.type==='planning';
+    if(isDesign){
+      const ti=document.getElementById('thumbimg-input-'+cat.id);
+      if(ti)cat.thumbImg=ti.value.trim();
+    }else{
+      const ti=document.getElementById('thumb-input-'+cat.id);
+      if(ti){const v=ti.value.trim();if(v)cat.thumb=v;else delete cat.thumb;}
     }
+  });
+  videoData.categories=categories;
+  renderTabs();
+  document.getElementById('cat-edit-panel').style.display='none';
+  if(currentCatId){const cat=categories.find(c=>c.id===currentCatId);if(cat)document.getElementById('cat-title').innerText=cat.name+' 카테고리 영상 스튜디오';}
+  markDirty();
+  alert('적용되었습니다! 하단 [🚀 덮어쓰기] 버튼을 눌러 실제 반영하세요.');
+}
 
-    if (ghToken) {
-        document.getElementById('gh-token').value = ghToken;
-        fetchData();
-    }
+// ── Open Category ─────────────────────────────────────────────────────────────
+async function openCat(id){
+  currentCatId=id;
+  const cat=categories.find(c=>c.id===id);
+  if(!cat)return;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  const tb=document.getElementById('tab-'+id);if(tb)tb.classList.add('active');
 
-    function showLoading(msg) { 
-        var l = document.getElementById('loader');
-        if(msg) {
-            document.getElementById('loader-msg').innerText = msg;
-            l.style.display = 'flex';
-        } else {
-            l.style.display = 'none';
-        }
-    }
-    
-    function login() {
-        const val = document.getElementById('gh-token').value.trim();
-        if(!val) return alert('토큰을 입력해주세요!');
-        ghToken = val;
-        localStorage.setItem('ghToken', ghToken);
-        fetchData();
-    }
-    
-    function logout() {
-        localStorage.removeItem('ghToken');
-        ghToken = '';
-        document.getElementById('gh-token').value = '';
-        document.getElementById('logout-btn').style.display = 'none';
-        document.getElementById('editor-section').classList.remove('active');
-        document.getElementById('fixed-save').classList.remove('active');
-        document.getElementById('auth-section').classList.add('active');
-    }
+  const g=document.getElementById('vid-grid');
 
-    async function fetchData() {
-        document.getElementById('auth-error').textContent = '';
-        showLoading("GitHub 서버에서 videos.json 연동 중...");
-        try {
-            const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}?t=${new Date().getTime()}`, {
-                headers: { 'Authorization': `token ${ghToken}` }
-            });
-            if (!res.ok) throw new Error('인증 실패 혹은 저장소를 찾을 수 없습니다.');
-            
-            const data = await res.json();
-            fileSha = data.sha;
-            videoData = JSON.parse(b64DecodeUnicode(data.content.replace(/\n/g, '')));
-            
-            if(!videoData.roles) videoData.roles = {};
-            YT_API_KEY = videoData.apiKey;
-            categories = videoData.categories || [];
-            
-            document.getElementById('auth-section').classList.remove('active');
-            document.getElementById('editor-section').classList.add('active');
-            document.getElementById('logout-btn').style.display = 'inline-block';
-            document.getElementById('fixed-save').classList.add('active');
-            
-            renderTabs();
-            initProfileCrop();
-            // 기본으로 첫 번째 탭 열기
-            if(categories.length > 0) openCat(categories[0].id);
-            
-            showLoading(false);
-        } catch(err) {
-            console.error(err);
-            document.getElementById('auth-error').textContent = err.message;
-            logout();
-            showLoading(false);
-        }
-    }
+  if(cat.type==='design'||cat.type==='planning'){
+    document.getElementById('cat-title').innerText=cat.name+' 카테고리';
+    renderDesignEditor(cat);return;
+  }
 
-    function renderTabs() {
-        const t = document.getElementById('cat-tabs');
-        t.innerHTML = '';
-        categories.forEach(cat => {
-            const btn = document.createElement('button');
-            btn.className = 'tab-btn';
-            btn.id = 'tab-' + cat.id;
-            btn.innerText = cat.name;
-            btn.onclick = () => openCat(cat.id);
-            t.appendChild(btn);
-        });
-        if(currentCatId) {
-            const act = document.getElementById('tab-' + currentCatId);
-            if(act) act.classList.add('active');
-        }
-    }
+  document.getElementById('cat-title').innerText=cat.name+' 카테고리 영상 스튜디오';
+  g.innerHTML='<p style="color:var(--text2)">유튜브 영상 배열 불러오는 중...</p>';
 
-    function toggleCatEdit() {
-        const p = document.getElementById('cat-edit-panel');
-        if(p.style.display === 'none' || p.style.display === '') {
-            const list = document.getElementById('cat-edit-list');
-            list.innerHTML = '';
-            categories.forEach(cat => {
-                const thumbId = cat.thumb || '';
-                list.innerHTML += `
-                <div style="margin-bottom:1.8rem; padding-bottom:1.8rem; border-bottom:1px solid var(--border);">
-                    <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1rem;">
-                        <span style="color:var(--text2); width:120px; font-size:0.85rem; font-family:'Space Grotesk',sans-serif; flex-shrink:0;">ID: ${cat.id}</span>
-                        <div style="flex:1;">
-                            <label style="margin-bottom:0.3rem;">카테고리 이름</label>
-                            <input type="text" id="cat-input-${cat.id}" value="${cat.name.replace(/"/g, '&quot;')}" style="margin-bottom:0; background:rgba(255,255,255,0.05);">
-                        </div>
-                    </div>
-                    <div style="display:flex; gap:1.5rem; align-items:flex-start;">
-                        <div style="flex:1;">
-                            <label style="margin-bottom:0.3rem;">썸네일 유튜브 영상 ID <span style="color:var(--text2); font-size:0.75rem;">(비워두면 플레이리스트 첫 영상 자동 사용)</span></label>
-                            <input type="text" id="thumb-input-${cat.id}" value="${thumbId}" placeholder="예: dQw4w9WgXcQ" style="margin-bottom:0; background:rgba(255,255,255,0.05);" oninput="previewThumb('${cat.id}')">
-                        </div>
-                        <div style="flex-shrink:0; width:160px;">
-                            <label style="margin-bottom:0.3rem;">미리보기</label>
-                            <div style="position:relative; width:160px; padding-bottom:90px; background:#000; border:1px solid var(--border); border-radius:4px; overflow:hidden;">
-                                <img id="thumb-preview-${cat.id}" src="${thumbId ? 'https://img.youtube.com/vi/'+thumbId+'/mqdefault.jpg' : ''}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; ${thumbId ? '' : 'display:none;'}">
-                                <span id="thumb-empty-${cat.id}" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:0.7rem; color:var(--text2); text-align:center; ${thumbId ? 'display:none;' : ''}">미리보기 없음</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-            });
-            p.style.display = 'block';
-        } else {
-            p.style.display = 'none';
-        }
-    }
+  try{
+    const url=`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${cat.playlistId}&key=${YT_API_KEY}`;
+    const r=await(await fetch(url)).json();
+    if(r.error)throw new Error(r.error.message);
+    let validItems=(r.items||[]).filter(i=>{const t=i.snippet?.title;return i.snippet?.resourceId?.videoId&&t!=='Deleted video'&&t!=='Private video'&&t!=='삭제된 동영상'&&t!=='비공개 동영상';});
+    const savedOrder=videoData.sortOrder&&videoData.sortOrder[id]?videoData.sortOrder[id]:[];
+    validItems.sort((a,b)=>{let ia=savedOrder.indexOf(a.snippet.resourceId.videoId);let ib=savedOrder.indexOf(b.snippet.resourceId.videoId);if(ia===-1)ia=9999;if(ib===-1)ib=9999;return ia-ib;});
+    g.innerHTML='';
+    if(validItems.length===0){g.innerHTML='<p style="color:var(--text2)">표시할 영상이 없습니다.</p>';return;}
+    validItems.forEach(item=>{
+      const vid=item.snippet.resourceId.videoId;
+      const title=item.snippet.title;
+      const savedRole=videoData.roles[vid]||'';
+      const card=document.createElement('div');card.className='vid-card';card.draggable=true;card.dataset.vid=vid;
+      card.innerHTML=`<div style="background:var(--border);color:var(--text);text-align:center;padding:.5rem;font-size:.8rem;cursor:grab;font-weight:600">✥ 드래그로 순서 변경 ✥</div><div class="vid-thumb"><img src="https://img.youtube.com/vi/${vid}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${vid}/hqdefault.jpg'"></div><div class="vid-info"><div class="vid-title" title="${title}">${title}</div><div style="font-size:.75rem;color:var(--text2);margin-top:.2rem">ID: ${vid}</div></div><div class="vid-role-area"><label>커스텀 설명 (유튜브 설명 대신 표시)</label><textarea placeholder="비워두면 유튜브 설명 사용" oninput="updateRole('${vid}',this.value)">${savedRole}</textarea></div>`;
+      card.addEventListener('dragstart',()=>card.classList.add('dragging'));
+      card.addEventListener('dragend',()=>{card.classList.remove('dragging');updateSortOrder();});
+      card.addEventListener('dragover',e=>{e.preventDefault();const drag=document.querySelector('.dragging');if(drag&&drag!==card){const box=card.getBoundingClientRect();const after=(e.clientX>box.left+box.width/2)||(e.clientY>box.top+box.height/2);card.parentNode.insertBefore(drag,after?card.nextSibling:card);}});
+      g.appendChild(card);
+    });
+  }catch(e){g.innerHTML=`<p style="color:var(--red)">영상을 불러오지 못했습니다: ${e.message}</p>`;}
+}
 
-    function applyCatNames() {
-        categories.forEach(cat => {
-            const nameVal = document.getElementById('cat-input-' + cat.id).value.trim();
-            if(nameVal) cat.name = nameVal;
-            const thumbVal = document.getElementById('thumb-input-' + cat.id).value.trim();
-            if(thumbVal) {
-                cat.thumb = thumbVal;
-            } else {
-                delete cat.thumb;
-            }
-        });
-        videoData.categories = categories;
-        renderTabs();
-        document.getElementById('cat-edit-panel').style.display = 'none';
+// ── Profile Crop with Zoom ────────────────────────────────────────────────────
+function initProfileCrop(){
+  const pos=(videoData.profilePosition||'50% 50%').split(' ');
+  cropX=parseFloat(pos[0])||50;cropY=parseFloat(pos[1])||50;
+  cropZoom=videoData.profileZoom||1;
+  document.getElementById('zoom-slider').value=Math.round(cropZoom*100);
+  applyCropPos();
+  document.getElementById('profile-crop-box').style.display='block';
+  initCropDrag();
+}
 
-        if(currentCatId) {
-            const cat = categories.find(c => c.id === currentCatId);
-            document.getElementById('cat-title').innerText = cat.name + " 카테고리 영상 스튜디오";
-        }
-        alert('적용되었습니다! 화면 하단의 [🚀 덮어쓰기] 버튼을 누르시면 실제 홈페이지에 최종 반영됩니다.');
-    }
+function applyCropPos(){
+  const bg=document.getElementById('crop-bg');
+  // Use background-size to simulate zoom over cover
+  // cover = 100% of the dimension that's smaller relative to frame
+  const zoomPct=Math.round(cropZoom*100);
+  bg.style.backgroundPosition=cropX+'% '+cropY+'%';
+  bg.style.backgroundSize=zoomPct+'%';
+  // if zoom is 1, force cover behavior
+  if(cropZoom<=1){bg.style.backgroundSize='cover';}
+  document.getElementById('pos-display').textContent=Math.round(cropX)+'% '+Math.round(cropY)+'%';
+  document.getElementById('zoom-display').textContent=Math.round(cropZoom*100)+'%';
+  document.getElementById('zoom-slider').value=Math.round(cropZoom*100);
+  videoData.profilePosition=Math.round(cropX)+'% '+Math.round(cropY)+'%';
+  videoData.profileZoom=parseFloat(cropZoom.toFixed(2));
+  markDirty();
+}
 
-    function previewThumb(catId) {
-        const val = document.getElementById('thumb-input-' + catId).value.trim();
-        const img = document.getElementById('thumb-preview-' + catId);
-        const empty = document.getElementById('thumb-empty-' + catId);
-        if(val) {
-            img.src = 'https://img.youtube.com/vi/' + val + '/mqdefault.jpg';
-            img.style.display = '';
-            empty.style.display = 'none';
-        } else {
-            img.src = '';
-            img.style.display = 'none';
-            empty.style.display = '';
-        }
-    }
+function onZoomSlider(val){cropZoom=parseInt(val)/100;applyCropPos();}
+function setPosDirect(x,y,z){cropX=x;cropY=y;cropZoom=z||1;applyCropPos();}
 
-    async function openCat(id) {
-        currentCatId = id;
-        const cat = categories.find(c => c.id === id);
-        if(!cat) return;
+function initCropDrag(){
+  const frame=document.getElementById('crop-frame');
+  let dragging=false,lastX=0,lastY=0;
+  function onDown(e){dragging=true;lastX=e.touches?e.touches[0].clientX:e.clientX;lastY=e.touches?e.touches[0].clientY:e.clientY;frame.classList.add('moved');e.preventDefault();}
+  function onMove(e){
+    if(!dragging)return;
+    const cx=e.touches?e.touches[0].clientX:e.clientX;const cy=e.touches?e.touches[0].clientY:e.clientY;
+    const dx=cx-lastX;const dy=cy-lastY;lastX=cx;lastY=cy;
+    const sens=cropZoom>1?0.15/cropZoom:0.15;
+    cropX=Math.max(0,Math.min(100,cropX-dx*sens));
+    cropY=Math.max(0,Math.min(100,cropY-dy*sens));
+    applyCropPos();e.preventDefault();
+  }
+  function onUp(){dragging=false;}
+  frame.addEventListener('mousedown',onDown);frame.addEventListener('touchstart',onDown,{passive:false});
+  document.addEventListener('mousemove',onMove);document.addEventListener('touchmove',onMove,{passive:false});
+  document.addEventListener('mouseup',onUp);document.addEventListener('touchend',onUp);
+}
 
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('tab-' + id).classList.add('active');
-        document.getElementById('cat-title').innerText = cat.name + " 카테고리";
+// ── Design Editor ─────────────────────────────────────────────────────────────
+function renderDesignEditor(cat){
+  if(!cat.items)cat.items=[];
+  const g=document.getElementById('vid-grid');g.innerHTML='';
 
-        const g = document.getElementById('vid-grid');
+  // Google Drive sync section
+  const driveDiv=document.createElement('div');
+  driveDiv.style.cssText='background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:6px;padding:1.2rem;margin-bottom:1.5rem;grid-column:1/-1';
+  driveDiv.innerHTML=`<div style="font-size:.85rem;font-weight:600;margin-bottom:.8rem;color:var(--text2)">📁 Google Drive 폴더 자동 불러오기 <span style="font-size:.72rem;font-weight:400">(공개 폴더 + Drive API 활성화 필요)</span></div>
+    <div class="drive-row"><input type="text" id="drive-folder-${cat.id}" placeholder="Google Drive 폴더 ID (URL의 .../folders/XXX 부분)" style="font-size:.85rem"><button class="sm" onclick="loadFromDrive('${cat.id}','${cat.id}')">불러오기</button></div>
+    <p style="font-size:.75rem;color:var(--text2);margin:.5rem 0 0;line-height:1.5">폴더의 이미지 파일을 자동으로 가져옵니다. 기존 항목에 추가됩니다. ※ 구글 드라이브 파일은 "링크가 있는 모든 사용자"에게 공유 설정 필요.</p>`;
+  g.appendChild(driveDiv);
 
-        // 디자인/기획안 타입 분기
-        if(cat.type === 'design' || cat.type === 'planning') {
-            renderDesignEditor(cat);
-            return;
-        }
+  function buildCard(item,idx){
+    const card=document.createElement('div');card.className='design-item-card';
+    const imgSrc=item.img||'';
+    card.innerHTML=`<div class="di-preview">${imgSrc?`<img src="${imgSrc}" onerror="this.style.display='none'" style="min-height:100px">`:'<div style="width:100%;height:100%;min-height:100px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text2)">이미지 없음</div>'}</div>
+      <div class="di-fields">
+        <label style="margin-bottom:.2rem;font-size:.78rem">제목</label><input type="text" value="${(item.title||'').replace(/"/g,'&quot;')}" placeholder="작품 제목" oninput="updateDesignItem('${cat.id}',${idx},'title',this.value)">
+        <label style="margin-bottom:.2rem;font-size:.78rem">이미지 URL <span style="color:var(--text2);font-size:.72rem">(GitHub raw, Drive 직접링크 등)</span></label>
+        <input type="text" value="${imgSrc.replace(/"/g,'&quot;')}" placeholder="https://..." oninput="updateDesignItem('${cat.id}',${idx},'img',this.value);refreshDiPreview(this)">
+        <label style="margin-bottom:.2rem;font-size:.78rem">설명 (선택)</label><textarea placeholder="작품 설명" oninput="updateDesignItem('${cat.id}',${idx},'desc',this.value)">${(item.desc||'').replace(/</g,'&lt;')}</textarea>
+        <label style="margin-bottom:.2rem;font-size:.78rem">파일 링크 (선택)</label><input type="text" value="${(item.link||'').replace(/"/g,'&quot;')}" placeholder="https://..." oninput="updateDesignItem('${cat.id}',${idx},'link',this.value)">
+        <div class="di-actions"><button class="sm danger" onclick="removeDesignItem('${cat.id}',${idx})">삭제</button></div>
+      </div>`;
+    return card;
+  }
+  cat.items.forEach((item,idx)=>g.appendChild(buildCard(item,idx)));
+  const addBtn=document.createElement('button');addBtn.className='add-design-btn';addBtn.textContent='+ 새 작품 추가';
+  addBtn.onclick=()=>{cat.items.push({title:'',img:'',desc:'',link:''});videoData.categories=categories;renderDesignEditor(cat);markDirty();};
+  g.appendChild(addBtn);
+}
 
-        document.getElementById('cat-title').innerText = cat.name + " 카테고리 영상 스튜디오";
-        g.innerHTML = '<p style="color:var(--text2)">유튜브 영상 배열 불러오는 중...</p>';
-        
-        try {
-            const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${cat.playlistId}&key=${YT_API_KEY}`;
-            const r = await (await fetch(url)).json();
-            if(r.error) throw new Error(r.error.message);
-            
-            let validItems = (r.items||[]).filter(i => {
-                const t = i.snippet?.title;
-                return i.snippet?.resourceId?.videoId && t !== 'Deleted video' && t !== 'Private video' && t !== '삭제된 동영상' && t !== '비공개 동영상';
-            });
-            
-            // 기존에 저장된 순서가 있으면 우선 적용
-            const savedOrder = videoData.sortOrder && videoData.sortOrder[id] ? videoData.sortOrder[id] : [];
-            validItems.sort((a,b) => {
-                let idxA = savedOrder.indexOf(a.snippet.resourceId.videoId);
-                let idxB = savedOrder.indexOf(b.snippet.resourceId.videoId);
-                if(idxA === -1) idxA = 9999;
-                if(idxB === -1) idxB = 9999;
-                return idxA - idxB;
-            });
-            
-            g.innerHTML = '';
-            if(validItems.length === 0) {
-                g.innerHTML = '<p style="color:var(--text2)">이 플레이리스트에 표시할 영상이 없습니다.</p>';
-                return;
-            }
-            
-            validItems.forEach(item => {
-                const vid = item.snippet.resourceId.videoId;
-                const title = item.snippet.title;
-                const savedRole = videoData.roles[vid] || '';
-                
-                const card = document.createElement('div');
-                card.className = 'vid-card';
-                card.draggable = true;
-                card.dataset.vid = vid;
-                card.innerHTML = `
-                    <div class="drag-handle" style="background:var(--border); color:var(--text); text-align:center; padding:0.5rem; font-size:0.8rem; cursor:grab; font-weight:600;">
-                        ✥ 마우스로 잡고 이리저리 움직여보세요 ✥
-                    </div>
-                    <div class="vid-thumb">
-                        <img src="https://img.youtube.com/vi/${vid}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${vid}/hqdefault.jpg'">
-                    </div>
-                    <div class="vid-info">
-                        <div class="vid-title" title="${title}">${title}</div>
-                        <div style="font-size:0.75rem; color:var(--text2); margin-top:0.2rem;">ID: ${vid}</div>
-                    </div>
-                    <div class="vid-role-area">
-                        <label>이 영상의 커스텀 설명 덮어쓰기</label>
-                        <textarea placeholder="유튜브 설명 대신 이 내용이 노출됩니다." oninput="updateRole('${vid}', this.value)">${savedRole}</textarea>
-                    </div>
-                `;
-                
-                // Drag Events
-                card.addEventListener('dragstart', () => { 
-                    card.classList.add('dragging'); 
-                });
-                card.addEventListener('dragend', () => {
-                    card.classList.remove('dragging');
-                    updateSortOrder();
-                });
-                card.addEventListener('dragover', e => {
-                    e.preventDefault();
-                    const draggingItem = document.querySelector('.dragging');
-                    if(draggingItem && draggingItem !== card) {
-                        const box = card.getBoundingClientRect();
-                        // 마우스 위치가 카드의 가로/세로 절반(중심)을 넘었는지 확인
-                        const isAfter = (e.clientX > box.left + box.width / 2) || (e.clientY > box.top + box.height / 2);
-                        if(isAfter) {
-                            card.parentNode.insertBefore(draggingItem, card.nextSibling);
-                        } else {
-                            card.parentNode.insertBefore(draggingItem, card);
-                        }
-                    }
-                });
-                
-                g.appendChild(card);
-            });
-            
-        } catch(e) {
-            g.innerHTML = `<p style="color:var(--red)">영상을 불러오지 못했습니다: ${e.message}</p>`;
-        }
-    }
-    
-    let cropX = 50, cropY = 50;
+function refreshDiPreview(input){
+  const preview=input.closest('.design-item-card').querySelector('.di-preview');
+  if(!preview)return;const val=input.value.trim();
+  preview.innerHTML=val?`<img src="${val}" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;min-height:100px">`:'<div style="width:140px;height:100%;min-height:100px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text2)">이미지 없음</div>';
+}
 
-    function initProfileCrop() {
-        const pos = (videoData.profilePosition || '50% 50%').split(' ');
-        cropX = parseFloat(pos[0]) || 50;
-        cropY = parseFloat(pos[1]) || 50;
-        applyCropPos();
-        document.getElementById('profile-crop-box').style.display = 'block';
-        initCropDrag();
-    }
+async function loadFromDrive(catId,inputSuffix){
+  const folderInput=document.getElementById('drive-folder-'+inputSuffix);
+  const folderId=folderInput?folderInput.value.trim():'';
+  if(!folderId)return alert('폴더 ID를 입력해주세요.');
+  const cat=categories.find(c=>c.id===catId);if(!cat)return;
+  showLoading('Google Drive 폴더 불러오는 중...');
+  try{
+    const url=`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'image/'&fields=files(id,name)&key=${YT_API_KEY}`;
+    const r=await(await fetch(url)).json();
+    if(r.error)throw new Error(r.error.message);
+    if(!r.files||r.files.length===0){showLoading(false);alert('이미지 파일을 찾을 수 없습니다. 폴더 ID와 공유 설정을 확인하세요.');return;}
+    r.files.forEach(f=>{
+      const directUrl=`https://drive.google.com/uc?export=view&id=${f.id}`;
+      cat.items.push({title:f.name.replace(/\.[^/.]+$/,''),img:directUrl,desc:'',link:''});
+    });
+    videoData.categories=categories;
+    renderDesignEditor(cat);markDirty();
+    showLoading(false);
+    alert(`✅ ${r.files.length}개 이미지를 불러왔습니다. 하단 [🚀 덮어쓰기] 버튼을 눌러 저장하세요.`);
+  }catch(e){showLoading(false);alert('오류: '+e.message);}
+}
 
-    function applyCropPos() {
-        const img = document.getElementById('profile-crop-img');
-        img.style.objectPosition = cropX + '% ' + cropY + '%';
-        document.getElementById('pos-display').textContent =
-            Math.round(cropX) + '% ' + Math.round(cropY) + '%';
-        videoData.profilePosition = Math.round(cropX) + '% ' + Math.round(cropY) + '%';
-    }
+function updateDesignItem(catId,idx,field,value){const cat=categories.find(c=>c.id===catId);if(!cat||!cat.items||!cat.items[idx])return;cat.items[idx][field]=value;videoData.categories=categories;markDirty();}
+function removeDesignItem(catId,idx){const cat=categories.find(c=>c.id===catId);if(!cat||!cat.items)return;cat.items.splice(idx,1);videoData.categories=categories;renderDesignEditor(cat);markDirty();}
+function updateSortOrder(){if(!videoData.sortOrder)videoData.sortOrder={};const g=document.getElementById('vid-grid');const order=[...g.querySelectorAll('.vid-card')].map(c=>c.dataset.vid);videoData.sortOrder[currentCatId]=order;markDirty();}
+function updateRole(vid,val){if(!val.trim()){delete videoData.roles[vid];}else{videoData.roles[vid]=val;}markDirty();}
 
-    function setPosDirect(x, y) {
-        cropX = x; cropY = y;
-        applyCropPos();
-    }
-
-    function initCropDrag() {
-        const frame = document.getElementById('crop-frame');
-        const img = document.getElementById('profile-crop-img');
-        let dragging = false, lastX = 0, lastY = 0;
-
-        // 이미지 로드 후 감도 계산
-        let sensX = 0.15, sensY = 0.15;
-        img.addEventListener('load', calcSens);
-        if (img.complete) calcSens();
-
-        function calcSens() {
-            const natW = img.naturalWidth, natH = img.naturalHeight;
-            const frameW = frame.clientWidth, frameH = frame.clientHeight;
-            if (!natW || !natH) return;
-            const natRatio = natW / natH;
-            const frameRatio = frameW / frameH;
-            if (natRatio > frameRatio) {
-                // 가로가 넘침 → 좌우 드래그 가능
-                const scaledW = frameH * natRatio;
-                sensX = 100 / (scaledW - frameW || 1);
-                sensY = 0;
-            } else {
-                // 세로가 넘침 → 상하 드래그 가능
-                const scaledH = frameW / natRatio;
-                sensY = 100 / (scaledH - frameH || 1);
-                sensX = 0;
-            }
-        }
-
-        function onDown(e) {
-            dragging = true;
-            lastX = e.touches ? e.touches[0].clientX : e.clientX;
-            lastY = e.touches ? e.touches[0].clientY : e.clientY;
-            frame.classList.add('dragging', 'moved');
-            e.preventDefault();
-        }
-        function onMove(e) {
-            if (!dragging) return;
-            const cx = e.touches ? e.touches[0].clientX : e.clientX;
-            const cy = e.touches ? e.touches[0].clientY : e.clientY;
-            const dx = cx - lastX, dy = cy - lastY;
-            lastX = cx; lastY = cy;
-            // 드래그 방향 = 이미지가 이동하는 방향 → position은 반대로
-            cropX = Math.max(0, Math.min(100, cropX - dx * sensX));
-            cropY = Math.max(0, Math.min(100, cropY - dy * sensY));
-            applyCropPos();
-            e.preventDefault();
-        }
-        function onUp() {
-            dragging = false;
-            frame.classList.remove('dragging');
-        }
-
-        frame.addEventListener('mousedown', onDown);
-        frame.addEventListener('touchstart', onDown, { passive: false });
-        document.addEventListener('mousemove', onMove);
-        document.addEventListener('touchmove', onMove, { passive: false });
-        document.addEventListener('mouseup', onUp);
-        document.addEventListener('touchend', onUp);
-    }
-
-    function renderDesignEditor(cat) {
-        if(!cat.items) cat.items = [];
-        const g = document.getElementById('vid-grid');
-        g.innerHTML = '';
-
-        function buildCard(item, idx) {
-            const card = document.createElement('div');
-            card.className = 'design-item-card';
-            card.innerHTML = `
-                <div class="di-preview">
-                    <img src="${item.img || ''}" onerror="this.style.display='none'" style="${item.img ? '' : 'display:none;'}">
-                </div>
-                <div class="di-fields">
-                    <label style="margin-bottom:0.2rem; font-size:0.78rem;">제목</label>
-                    <input type="text" value="${(item.title||'').replace(/"/g,'&quot;')}" placeholder="작품 제목" oninput="updateDesignItem('${cat.id}',${idx},'title',this.value)">
-                    <label style="margin-bottom:0.2rem; font-size:0.78rem;">이미지 URL <span style="color:var(--text2); font-size:0.72rem;">(GitHub raw 또는 외부 이미지 링크)</span></label>
-                    <input type="text" value="${(item.img||'').replace(/"/g,'&quot;')}" placeholder="https://..." oninput="updateDesignItem('${cat.id}',${idx},'img',this.value); previewDesignImg(this, ${idx})">
-                    <label style="margin-bottom:0.2rem; font-size:0.78rem;">설명 <span style="color:var(--text2); font-size:0.72rem;">(선택)</span></label>
-                    <textarea placeholder="작품 설명을 입력하세요" oninput="updateDesignItem('${cat.id}',${idx},'desc',this.value)">${(item.desc||'').replace(/</g,'&lt;')}</textarea>
-                    <label style="margin-bottom:0.2rem; font-size:0.78rem;">파일 링크 <span style="color:var(--text2); font-size:0.72rem;">(선택 - PDF, 구글드라이브 등)</span></label>
-                    <input type="text" value="${(item.link||'').replace(/"/g,'&quot;')}" placeholder="https://..." oninput="updateDesignItem('${cat.id}',${idx},'link',this.value)">
-                    <div class="di-actions">
-                        <button class="sm danger" onclick="removeDesignItem('${cat.id}',${idx})">삭제</button>
-                    </div>
-                </div>
-            `;
-            // preview img on load
-            const imgInput = card.querySelectorAll('input')[1];
-            const previewImg = card.querySelector('.di-preview img');
-            imgInput._preview = previewImg;
-            return card;
-        }
-
-        cat.items.forEach((item, idx) => g.appendChild(buildCard(item, idx)));
-
-        const addBtn = document.createElement('button');
-        addBtn.className = 'add-design-btn';
-        addBtn.textContent = '+ 새 작품 추가';
-        addBtn.onclick = () => {
-            cat.items.push({ title: '', img: '', desc: '', link: '' });
-            videoData.categories = categories;
-            renderDesignEditor(cat);
-        };
-        g.appendChild(addBtn);
-    }
-
-    function updateDesignItem(catId, idx, field, value) {
-        const cat = categories.find(c => c.id === catId);
-        if(!cat || !cat.items || !cat.items[idx]) return;
-        cat.items[idx][field] = value;
-        videoData.categories = categories;
-    }
-
-    function previewDesignImg(input, idx) {
-        const previewImg = input._preview || input.closest('.design-item-card').querySelector('.di-preview img');
-        if(!previewImg) return;
-        const val = input.value.trim();
-        if(val) { previewImg.style.display = ''; previewImg.src = val; }
-        else { previewImg.style.display = 'none'; }
-    }
-
-    function removeDesignItem(catId, idx) {
-        const cat = categories.find(c => c.id === catId);
-        if(!cat || !cat.items) return;
-        cat.items.splice(idx, 1);
-        videoData.categories = categories;
-        renderDesignEditor(cat);
-    }
-
-    function updateSortOrder() {
-        if(!videoData.sortOrder) videoData.sortOrder = {};
-        const g = document.getElementById('vid-grid');
-        const order = [...g.querySelectorAll('.vid-card')].map(c => c.dataset.vid);
-        videoData.sortOrder[currentCatId] = order;
-    }
-
-    // Textarea oninput event
-    function updateRole(vid, val) {
-        if(!val.trim()) {
-            delete videoData.roles[vid];
-        } else {
-            videoData.roles[vid] = val;
-        }
-    }
-
-    async function saveToGithub() {
-        if(!videoData) return;
-        showLoading("GitHub 원격 저장소에 새로운 코드를 덮어쓰고 있습니다! (Vercel 배포 트리거)");
-        try {
-            const jsonStr = JSON.stringify(videoData, null, 2);
-            const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-                method: 'PUT',
-                headers: { 'Authorization': `token ${ghToken}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: 'Admin Panel Update: Custom Roles using Visual Editor',
-                    content: b64EncodeUnicode(jsonStr),
-                    sha: fileSha
-                })
-            });
-            
-            if(!res.ok) {
-                const errData = await res.json();
-                throw new Error(errData.message || '업데이트에 실패했습니다.');
-            }
-            
-            const newData = await res.json();
-            fileSha = newData.content.sha;
-            
-            showLoading(false);
-            alert('🎉 성공적으로 깃허브 저장 & 배포 지시가 완료되었습니다!\n\nVercel이 변경된 파일을 감지하여 배포 중이므로, 약 5~10초 후 메인 사이트(포트폴리오 도메인)에 접속하여 확인해보세요!');
-        } catch(err) {
-            alert('오류가 발생했습니다: ' + err.message);
-            showLoading(false);
-        }
-    }
+async function saveToGithub(){
+  if(!videoData)return;
+  showLoading('GitHub에 저장 중... (Vercel 배포 트리거)');
+  try{
+    const jsonStr=JSON.stringify(videoData,null,2);
+    const res=await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`,{method:'PUT',headers:{'Authorization':`token ${ghToken}`,'Content-Type':'application/json'},body:JSON.stringify({message:'Admin Panel Update: Visual Editor',content:b64Enc(jsonStr),sha:fileSha})});
+    if(!res.ok){const d=await res.json();throw new Error(d.message||'업데이트 실패');}
+    const newData=await res.json();fileSha=newData.content.sha;
+    isDirty=false;document.getElementById('unsaved-badge').style.display='none';
+    showLoading(false);
+    alert('🎉 성공적으로 저장 & 배포 지시 완료!\n약 5~10초 후 메인 사이트를 확인하세요!');
+  }catch(err){alert('오류: '+err.message);showLoading(false);}
+}
 </script>
-
 </body>
 </html>
