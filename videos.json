@@ -131,7 +131,10 @@
   },
   "pageContent": {
     "contactEmail": "h001715@naver.com",
-    "contactPhone": "01057191055"
+    "contactPhone": "01057191055",
+    "footerYear": "2026",
+    "footerName": "Han Taemin",
+    "contactLead": "직통 연락처"
   },
   "career": [
     {
