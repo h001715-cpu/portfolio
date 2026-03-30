@@ -204,7 +204,12 @@
     }
   ],
   "profileZoom": 1.38,
-  "skills": [],
+  "skills": [
+    {
+      "label": "일본어",
+      "value": ""
+    }
+  ],
   "clients": {
     "folderId": "1PafGWxSizjB2kfB7a-r6eSTeiuCX9K53",
     "title": "",
