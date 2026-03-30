@@ -158,13 +158,12 @@ section{padding:7rem 5vw}
 #clients{background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:none}
 .clients-inner{max-width:960px;margin:0 auto;text-align:center}
 .clients-subtitle{font-size:1rem;color:var(--text2);font-weight:300;line-height:1.8;margin:-.5rem 0 3rem}
-.clients-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem}
-.client-logo{background:transparent;border-radius:6px;padding:1.2rem 1rem;display:flex;align-items:center;justify-content:center;aspect-ratio:5/3;transition:transform .3s,opacity .3s;overflow:hidden}
+.clients-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:1.5rem}
+.client-logo{width:160px;background:transparent;border-radius:6px;padding:1.2rem 1rem;display:flex;align-items:center;justify-content:center;transition:transform .3s,opacity .3s;overflow:hidden}
 .client-logo:hover{transform:translateY(-4px);opacity:.75}
-.client-logo img{max-width:100%;max-height:90px;object-fit:contain;transition:opacity .3s}
+.client-logo img{max-width:140px;max-height:90px;object-fit:contain;transition:opacity .3s}
 .client-logo img:hover{opacity:.85}
-@media(max-width:1024px){.clients-grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:600px){.clients-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.client-logo{width:130px}}
 #services{border-bottom:1px solid var(--border)}
 .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:3rem}
 .svc-card{padding:2rem;border:1px solid var(--border);background:var(--card);position:relative;overflow:hidden;transition:border-color .3s,background .3s}
@@ -623,6 +622,16 @@ function buildClients(clients){
   var url='https://www.googleapis.com/drive/v3/files?q='+q+'&fields=files(id,name)&orderBy=name&key='+YT_API_KEY;
   fetch(url).then(function(r){return r.json();}).then(function(d){
     if(!d.files||d.files.length===0)return;
+    // fileOrder가 있으면 저장된 순서대로 정렬
+    if(clients.fileOrder&&clients.fileOrder.length){
+      var orderMap={};
+      clients.fileOrder.forEach(function(id,i){orderMap[id]=i;});
+      d.files.sort(function(a,b){
+        var ai=orderMap[a.id]!=null?orderMap[a.id]:999;
+        var bi=orderMap[b.id]!=null?orderMap[b.id]:999;
+        return ai-bi;
+      });
+    }
     grid.innerHTML='';
     d.files.forEach(function(file){
       var item=document.createElement('div');
