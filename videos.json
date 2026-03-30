@@ -41,7 +41,7 @@
       "id": "ai-ad",
       "name": "AI 광고 영상",
       "playlistId": "PLmtMXxa-X5LOoF9lgqsTcpLvB1i7cPTr1",
-      "thumb": "6U0aNE5UHlU"
+      "thumb": "4CRpNu_7W50"
     },
     {
       "id": "brand-film",
@@ -85,13 +85,15 @@
           "link": ""
         }
       ],
-      "thumb": "https://github.com/h001715-cpu/portfolio/blob/main/%ED%95%98%EC%8A%B9%EC%A7%84-%EC%9C%A0%ED%8A%9C%EB%B8%8C-%EC%B1%84%EB%84%90%EC%95%84%ED%8A%B8_230407.png?raw=true"
+      "thumb": "https://github.com/h001715-cpu/portfolio/blob/main/%ED%95%98%EC%8A%B9%EC%A7%84-%EC%9C%A0%ED%8A%9C%EB%B8%8C-%EC%B1%84%EB%84%90%EC%95%84%ED%8A%B8_230407.png?raw=true",
+      "thumbImg": "https://drive.google.com/thumbnail?id=1u-LbU-0S618LTWYNzIvndfTgP2UenBag&sz=w1200"
     },
     {
       "id": "planning",
       "name": "기획안",
       "type": "planning",
-      "items": []
+      "items": [],
+      "thumbImg": ""
     }
   ],
   "sortOrder": {
