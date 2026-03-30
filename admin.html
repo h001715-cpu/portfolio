@@ -681,6 +681,13 @@ function renderDesignEditor(cat){
     ${currentFolderId?`<div style="margin-top:.8rem;padding:.5rem .8rem;background:rgba(0,180,136,.08);border:1px solid rgba(0,180,136,.2);border-radius:4px;font-size:.78rem;color:#00b488">✓ 폴더 ID 설정됨 — 메인 사이트에서 자동 반영 중</div>`:''}`;
   g.appendChild(folderSection);
 
+  // Drive 미리보기 영역
+  const previewSection=document.createElement('div');
+  previewSection.id='drive-preview-'+cat.id;
+  previewSection.style.cssText='grid-column:1/-1;margin-bottom:1.5rem';
+  g.appendChild(previewSection);
+  if(currentFolderId){setTimeout(()=>previewDriveFolder(cat.id),100);}
+
   function buildCard(item,idx){
     const card=document.createElement('div');card.className='design-item-card';
     const imgSrc=item.img||'';
@@ -688,8 +695,14 @@ function renderDesignEditor(cat){
     if(isPlanningCat){
       // PDF 기획안 카드
       const hasPdf=!!linkSrc;
-      card.innerHTML=`<div class="di-preview" style="background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:100px">
-        ${hasPdf?`<span style="font-size:2.4rem">📄</span><span style="font-size:.7rem;color:var(--red);font-weight:700">PDF 등록됨</span>`:`<span style="font-size:2rem;opacity:.3">📄</span><span style="font-size:.68rem;color:var(--text2)">미등록</span>`}
+      const _pdm=linkSrc?(linkSrc.match(/\/file\/d\/([^/?]+)/)||linkSrc.match(/[?&]id=([^&]+)/)):null;
+      const _pThumb=_pdm&&_pdm[1]?'https://drive.google.com/thumbnail?id='+_pdm[1]+'&sz=w400':'';
+      card.innerHTML=`<div class="di-preview" style="${_pThumb?'padding:0;overflow:hidden':'background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:100px'}">
+        ${_pThumb
+          ?`<img src="${_pThumb}" style="width:100%;height:100%;min-height:100px;object-fit:cover;display:block" onerror="this.outerHTML='<div style=\\'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:1rem;background:#111;height:100%\\'><span style=\\'font-size:2.4rem\\'>📄</span><span style=\\'font-size:.7rem;color:var(--red);font-weight:700\\'>PDF 등록됨</span></div>'">`
+          :hasPdf
+            ?`<span style="font-size:2.4rem">📄</span><span style="font-size:.7rem;color:var(--red);font-weight:700">PDF 등록됨</span>`
+            :`<span style="font-size:2rem;opacity:.3">📄</span><span style="font-size:.68rem;color:var(--text2)">미등록</span>`}
         </div>
         <div class="di-fields">
           <label style="margin-bottom:.2rem;font-size:.78rem">기획안 제목</label><input type="text" value="${(item.title||'').replace(/"/g,'&quot;')}" placeholder="기획안 제목" oninput="updateDesignItem('${cat.id}',${idx},'title',this.value)">
@@ -720,11 +733,22 @@ function renderDesignEditor(cat){
 
 function refreshPdfPreview(input){
   const preview=input.closest('.design-item-card').querySelector('.di-preview');
-  if(!preview)return;const val=input.value.trim();
-  preview.innerHTML=val
-    ?'<span style="font-size:2.4rem">📄</span><span style="font-size:.7rem;color:var(--red);font-weight:700">PDF 등록됨</span>'
-    :'<span style="font-size:2rem;opacity:.3">📄</span><span style="font-size:.68rem;color:var(--text2)">미등록</span>';
-  preview.style.cssText='background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:100px';
+  if(!preview)return;
+  const val=input.value.trim();
+  if(val){
+    const m=val.match(/\/file\/d\/([^/?]+)/)||val.match(/[?&]id=([^&]+)/);
+    const thumbUrl=m&&m[1]?'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w400':'';
+    if(thumbUrl){
+      preview.style.cssText='padding:0;overflow:hidden';
+      preview.innerHTML=`<img src="${thumbUrl}" style="width:100%;height:100%;min-height:100px;object-fit:cover;display:block" onerror="this.outerHTML='<div style=\\'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:1rem;background:#111;height:100%\\'><span style=\\'font-size:2.4rem\\'>📄</span><span style=\\'font-size:.7rem;color:var(--red);font-weight:700\\'>PDF 등록됨</span></div>'">`;
+    }else{
+      preview.style.cssText='background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:100px';
+      preview.innerHTML='<span style="font-size:2.4rem">📄</span><span style="font-size:.7rem;color:var(--red);font-weight:700">PDF 등록됨</span>';
+    }
+  }else{
+    preview.style.cssText='background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:100px';
+    preview.innerHTML='<span style="font-size:2rem;opacity:.3">📄</span><span style="font-size:.68rem;color:var(--text2)">미등록</span>';
+  }
 }
 
 function refreshDiPreview(input){
@@ -748,12 +772,59 @@ async function applyFolderId(catId){
   if(!value){alert('폴더 ID를 입력해주세요.');return;}
   saveFolderId(catId,value);
   await saveToGithub();
+  // 저장 후 폴더 미리보기 갱신
+  previewDriveFolder(catId);
 }
 
 function updateDesignItem(catId,idx,field,value){const cat=categories.find(c=>c.id===catId);if(!cat||!cat.items||!cat.items[idx])return;cat.items[idx][field]=value;videoData.categories=categories;markDirty();}
 function removeDesignItem(catId,idx){const cat=categories.find(c=>c.id===catId);if(!cat||!cat.items)return;cat.items.splice(idx,1);videoData.categories=categories;renderDesignEditor(cat);markDirty();}
 function updateSortOrder(){if(!videoData.sortOrder)videoData.sortOrder={};const g=document.getElementById('vid-grid');const order=[...g.querySelectorAll('.vid-card')].map(c=>c.dataset.vid);videoData.sortOrder[currentCatId]=order;markDirty();}
 function updateRole(vid,val){if(!val.trim()){delete videoData.roles[vid];}else{videoData.roles[vid]=val;}markDirty();}
+
+// ── Drive Folder Preview ──────────────────────────────────────────────────────
+async function previewDriveFolder(catId){
+  const cat=categories.find(c=>c.id===catId);
+  if(!cat||!cat.folderId)return;
+  const previewDiv=document.getElementById('drive-preview-'+catId);
+  if(!previewDiv)return;
+  previewDiv.innerHTML='<p style="color:var(--text2);font-size:.85rem;padding:.8rem">📁 폴더 파일 불러오는 중...</p>';
+  const isPlanningCat=cat.type==='planning';
+  const mimeFilter=isPlanningCat?"mimeType='application/pdf'":"mimeType+contains+'image/'";
+  const q="'"+cat.folderId+"'+in+parents+and+"+mimeFilter;
+  const url='https://www.googleapis.com/drive/v3/files?q='+q+'&fields=files(id,name,mimeType)&orderBy=name&key='+YT_API_KEY;
+  try{
+    const r=await fetch(url);const data=await r.json();
+    if(data.error||!data.files||data.files.length===0){
+      previewDiv.innerHTML='<p style="color:var(--text2);font-size:.82rem;padding:.8rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px">폴더에 파일이 없거나 공유 설정을 확인해주세요. (폴더와 파일 모두 "링크가 있는 모든 사용자" 설정 필요)</p>';
+      return;
+    }
+    const ratio=isPlanningCat?'3/4':'4/3';
+    let html=`<div style="margin-bottom:.8rem;display:flex;align-items:center;gap:.6rem">
+      <span style="font-size:.82rem;font-weight:700;color:var(--text)">📁 폴더 내 ${data.files.length}개 파일</span>
+      <span style="font-size:.7rem;background:rgba(0,180,136,.15);border:1px solid rgba(0,180,136,.3);border-radius:3px;padding:.1rem .4rem;color:#00b488">메인 사이트 자동 반영 중</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.8rem">`;
+    data.files.forEach(file=>{
+      const thumbUrl='https://drive.google.com/thumbnail?id='+file.id+'&sz=w400';
+      const name=file.name.replace(/\.[^/.]+$/,'');
+      const errHtml=isPlanningCat
+        ?`<div style='display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:100%'><span style='font-size:1.8rem'>📄</span><span style='font-size:.6rem;color:#888'>미리보기 없음</span></div>`
+        :`<div style='display:flex;align-items:center;justify-content:center;height:100%;color:#555;font-size:.65rem'>이미지 없음</div>`;
+      html+=`<div style="background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:6px;overflow:hidden">
+        <div style="width:100%;aspect-ratio:${ratio};background:#111;overflow:hidden;position:relative">
+          <img src="${thumbUrl}" alt="${name}" loading="lazy"
+            style="width:100%;height:100%;object-fit:cover;display:block"
+            onerror="this.parentNode.innerHTML='${errHtml}'">
+        </div>
+        <div style="padding:.5rem .6rem;font-size:.7rem;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-top:1px solid var(--border)" title="${name}">${name}</div>
+      </div>`;
+    });
+    html+='</div>';
+    previewDiv.innerHTML=html;
+  }catch(e){
+    previewDiv.innerHTML=`<p style="color:var(--red);font-size:.82rem;padding:.6rem">오류: ${e.message}</p>`;
+  }
+}
 
 async function saveToGithub(){
   if(!videoData)return;
