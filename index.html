@@ -154,6 +154,17 @@ section{padding:7rem 5vw}
 .cmodal-copy{background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--text2);font-size:.72rem;letter-spacing:.08em;padding:.4rem .8rem;cursor:pointer;transition:all .2s;white-space:nowrap;border-radius:3px}
 .cmodal-copy:hover{background:var(--red-dim);border-color:var(--red);color:var(--text)}
 .cmodal-copy.copied{background:var(--red);border-color:var(--red);color:#fff}
+/* Clients */
+#clients{background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:none}
+.clients-inner{max-width:960px;margin:0 auto;text-align:center}
+.clients-subtitle{font-size:1rem;color:var(--text2);font-weight:300;line-height:1.8;margin:-.5rem 0 3rem}
+.clients-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem}
+.client-logo{background:#fff;border-radius:6px;padding:1.6rem 1.4rem;display:flex;align-items:center;justify-content:center;aspect-ratio:5/3;transition:transform .3s,box-shadow .3s;overflow:hidden}
+.client-logo:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.client-logo img{max-width:100%;max-height:55px;object-fit:contain;transition:opacity .3s}
+.client-logo img:hover{opacity:.85}
+@media(max-width:1024px){.clients-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.clients-grid{grid-template-columns:repeat(2,1fr)}}
 #services{border-bottom:1px solid var(--border)}
 .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:3rem}
 .svc-card{padding:2rem;border:1px solid var(--border);background:var(--card);position:relative;overflow:hidden;transition:border-color .3s,background .3s}
@@ -343,6 +354,15 @@ a, button, .cat-card, .vid-item, .ptab, .burger, .back-btn, input, textarea, .lb
   </div>
 </section>
 
+<section id="clients">
+  <div class="clients-inner">
+    <span class="sec-label rv" style="display:block;margin-bottom:.8rem">Clients</span>
+    <h2 class="sec-title rv" id="clients-title-text" style="margin-bottom:1rem">함께한 브랜드들</h2>
+    <p class="clients-subtitle rv" id="clients-subtitle-text"></p>
+    <div class="clients-grid" id="clients-grid"></div>
+  </div>
+</section>
+
 <section id="contact">
   <div class="ct-inner">
     <span class="sec-label rv" style="display:block;margin-bottom:.8rem">Contact</span>
@@ -448,6 +468,7 @@ fetch('videos.json?t='+Date.now())
     setText('ft-name',pc.footerName);setText('ft-year',pc.footerYear);
     if(data.career&&data.career.length>0)buildCareer(data.career);
     if(data.skills&&data.skills.length>0)buildSkills(data.skills);
+    if(data.clients&&data.clients.folderId)buildClients(data.clients);
     buildCatGrid();
     setTimeout(observeRv,300);
   })
@@ -587,6 +608,35 @@ function buildCareer(career){
     list.appendChild(d);
   });
   wrap.style.display='';
+}
+
+function buildClients(clients){
+  if(!clients||!clients.folderId)return;
+  var section=document.getElementById('clients');
+  var grid=document.getElementById('clients-grid');
+  if(!section||!grid)return;
+  var titleEl=document.getElementById('clients-title-text');
+  var subEl=document.getElementById('clients-subtitle-text');
+  if(clients.title&&titleEl)titleEl.textContent=clients.title;
+  if(clients.subtitle&&subEl){subEl.textContent=clients.subtitle;subEl.style.display='';}else if(subEl){subEl.style.display='none';}
+  var q="'"+clients.folderId+"'+in+parents+and+mimeType+contains+'image/'";
+  var url='https://www.googleapis.com/drive/v3/files?q='+q+'&fields=files(id,name)&orderBy=name&key='+YT_API_KEY;
+  fetch(url).then(function(r){return r.json();}).then(function(d){
+    if(!d.files||d.files.length===0)return;
+    grid.innerHTML='';
+    d.files.forEach(function(file){
+      var item=document.createElement('div');
+      item.className='client-logo rv-s';
+      var img=document.createElement('img');
+      img.src='https://drive.google.com/thumbnail?id='+file.id+'&sz=w400';
+      img.alt=file.name.replace(/\.[^/.]+$/,'');
+      img.loading='lazy';
+      item.appendChild(img);
+      grid.appendChild(item);
+    });
+    section.style.display='';
+    setTimeout(observeRv,100);
+  }).catch(function(){});
 }
 
 function buildSkills(skills){
