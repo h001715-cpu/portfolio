@@ -781,7 +781,7 @@ function removeDesignItem(catId,idx){const cat=categories.find(c=>c.id===catId);
 function updateSortOrder(){if(!videoData.sortOrder)videoData.sortOrder={};const g=document.getElementById('vid-grid');const order=[...g.querySelectorAll('.vid-card')].map(c=>c.dataset.vid);videoData.sortOrder[currentCatId]=order;markDirty();}
 function updateRole(vid,val){if(!val.trim()){delete videoData.roles[vid];}else{videoData.roles[vid]=val;}markDirty();}
 
-// ── Drive Folder Preview ──────────────────────────────────────────────────────
+// ── Drive Folder Preview (편집 카드) ─────────────────────────────────────────
 async function previewDriveFolder(catId){
   const cat=categories.find(c=>c.id===catId);
   if(!cat||!cat.folderId)return;
@@ -793,37 +793,67 @@ async function previewDriveFolder(catId){
   const q="'"+cat.folderId+"'+in+parents+and+"+mimeFilter;
   const url='https://www.googleapis.com/drive/v3/files?q='+q+'&fields=files(id,name,mimeType)&orderBy=name&key='+YT_API_KEY;
   try{
-    const r=await fetch(url);const data=await r.json();
+    const r=await fetch(url);
+    const data=await r.json();
     if(data.error||!data.files||data.files.length===0){
-      previewDiv.innerHTML='<p style="color:var(--text2);font-size:.82rem;padding:.8rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px">폴더에 파일이 없거나 공유 설정을 확인해주세요. (폴더와 파일 모두 "링크가 있는 모든 사용자" 설정 필요)</p>';
+      previewDiv.innerHTML='<p style="color:var(--text2);font-size:.82rem;padding:.8rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px">폴더에 파일이 없거나 공유 설정을 확인해주세요.<br><span style="font-size:.75rem;color:var(--text2)">폴더와 파일 모두 "링크가 있는 모든 사용자" 공유 설정 필요</span></p>';
       return;
     }
-    const ratio=isPlanningCat?'3/4':'4/3';
-    let html=`<div style="margin-bottom:.8rem;display:flex;align-items:center;gap:.6rem">
-      <span style="font-size:.82rem;font-weight:700;color:var(--text)">📁 폴더 내 ${data.files.length}개 파일</span>
-      <span style="font-size:.7rem;background:rgba(0,180,136,.15);border:1px solid rgba(0,180,136,.3);border-radius:3px;padding:.1rem .4rem;color:#00b488">메인 사이트 자동 반영 중</span>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.8rem">`;
+    if(!cat.driveOverrides)cat.driveOverrides={};
+
+    previewDiv.innerHTML=`
+      <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;flex-wrap:wrap">
+        <span style="font-size:.88rem;font-weight:700;color:var(--text)">📁 Drive 자동 연동 — ${data.files.length}개 파일</span>
+        <span style="font-size:.7rem;background:rgba(0,180,136,.15);border:1px solid rgba(0,180,136,.3);border-radius:3px;padding:.15rem .5rem;color:#00b488">메인 사이트 자동 반영 중</span>
+      </div>
+      <p style="font-size:.78rem;color:var(--text2);margin:0 0 1rem;line-height:1.6">파일 추가·삭제는 Drive 폴더에서 직접 하세요. 제목·설명은 여기서 수정 후 하단 [🚀 GitHub 덮어쓰기]로 저장하세요.</p>
+      <div id="drive-cards-${catId}"></div>`;
+
+    const container=document.getElementById('drive-cards-'+catId);
     data.files.forEach(file=>{
       const thumbUrl='https://drive.google.com/thumbnail?id='+file.id+'&sz=w400';
-      const name=file.name.replace(/\.[^/.]+$/,'');
-      const errHtml=isPlanningCat
-        ?`<div style='display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:100%'><span style='font-size:1.8rem'>📄</span><span style='font-size:.6rem;color:#888'>미리보기 없음</span></div>`
-        :`<div style='display:flex;align-items:center;justify-content:center;height:100%;color:#555;font-size:.65rem'>이미지 없음</div>`;
-      html+=`<div style="background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:6px;overflow:hidden">
-        <div style="width:100%;aspect-ratio:${ratio};background:#111;overflow:hidden;position:relative">
-          <img src="${thumbUrl}" alt="${name}" loading="lazy"
-            style="width:100%;height:100%;object-fit:cover;display:block"
-            onerror="this.parentNode.innerHTML='${errHtml}'">
-        </div>
-        <div style="padding:.5rem .6rem;font-size:.7rem;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-top:1px solid var(--border)" title="${name}">${name}</div>
-      </div>`;
+      const fileName=file.name.replace(/\.[^/.]+$/,'');
+      const override=cat.driveOverrides[file.id]||{};
+      const titleVal=(override.title!==undefined&&override.title!=='')?override.title:fileName;
+      const descVal=override.desc||'';
+      const linkUrl=isPlanningCat?'https://drive.google.com/file/d/'+file.id+'/view':'';
+
+      const card=document.createElement('div');
+      card.className='design-item-card';
+
+      const previewHtml=isPlanningCat
+        ?`<img src="${thumbUrl}" style="width:100%;height:100%;min-height:120px;object-fit:cover;display:block"
+            onerror="this.outerHTML='<div style=\\'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:1rem;background:#111;height:100%;min-height:120px\\'><span style=\\'font-size:2.4rem\\'>📄</span><span style=\\'font-size:.7rem;color:var(--red);font-weight:700\\'>PDF</span></div>'">`
+        :`<img src="${thumbUrl}" style="width:100%;height:100%;min-height:120px;object-fit:cover;display:block"
+            onerror="this.outerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;padding:1rem;background:#111;height:100%;min-height:120px;font-size:.7rem;color:#555\\'>이미지 없음</div>'">`;
+
+      card.innerHTML=`
+        <div class="di-preview" style="padding:0;overflow:hidden;background:#111">${previewHtml}</div>
+        <div class="di-fields">
+          <div style="font-size:.68rem;color:var(--text3);margin-bottom:.5rem;font-family:'Space Grotesk',sans-serif;padding:.3rem .5rem;background:rgba(255,255,255,.03);border-radius:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="ID: ${file.id}">🔗 Drive ID: ${file.id}</div>
+          <label style="margin-bottom:.2rem;font-size:.78rem">표시 제목 <span style="color:var(--text2);font-size:.7rem">(비우면 파일명 그대로)</span></label>
+          <input type="text" value="${titleVal.replace(/"/g,'&quot;')}" placeholder="${fileName}"
+            oninput="updateDriveOverride('${catId}','${file.id}','title',this.value)">
+          <label style="margin-bottom:.2rem;font-size:.78rem">설명 (선택)</label>
+          <textarea placeholder="설명을 입력하세요 — 메인 사이트에 표시됩니다"
+            oninput="updateDriveOverride('${catId}','${file.id}','desc',this.value)">${descVal.replace(/</g,'&lt;')}</textarea>
+          ${linkUrl?`<div style="margin-top:.4rem"><a href="${linkUrl}" target="_blank" style="font-size:.72rem;color:var(--red);text-decoration:none;display:inline-flex;align-items:center;gap:.3rem">↗ Drive에서 열기</a></div>`:''}
+        </div>`;
+      container.appendChild(card);
     });
-    html+='</div>';
-    previewDiv.innerHTML=html;
   }catch(e){
     previewDiv.innerHTML=`<p style="color:var(--red);font-size:.82rem;padding:.6rem">오류: ${e.message}</p>`;
   }
+}
+
+function updateDriveOverride(catId,fileId,field,val){
+  const cat=categories.find(c=>c.id===catId);
+  if(!cat)return;
+  if(!cat.driveOverrides)cat.driveOverrides={};
+  if(!cat.driveOverrides[fileId])cat.driveOverrides[fileId]={};
+  cat.driveOverrides[fileId][field]=val;
+  videoData.categories=categories;
+  markDirty();
 }
 
 async function saveToGithub(){
