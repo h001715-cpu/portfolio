@@ -181,6 +181,23 @@ input[type=range]{width:100%;height:4px;accent-color:var(--red);cursor:pointer;m
       <button class="add-design-btn" onclick="addSkillItem()">+ 능력 항목 추가</button>
     </div>
 
+    <!-- Clients Editor -->
+    <div class="box" id="clients-editor-box" style="display:none;margin-top:2rem">
+      <h2>🏢 고객사 / 파트너 로고 편집</h2>
+      <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.5rem">Drive 폴더에 로고 이미지를 올려두면 메인 사이트에 자동 반영됩니다. 폴더와 파일 모두 <strong style="color:var(--text)">"링크가 있는 모든 사용자"</strong> 공유 설정 필요.</p>
+      <label>섹션 제목</label>
+      <input type="text" id="clients-title-input" placeholder="예: VD와 함께한 앞서가는 브랜드들">
+      <label>섹션 부제목 <span style="color:var(--text2);font-size:.75rem">(선택 — 비우면 숨김)</span></label>
+      <input type="text" id="clients-subtitle-input" placeholder="예: Leading brands we've worked with">
+      <label>Drive 폴더 ID <span style="color:var(--text2);font-size:.75rem">(폴더 URL의 .../folders/<strong style="color:var(--text)">여기부분</strong>)</span></label>
+      <div class="drive-row" style="margin-bottom:.5rem">
+        <input type="text" id="clients-folder-id" placeholder="예: 1ABC...xyz">
+        <button class="sm primary" style="width:auto;flex-shrink:0" onclick="saveClientsFolder()">✓ 저장 &amp; 미리보기</button>
+      </div>
+      <p style="font-size:.78rem;color:var(--text2);margin:.4rem 0 1.2rem;line-height:1.65">저장 후 하단 <strong style="color:var(--text)">🚀 GitHub 덮어쓰기</strong>를 눌러야 실제 반영됩니다.</p>
+      <div id="clients-preview"></div>
+    </div>
+
     <!-- Profile Crop with Zoom -->
     <div class="box" id="profile-crop-box" style="display:none;margin-top:2rem">
       <h2>📷 프로필 사진 위치 &amp; 확대 설정</h2>
@@ -451,6 +468,7 @@ async function fetchData(){
     if(!videoData.pageContent)videoData.pageContent={};
     if(!videoData.career)videoData.career=[];
     if(!videoData.skills)videoData.skills=[];
+    if(!videoData.clients)videoData.clients={};
     YT_API_KEY=videoData.apiKey;
     categories=videoData.categories||[];
     document.getElementById('auth-section').classList.remove('active');
@@ -461,10 +479,12 @@ async function fetchData(){
     initTextEditor();
     initCareerEditor();
     initSkillsEditor();
+    initClientsEditor();
     initProfileCrop();
     document.getElementById('text-editor-box').style.display='block';
     document.getElementById('career-box').style.display='block';
     document.getElementById('skills-editor-box').style.display='block';
+    document.getElementById('clients-editor-box').style.display='block';
     if(categories.length>0)openCat(categories[0].id);
     showLoading(false);
   }catch(err){
@@ -593,6 +613,57 @@ function removeSkillItem(idx){
   if(!videoData.skills)return;
   videoData.skills.splice(idx,1);
   renderSkillsAdmin();markDirty();
+}
+
+// ── Clients Editor ────────────────────────────────────────────────────────────
+function initClientsEditor(){
+  const clients=videoData.clients||{};
+  const titleInput=document.getElementById('clients-title-input');
+  const subtitleInput=document.getElementById('clients-subtitle-input');
+  const folderInput=document.getElementById('clients-folder-id');
+  if(titleInput){titleInput.value=clients.title||'';titleInput.oninput=()=>{if(!videoData.clients)videoData.clients={};videoData.clients.title=titleInput.value;markDirty();};}
+  if(subtitleInput){subtitleInput.value=clients.subtitle||'';subtitleInput.oninput=()=>{if(!videoData.clients)videoData.clients={};videoData.clients.subtitle=subtitleInput.value;markDirty();};}
+  if(folderInput)folderInput.value=clients.folderId||'';
+  if(clients.folderId)renderClientsFolderPreview(clients.folderId);
+}
+
+function saveClientsFolder(){
+  const folderId=document.getElementById('clients-folder-id').value.trim();
+  if(!videoData.clients)videoData.clients={};
+  videoData.clients.folderId=folderId;
+  // 제목/부제목도 한번에 저장
+  const t=document.getElementById('clients-title-input');
+  const s=document.getElementById('clients-subtitle-input');
+  if(t)videoData.clients.title=t.value;
+  if(s)videoData.clients.subtitle=s.value;
+  markDirty();
+  if(folderId)renderClientsFolderPreview(folderId);
+  else{const p=document.getElementById('clients-preview');if(p)p.innerHTML='';}
+}
+
+async function renderClientsFolderPreview(folderId){
+  const preview=document.getElementById('clients-preview');
+  if(!preview)return;
+  preview.innerHTML='<p style="color:var(--text2);font-size:.85rem">📁 로고 불러오는 중...</p>';
+  const q="'"+folderId+"'+in+parents+and+mimeType+contains+'image/'";
+  const url='https://www.googleapis.com/drive/v3/files?q='+q+'&fields=files(id,name)&orderBy=name&key='+YT_API_KEY;
+  try{
+    const r=await fetch(url);const d=await r.json();
+    if(d.error||!d.files||d.files.length===0){
+      preview.innerHTML='<p style="color:var(--text2);font-size:.82rem;padding:.8rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px">파일이 없거나 공유 설정을 확인해주세요.<br><span style="font-size:.75rem">폴더·파일 모두 "링크가 있는 모든 사용자" 공유 필요</span></p>';
+      return;
+    }
+    let html=`<div style="margin-bottom:.8rem;font-size:.85rem;color:var(--text)">✅ ${d.files.length}개 로고 감지됨 — 메인 사이트 자동 반영 예정</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.8rem">`;
+    d.files.forEach(f=>{
+      html+=`<div style="background:#fff;border-radius:6px;padding:.8rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;min-height:70px;justify-content:center">
+        <img src="https://drive.google.com/thumbnail?id=${f.id}&sz=w300" style="max-width:100%;max-height:50px;object-fit:contain" alt="${f.name.replace(/"/g,'&quot;')}">
+        <span style="font-size:.62rem;color:#555;text-align:center;word-break:break-all;max-width:100%">${f.name.replace(/\.[^/.]+$/,'')}</span>
+      </div>`;
+    });
+    html+='</div>';
+    preview.innerHTML=html;
+  }catch(e){preview.innerHTML=`<p style="color:var(--red);font-size:.82rem">오류: ${e.message}</p>`;}
 }
 
 // ── Category Tabs ─────────────────────────────────────────────────────────────
