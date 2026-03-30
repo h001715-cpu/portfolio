@@ -159,9 +159,9 @@ section{padding:7rem 5vw}
 .clients-inner{max-width:960px;margin:0 auto;text-align:center}
 .clients-subtitle{font-size:1rem;color:var(--text2);font-weight:300;line-height:1.8;margin:-.5rem 0 3rem}
 .clients-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem}
-.client-logo{background:#fff;border-radius:6px;padding:1.6rem 1.4rem;display:flex;align-items:center;justify-content:center;aspect-ratio:5/3;transition:transform .3s,box-shadow .3s;overflow:hidden}
-.client-logo:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.5)}
-.client-logo img{max-width:100%;max-height:55px;object-fit:contain;transition:opacity .3s}
+.client-logo{background:transparent;border-radius:6px;padding:1.2rem 1rem;display:flex;align-items:center;justify-content:center;aspect-ratio:5/3;transition:transform .3s,opacity .3s;overflow:hidden}
+.client-logo:hover{transform:translateY(-4px);opacity:.75}
+.client-logo img{max-width:100%;max-height:90px;object-fit:contain;transition:opacity .3s}
 .client-logo img:hover{opacity:.85}
 @media(max-width:1024px){.clients-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:600px){.clients-grid{grid-template-columns:repeat(2,1fr)}}
