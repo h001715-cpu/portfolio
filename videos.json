@@ -103,7 +103,18 @@
       "thumb": "https://github.com/h001715-cpu/portfolio/blob/main/%ED%95%98%EC%8A%B9%EC%A7%84-%EC%9C%A0%ED%8A%9C%EB%B8%8C-%EC%B1%84%EB%84%90%EC%95%84%ED%8A%B8_230407.png?raw=true",
       "thumbImg": "https://drive.google.com/thumbnail?id=1u-LbU-0S618LTWYNzIvndfTgP2UenBag&sz=w1200",
       "tag": "GRAPHIC DESIGN",
-      "folderId": "1bbnKgZG8E_3MBaeuPfiogQGP_bZdd4vB"
+      "folderId": "1bbnKgZG8E_3MBaeuPfiogQGP_bZdd4vB",
+      "driveOverrides": {
+        "122oL10L9dGM1qMcRhPPif-ghqpZzH_uv": {
+          "title": "마사부 유튜브 채널아트"
+        },
+        "1jyv4JL2OkEjWtrH8Da2z1C0ydV5GeVc9": {
+          "title": "하승진 유튜브 채널아트"
+        },
+        "1mmSP66qRju1Hs49hheWwPPVwOjZrX0Or": {
+          "title": "바이오리브 광고 공모전 디자인 (장려상 수상)"
+        }
+      }
     },
     {
       "id": "planning",
