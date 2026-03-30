@@ -461,12 +461,14 @@ function openCat(id,name,fromState){if(!fromState)history.pushState({view:'cat',
     fetch(_driveUrl).then(function(r){return r.json()}).then(function(d){
       if(d.error||!d.files){doBuild(cat.items||[]);return;}
       var items=d.files.map(function(f){
+        var ov=(cat.driveOverrides&&cat.driveOverrides[f.id])||{};
+        var defaultTitle=f.name.replace(/\.[^/.]+$/,'');
         return {
-          title:f.name.replace(/\.[^/.]+$/,''),
+          title:(ov.title!==undefined&&ov.title!=='')?ov.title:defaultTitle,
           img:'https://drive.google.com/thumbnail?id='+f.id+'&sz=w800',
           zoomImg:'https://drive.google.com/thumbnail?id='+f.id+'&sz=w1920',
           link:cat.type==='planning'?'https://drive.google.com/file/d/'+f.id+'/view':'',
-          desc:''
+          desc:ov.desc||''
         };
       });
       doBuild(items);
