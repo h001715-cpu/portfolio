@@ -34,9 +34,7 @@
     "DRu7VuSp7gg": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
     "Bo50t7arAsI": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
     "Woa4hq3fvxA": "ROLE :  기획 / 편집 / 후보정 / 자막 및 모션 디자인 ",
-    "DpO-VPC_mm4": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 자막 및 모션 디자인\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING",
-    "g8yJNDLhyLc": "ROLE : 연출 / 촬영 (서브캠) / 편집 / 후보정 / 자막 및 모션 디자인",
-    "7wNL_jCo3-M": "ROLE : 연출 / 촬영 (메인캠) / 편집 / 후보정 / 자막 및 모션 디자인"
+    "DpO-VPC_mm4": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 자막 및 모션 디자인\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING"
   },
   "categories": [
     {
@@ -79,21 +77,16 @@
       "id": "design",
       "name": "디자인",
       "type": "design",
-      "items": [],
-      "thumb": "https://github.com/h001715-cpu/portfolio/blob/main/%ED%95%98%EC%8A%B9%EC%A7%84-%EC%9C%A0%ED%8A%9C%EB%B8%8C-%EC%B1%84%EB%84%90%EC%95%84%ED%8A%B8_230407.png?raw=true",
-      "thumbImg": "https://drive.google.com/thumbnail?id=1u-LbU-0S618LTWYNzIvndfTgP2UenBag&sz=w1200",
-      "folderId": "1bbnKgZG8E_3MBaeuPfiogQGP_bZdd4vB",
-      "driveOverrides": {
-        "122oL10L9dGM1qMcRhPPif-ghqpZzH_uv": {
-          "title": "마사부 유튜브 채널아트"
-        },
-        "1jyv4JL2OkEjWtrH8Da2z1C0ydV5GeVc9": {
-          "title": "하승진 유튜브 채널아트"
-        },
-        "1mmSP66qRju1Hs49hheWwPPVwOjZrX0Or": {
-          "title": "바이오리브 광고 공모전 디자인 (장려상 수상)"
+      "items": [
+        {
+          "title": "하승진-유튜브-채널아트_230407",
+          "img": "https://drive.google.com/uc?export=view&id=1jyv4JL2OkEjWtrH8Da2z1C0ydV5GeVc9",
+          "desc": "",
+          "link": ""
         }
-      }
+      ],
+      "thumb": "https://github.com/h001715-cpu/portfolio/blob/main/%ED%95%98%EC%8A%B9%EC%A7%84-%EC%9C%A0%ED%8A%9C%EB%B8%8C-%EC%B1%84%EB%84%90%EC%95%84%ED%8A%B8_230407.png?raw=true",
+      "thumbImg": "https://drive.google.com/thumbnail?id=1u-LbU-0S618LTWYNzIvndfTgP2UenBag&sz=w1200"
     },
     {
       "id": "planning",
@@ -132,14 +125,7 @@
         }
       ],
       "thumbImg": "",
-      "folderId": "1XbwyCj8cVyDj-1irZWFq8_9fZOajNUwr",
-      "driveOverrides": {}
-    },
-    {
-      "id": "cat-mnclybpm",
-      "name": "인터뷰",
-      "playlistId": "PLmtMXxa-X5LMnbTdqD2vIZ1Faadf-dZgb",
-      "thumb": "g8yJNDLhyLc"
+      "folderId": "1PafGWxSizjB2kfB7a-r6eSTeiuCX9K53"
     }
   ],
   "sortOrder": {
@@ -175,12 +161,6 @@
       "uQoM8WJ_yWc",
       "TpBP4R73rBM",
       "58oOw6L9K34"
-    ],
-    "sns": [
-      "AIHelUnH0bI",
-      "DRu7VuSp7gg",
-      "Bo50t7arAsI",
-      "Woa4hq3fvxA"
     ]
   },
   "pageContent": {
