@@ -108,6 +108,12 @@ input[type=range]{width:100%;height:4px;accent-color:var(--red);cursor:pointer;m
 /* Drive */
 .drive-row{display:flex;gap:.8rem;align-items:center}
 .drive-row input{flex:1;margin-bottom:0}
+/* Cat edit row drag */
+.cat-edit-row{display:flex;gap:.8rem;align-items:flex-start;margin-bottom:.8rem;padding:.9rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px}
+.cat-edit-row.dragging{opacity:.4;transform:scale(.98)}
+/* Skill admin card */
+.skill-admin-card{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:6px;padding:.8rem 1rem;margin-bottom:.7rem;display:flex;gap:.8rem;align-items:center}
+.skill-admin-card input{margin-bottom:0;font-size:.88rem;padding:.5rem .7rem}
 @media(max-width:768px){
   .fixed-save{flex-direction:column;gap:1rem;text-align:center;padding:1rem}
   .text-field-group{grid-template-columns:1fr}
@@ -147,7 +153,8 @@ input[type=range]{width:100%;height:4px;accent-color:var(--red);cursor:pointer;m
     </div>
 
     <div id="cat-edit-panel" style="display:none;background:rgba(0,0,0,.5);border:1px solid var(--border);padding:1.5rem;border-radius:6px;margin-bottom:2rem">
-      <h3 style="margin-top:0;font-size:1rem;margin-bottom:1.5rem;color:var(--red)">고정 카테고리 이름 변경</h3>
+      <h3 style="margin-top:0;font-size:1rem;margin-bottom:.5rem;color:var(--red)">카테고리 순서 변경 / 이름 수정</h3>
+      <p style="margin:0 0 1.2rem;font-size:.82rem;color:var(--text2)">☰ 드래그로 순서를 바꾼 뒤 <strong style="color:var(--text)">적용하기</strong>를 누르세요. 삭제 후 복구는 불가합니다.</p>
       <div id="cat-edit-list"></div>
       <div style="text-align:right;margin-top:1rem">
         <button class="sm primary" style="width:auto;padding:.6rem 1.2rem" onclick="applyCatNames()">적용하기</button>
@@ -164,6 +171,14 @@ input[type=range]{width:100%;height:4px;accent-color:var(--red);cursor:pointer;m
       <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.5rem">연도, 회사/소속, 직책/역할, 설명을 입력하세요.</p>
       <div id="career-list-admin"></div>
       <button class="add-design-btn" onclick="addCareerItem()">+ 이력 추가</button>
+    </div>
+
+    <!-- Skills Editor -->
+    <div class="box" id="skills-editor-box" style="display:none;margin-top:2rem">
+      <h2>🔧 기타 능력 / 스킬 편집 (About 섹션)</h2>
+      <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.5rem">외국어, 사용 툴 등 능력 항목을 추가하세요. 드래그로 순서를 바꿀 수 있습니다.</p>
+      <div id="skills-list-admin"></div>
+      <button class="add-design-btn" onclick="addSkillItem()">+ 능력 항목 추가</button>
     </div>
 
     <!-- Profile Crop with Zoom -->
@@ -435,6 +450,7 @@ async function fetchData(){
     if(!videoData.roles)videoData.roles={};
     if(!videoData.pageContent)videoData.pageContent={};
     if(!videoData.career)videoData.career=[];
+    if(!videoData.skills)videoData.skills=[];
     YT_API_KEY=videoData.apiKey;
     categories=videoData.categories||[];
     document.getElementById('auth-section').classList.remove('active');
@@ -444,9 +460,11 @@ async function fetchData(){
     renderTabs();
     initTextEditor();
     initCareerEditor();
+    initSkillsEditor();
     initProfileCrop();
     document.getElementById('text-editor-box').style.display='block';
     document.getElementById('career-box').style.display='block';
+    document.getElementById('skills-editor-box').style.display='block';
     if(categories.length>0)openCat(categories[0].id);
     showLoading(false);
   }catch(err){
@@ -527,6 +545,56 @@ function removeCareerItem(idx){
   renderCareerAdmin();markDirty();
 }
 
+// ── Skills Editor ─────────────────────────────────────────────────────────────
+function initSkillsEditor(){renderSkillsAdmin();}
+
+function renderSkillsAdmin(){
+  const list=document.getElementById('skills-list-admin');
+  list.innerHTML='';
+  (videoData.skills||[]).forEach((item,idx)=>{
+    const card=document.createElement('div');
+    card.className='skill-admin-card';
+    card.dataset.idx=idx;
+    card.innerHTML=`
+      <div class="drag-handle" title="드래그하여 순서 변경" style="font-size:1.2rem;color:var(--text2);cursor:grab;user-select:none">☰</div>
+      <div style="flex:1;display:grid;grid-template-columns:150px 1fr;gap:.5rem">
+        <input type="text" value="${(item.label||'').replace(/"/g,'&quot;')}" placeholder="항목명 (예: 외국어)" oninput="updateSkillField(${idx},'label',this.value)">
+        <input type="text" value="${(item.value||'').replace(/"/g,'&quot;')}" placeholder="내용 (예: 영어 비즈니스 가능)" oninput="updateSkillField(${idx},'value',this.value)">
+      </div>
+      <button class="sm danger" onclick="removeSkillItem(${idx})">삭제</button>`;
+    card.querySelector('.drag-handle').addEventListener('mousedown',()=>{card.draggable=true;});
+    card.addEventListener('dragstart',()=>card.classList.add('dragging'));
+    card.addEventListener('dragend',()=>{card.classList.remove('dragging');card.draggable=false;syncSkillsOrder();});
+    card.addEventListener('dragover',e=>{e.preventDefault();const drag=document.querySelector('.skill-admin-card.dragging');if(drag&&drag!==card){const box=card.getBoundingClientRect();const after=(e.clientY>box.top+box.height/2);card.parentNode.insertBefore(drag,after?card.nextSibling:card);}});
+    list.appendChild(card);
+  });
+}
+
+function syncSkillsOrder(){
+  const list=document.getElementById('skills-list-admin');
+  const cards=[...list.querySelectorAll('.skill-admin-card')];
+  const snap=(videoData.skills||[]).slice();
+  videoData.skills=cards.map(c=>snap[parseInt(c.dataset.idx)]).filter(Boolean);
+  renderSkillsAdmin();markDirty();
+}
+
+function updateSkillField(idx,field,val){
+  if(!videoData.skills||!videoData.skills[idx])return;
+  videoData.skills[idx][field]=val;markDirty();
+}
+
+function addSkillItem(){
+  if(!videoData.skills)videoData.skills=[];
+  videoData.skills.push({label:'',value:''});
+  renderSkillsAdmin();markDirty();
+}
+
+function removeSkillItem(idx){
+  if(!videoData.skills)return;
+  videoData.skills.splice(idx,1);
+  renderSkillsAdmin();markDirty();
+}
+
 // ── Category Tabs ─────────────────────────────────────────────────────────────
 function renderTabs(){
   const t=document.getElementById('cat-tabs');t.innerHTML='';
@@ -538,37 +606,63 @@ function renderTabs(){
   if(currentCatId){const act=document.getElementById('tab-'+currentCatId);if(act)act.classList.add('active');}
 }
 
+function buildCatEditThumbHtml(cat){
+  const thumbId=cat.thumb||'';const thumbImg=cat.thumbImg||'';
+  const isPlanning=cat.type==='planning';const isDesign=cat.type==='design';
+  if(isPlanning){
+    return `<div style="padding:.7rem .9rem;background:rgba(0,180,136,.07);border:1px solid rgba(0,180,136,.2);border-radius:6px;font-size:.78rem;line-height:1.65">
+      <div style="color:#00b488;font-weight:700;margin-bottom:.3rem">✅ 썸네일 자동 설정</div>
+      <div style="color:var(--text2)">Drive 폴더의 첫 번째 PDF 이미지가 카테고리 카드에 자동 표시됩니다. 직접 지정하려면 아래에 URL 입력 (비우면 자동).</div>
+      <div style="display:flex;gap:.8rem;align-items:center;margin-top:.6rem">
+        <input type="text" id="thumbimg-input-${cat.id}" value="${thumbImg}" placeholder="https://... (선택사항)" style="flex:1;margin-bottom:0;background:rgba(255,255,255,.05)" oninput="previewThumbImg('${cat.id}')">
+        <img id="thumbimg-preview-${cat.id}" src="${thumbImg||''}" style="width:80px;height:45px;object-fit:cover;border-radius:3px;border:1px solid var(--border);background:#000;${thumbImg?'':'display:none'}">
+      </div>
+    </div>`;
+  }else if(isDesign){
+    return `<div><label style="margin-bottom:.3rem">썸네일 이미지 URL <span style="color:var(--text2);font-size:.72rem">(비우면 첫 번째 작품 자동 사용)</span></label><div style="display:flex;gap:.8rem;align-items:center"><input type="text" id="thumbimg-input-${cat.id}" value="${thumbImg}" placeholder="https://..." style="flex:1;margin-bottom:0;background:rgba(255,255,255,.05)" oninput="previewThumbImg('${cat.id}')"><img id="thumbimg-preview-${cat.id}" src="${thumbImg||''}" style="width:80px;height:45px;object-fit:cover;border-radius:3px;border:1px solid var(--border);background:#000;${thumbImg?'':'display:none'}"></div></div>`;
+  }else{
+    return `<div style="display:flex;gap:1.5rem;align-items:flex-start"><div style="flex:1"><label style="margin-bottom:.3rem">썸네일 유튜브 영상 ID <span style="color:var(--text2);font-size:.72rem">(비워두면 플레이리스트 첫 영상)</span></label><input type="text" id="thumb-input-${cat.id}" value="${thumbId}" placeholder="예: dQw4w9WgXcQ" style="margin-bottom:0;background:rgba(255,255,255,.05)" oninput="previewThumb('${cat.id}')"></div><div style="flex-shrink:0;width:120px"><label style="margin-bottom:.3rem">미리보기</label><div style="position:relative;width:120px;padding-bottom:67px;background:#000;border:1px solid var(--border);border-radius:4px;overflow:hidden"><img id="thumb-preview-${cat.id}" src="${thumbId?'https://img.youtube.com/vi/'+thumbId+'/mqdefault.jpg':''}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;${thumbId?'':'display:none'}"><span id="thumb-empty-${cat.id}" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.65rem;color:var(--text2);text-align:center;${thumbId?'display:none':''}">미리보기 없음</span></div></div></div>`;
+  }
+}
+
 function toggleCatEdit(){
   const p=document.getElementById('cat-edit-panel');
   if(p.style.display==='none'||p.style.display===''){
-    const list=document.getElementById('cat-edit-list');list.innerHTML='';
-    categories.forEach(cat=>{
-      const thumbId=cat.thumb||'';const thumbImg=cat.thumbImg||'';
-      const isPlanning=cat.type==='planning';
-      const isDesign=cat.type==='design';
-      let thumbHtml='';
-      if(isPlanning){
-        thumbHtml=`<div style="padding:.7rem .9rem;background:rgba(0,180,136,.07);border:1px solid rgba(0,180,136,.2);border-radius:6px;font-size:.78rem;line-height:1.65">
-          <div style="color:#00b488;font-weight:700;margin-bottom:.3rem">✅ 썸네일 자동 설정</div>
-          <div style="color:var(--text2)">Drive 폴더의 첫 번째 PDF 이미지가 카테고리 카드에 자동 표시됩니다. 직접 지정하려면 아래에 URL 입력 (비우면 자동).</div>
-          <div style="display:flex;gap:.8rem;align-items:center;margin-top:.6rem">
-            <input type="text" id="thumbimg-input-${cat.id}" value="${thumbImg}" placeholder="https://... (선택사항)" style="flex:1;margin-bottom:0;background:rgba(255,255,255,.05)" oninput="previewThumbImg('${cat.id}')">
-            <img id="thumbimg-preview-${cat.id}" src="${thumbImg||''}" style="width:80px;height:45px;object-fit:cover;border-radius:3px;border:1px solid var(--border);background:#000;${thumbImg?'':'display:none'}">
-          </div>
-        </div>`;
-      }else if(isDesign){
-        thumbHtml=`<div><label style="margin-bottom:.3rem">썸네일 이미지 URL <span style="color:var(--text2);font-size:.72rem">(비우면 첫 번째 작품 자동 사용)</span></label><div style="display:flex;gap:.8rem;align-items:center"><input type="text" id="thumbimg-input-${cat.id}" value="${thumbImg}" placeholder="https://..." style="flex:1;margin-bottom:0;background:rgba(255,255,255,.05)" oninput="previewThumbImg('${cat.id}')"><img id="thumbimg-preview-${cat.id}" src="${thumbImg||''}" style="width:80px;height:45px;object-fit:cover;border-radius:3px;border:1px solid var(--border);background:#000;${thumbImg?'':'display:none'}"></div></div>`;
-      }else{
-        thumbHtml=`<div style="display:flex;gap:1.5rem;align-items:flex-start"><div style="flex:1"><label style="margin-bottom:.3rem">썸네일 유튜브 영상 ID <span style="color:var(--text2);font-size:.72rem">(비워두면 플레이리스트 첫 영상)</span></label><input type="text" id="thumb-input-${cat.id}" value="${thumbId}" placeholder="예: dQw4w9WgXcQ" style="margin-bottom:0;background:rgba(255,255,255,.05)" oninput="previewThumb('${cat.id}')"></div><div style="flex-shrink:0;width:120px"><label style="margin-bottom:.3rem">미리보기</label><div style="position:relative;width:120px;padding-bottom:67px;background:#000;border:1px solid var(--border);border-radius:4px;overflow:hidden"><img id="thumb-preview-${cat.id}" src="${thumbId?'https://img.youtube.com/vi/'+thumbId+'/mqdefault.jpg':''}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;${thumbId?'':'display:none'}"><span id="thumb-empty-${cat.id}" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.65rem;color:var(--text2);text-align:center;${thumbId?'display:none':''}">미리보기 없음</span></div></div></div>`;
-      }
-      list.innerHTML+=`<div style="margin-bottom:1.8rem;padding-bottom:1.8rem;border-bottom:1px solid var(--border)">
-        <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem">
-          <span style="color:var(--text2);width:90px;font-size:.78rem;font-family:'Space Grotesk',sans-serif;flex-shrink:0;line-height:1.4">ID:<br>${cat.id}</span>
+    const list=document.getElementById('cat-edit-list');
+    list.innerHTML='<p style="font-size:.8rem;color:var(--text2);margin:0 0 1rem">☰ 드래그로 순서를 변경할 수 있습니다.</p>';
+    categories.forEach((cat,idx)=>{
+      const row=document.createElement('div');
+      row.className='cat-edit-row';
+      row.dataset.catId=cat.id;
+      row.dataset.idx=idx;
+      const handle=document.createElement('div');
+      handle.className='drag-handle';
+      handle.title='드래그하여 순서 변경';
+      handle.innerHTML='☰';
+      handle.style.cssText='font-size:1.2rem;align-self:center';
+      const body=document.createElement('div');
+      body.style.flex='1';
+      body.innerHTML=`
+        <div style="display:flex;gap:1rem;align-items:center;margin-bottom:.8rem">
+          <span style="color:var(--text2);width:80px;font-size:.75rem;font-family:'Space Grotesk',sans-serif;flex-shrink:0;line-height:1.4">ID:<br>${cat.id}</span>
           <div style="flex:1"><label style="margin-bottom:.3rem">카테고리 이름</label><input type="text" id="cat-input-${cat.id}" value="${cat.name.replace(/"/g,'&quot;')}" style="margin-bottom:0;background:rgba(255,255,255,.05)"></div>
-          <button class="sm danger" style="flex-shrink:0;align-self:flex-end" onclick="removeCategoryById('${cat.id}')">삭제</button>
         </div>
-        ${thumbHtml}
-      </div>`;
+        ${buildCatEditThumbHtml(cat)}`;
+      const delBtn=document.createElement('button');
+      delBtn.className='sm danger';
+      delBtn.style.cssText='flex-shrink:0;align-self:flex-start;margin-top:.2rem';
+      delBtn.textContent='삭제';
+      delBtn.onclick=()=>removeCategoryById(cat.id);
+      row.appendChild(handle);row.appendChild(body);row.appendChild(delBtn);
+      handle.addEventListener('mousedown',()=>{row.draggable=true;});
+      row.addEventListener('dragstart',()=>row.classList.add('dragging'));
+      row.addEventListener('dragend',()=>{row.classList.remove('dragging');row.draggable=false;});
+      row.addEventListener('dragover',e=>{
+        e.preventDefault();
+        const drag=document.querySelector('.cat-edit-row.dragging');
+        if(drag&&drag!==row){const box=row.getBoundingClientRect();const after=(e.clientY>box.top+box.height/2);row.parentNode.insertBefore(drag,after?row.nextSibling:row);}
+      });
+      list.appendChild(row);
     });
     p.style.display='block';
   }else{p.style.display='none';}
@@ -591,6 +685,18 @@ function previewThumbImg(catId){
 }
 
 function applyCatNames(){
+  // sync order from DOM first
+  const list=document.getElementById('cat-edit-list');
+  const rows=[...list.querySelectorAll('.cat-edit-row')];
+  if(rows.length>0){
+    const orderedIds=rows.map(r=>r.dataset.catId);
+    const reordered=orderedIds.map(id=>categories.find(c=>c.id===id)).filter(Boolean);
+    // keep any categories not in DOM (edge case safety)
+    categories.forEach(c=>{if(!orderedIds.includes(c.id))reordered.push(c);});
+    categories=reordered;
+    videoData.categories=categories;
+  }
+  // apply names & thumbnails
   categories.forEach(cat=>{
     const nameInput=document.getElementById('cat-input-'+cat.id);
     if(nameInput){const n=nameInput.value.trim();if(n)cat.name=n;}
