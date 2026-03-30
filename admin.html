@@ -1228,16 +1228,21 @@ async function deployAll(){
 
 async function saveToGithub(){
   if(!videoData)return;
-  showLoading('GitHub에 저장 중... (Vercel 배포 트리거)');
+  showLoading('GitHub에 저장 중...');
   try{
+    // 1) 최신 SHA 먼저 가져오기 (충돌 방지)
+    const shaRes=await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}?t=${Date.now()}`,{headers:{'Authorization':`token ${ghToken}`}});
+    if(shaRes.ok){const shaData=await shaRes.json();fileSha=shaData.sha;}
+
+    // 2) 저장
     const jsonStr=JSON.stringify(videoData,null,2);
     const res=await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`,{method:'PUT',headers:{'Authorization':`token ${ghToken}`,'Content-Type':'application/json'},body:JSON.stringify({message:'Admin Panel Update: Visual Editor',content:b64Enc(jsonStr),sha:fileSha})});
-    if(!res.ok){const d=await res.json();throw new Error(d.message||'업데이트 실패');}
+    if(!res.ok){const d=await res.json();throw new Error('['+res.status+'] '+(d.message||'업데이트 실패'));}
     const newData=await res.json();fileSha=newData.content.sha;
     isDirty=false;document.getElementById('unsaved-badge').style.display='none';
     showLoading(false);
-    alert('🎉 성공적으로 저장 & 배포 지시 완료!\n약 5~10초 후 메인 사이트를 확인하세요!');
-  }catch(err){alert('오류: '+err.message);showLoading(false);}
+    alert('🎉 저장 완료!\nSHA: '+fileSha.substring(0,7)+'\n약 10~30초 후 메인 사이트를 확인하세요.');
+  }catch(err){alert('❌ 저장 실패!\n\n'+err.message+'\n\n해결법: 페이지 새로고침 후 다시 시도');showLoading(false);}
 }
 </script>
 </body>
