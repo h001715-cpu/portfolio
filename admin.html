@@ -111,6 +111,10 @@ input[type=range]{width:100%;height:4px;accent-color:var(--red);cursor:pointer;m
 /* Cat edit row drag */
 .cat-edit-row{display:flex;gap:.8rem;align-items:flex-start;margin-bottom:.8rem;padding:.9rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px}
 .cat-edit-row.dragging{opacity:.4;transform:scale(.98)}
+.client-logo-admin{background:#fff;border-radius:6px;padding:.8rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;width:120px;min-height:80px;justify-content:center;cursor:grab;user-select:none;position:relative;transition:transform .2s,opacity .2s}
+.client-logo-admin:active{cursor:grabbing}
+.client-logo-admin.dragging{opacity:.35;transform:scale(.95)}
+.client-logo-admin .drag-hint{position:absolute;top:4px;right:5px;font-size:.6rem;color:#aaa;line-height:1}
 /* Skill admin card */
 .skill-admin-card{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:6px;padding:.8rem 1rem;margin-bottom:.7rem;display:flex;gap:.8rem;align-items:center}
 .skill-admin-card input{margin-bottom:0;font-size:.88rem;padding:.5rem .7rem}
@@ -653,17 +657,49 @@ async function renderClientsFolderPreview(folderId){
       preview.innerHTML='<p style="color:var(--text2);font-size:.82rem;padding:.8rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px">파일이 없거나 공유 설정을 확인해주세요.<br><span style="font-size:.75rem">폴더·파일 모두 "링크가 있는 모든 사용자" 공유 필요</span></p>';
       return;
     }
-    let html=`<div style="margin-bottom:.8rem;font-size:.85rem;color:var(--text)">✅ ${d.files.length}개 로고 감지됨 — 메인 사이트 자동 반영 예정</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.8rem">`;
+    // 저장된 fileOrder가 있으면 그 순서대로 정렬
+    const savedOrder=(videoData.clients&&videoData.clients.fileOrder)||[];
+    if(savedOrder.length){
+      const om={};savedOrder.forEach((id,i)=>om[id]=i);
+      d.files.sort((a,b)=>(om[a.id]!=null?om[a.id]:999)-(om[b.id]!=null?om[b.id]:999));
+    }
+    preview.innerHTML='';
+    const info=document.createElement('div');
+    info.style.cssText='margin-bottom:.8rem;font-size:.85rem;color:var(--text)';
+    info.textContent='✅ '+d.files.length+'개 로고 감지됨 — 드래그로 순서 변경 가능';
+    preview.appendChild(info);
+    const grid=document.createElement('div');
+    grid.style.cssText='display:flex;flex-wrap:wrap;gap:.8rem';
     d.files.forEach(f=>{
-      html+=`<div style="background:#fff;border-radius:6px;padding:.8rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;min-height:70px;justify-content:center">
-        <img src="https://drive.google.com/thumbnail?id=${f.id}&sz=w300" style="max-width:100%;max-height:50px;object-fit:contain" alt="${f.name.replace(/"/g,'&quot;')}">
-        <span style="font-size:.62rem;color:#555;text-align:center;word-break:break-all;max-width:100%">${f.name.replace(/\.[^/.]+$/,'')}</span>
-      </div>`;
+      const card=document.createElement('div');
+      card.className='client-logo-admin';
+      card.draggable=true;
+      card.dataset.id=f.id;
+      card.innerHTML=`<span class="drag-hint">⠿</span><img src="https://drive.google.com/thumbnail?id=${f.id}&sz=w300" style="max-width:100px;max-height:55px;object-fit:contain" alt="${f.name.replace(/"/g,'&quot;')}"><span style="font-size:.6rem;color:#555;text-align:center;word-break:break-all;max-width:110px">${f.name.replace(/\.[^/.]+$/,'')}</span>`;
+      card.addEventListener('dragstart',()=>card.classList.add('dragging'));
+      card.addEventListener('dragend',()=>{card.classList.remove('dragging');syncClientsOrder();});
+      card.addEventListener('dragover',e=>{
+        e.preventDefault();
+        const drag=document.querySelector('.client-logo-admin.dragging');
+        if(drag&&drag!==card){
+          const box=card.getBoundingClientRect();
+          const after=e.clientX>box.left+box.width/2;
+          grid.insertBefore(drag,after?card.nextSibling:card);
+        }
+      });
+      grid.appendChild(card);
     });
-    html+='</div>';
-    preview.innerHTML=html;
+    preview.appendChild(grid);
   }catch(e){preview.innerHTML=`<p style="color:var(--red);font-size:.82rem">오류: ${e.message}</p>`;}
+}
+
+function syncClientsOrder(){
+  const grid=document.querySelector('#clients-preview .client-logo-admin')?.parentElement;
+  if(!grid)return;
+  const order=[...grid.querySelectorAll('.client-logo-admin')].map(c=>c.dataset.id);
+  if(!videoData.clients)videoData.clients={};
+  videoData.clients.fileOrder=order;
+  markDirty();
 }
 
 // ── Category Tabs ─────────────────────────────────────────────────────────────
