@@ -668,13 +668,13 @@ function renderDesignEditor(cat){
       <p style="font-size:.75rem;color:var(--text2);margin:.5rem 0 0;line-height:1.5">폴더의 이미지 파일을 자동으로 가져옵니다. 기존 항목에 추가됩니다. ※ 구글 드라이브 파일은 "링크가 있는 모든 사용자"에게 공유 설정 필요.</p>`;
     g.appendChild(driveDiv);
   } else {
-    // 기획안 안내
-    const pdfGuide=document.createElement('div');
-    pdfGuide.style.cssText='background:rgba(230,37,37,.07);border:1px solid rgba(230,37,37,.25);border-radius:6px;padding:1.2rem;margin-bottom:1.5rem;grid-column:1/-1';
-    pdfGuide.innerHTML=`<div style="font-size:.88rem;font-weight:600;margin-bottom:.5rem;color:var(--red)">📄 기획안 PDF 등록 방법</div>
-      <p style="font-size:.8rem;color:var(--text2);line-height:1.7;margin:0">① Google Drive에 PDF 업로드 → ② 파일 우클릭 → <strong style="color:var(--text)">링크가 있는 모든 사용자</strong>로 공유 설정 → ③ 공유 링크 복사 → ④ 아래 'PDF URL' 입력칸에 붙여넣기<br>
-      <span style="color:var(--text2);font-size:.75rem">※ 구글 드라이브 공유 링크 자동 변환 지원 (drive.google.com/file/d/...)</span></p>`;
-    g.appendChild(pdfGuide);
+    // 기획안 Drive PDF 자동 불러오기
+    const pdfDriveDiv=document.createElement('div');
+    pdfDriveDiv.style.cssText='background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:6px;padding:1.2rem;margin-bottom:1.5rem;grid-column:1/-1';
+    pdfDriveDiv.innerHTML=`<div style="font-size:.85rem;font-weight:600;margin-bottom:.8rem;color:var(--text2)">📁 Google Drive 폴더에서 PDF 자동 불러오기 <span style="font-size:.72rem;font-weight:400">(공개 폴더 + Drive API 활성화 필요)</span></div>
+      <div class="drive-row"><input type="text" id="drive-folder-${cat.id}" placeholder="Google Drive 폴더 ID (URL의 .../folders/XXX 부분)" style="font-size:.85rem"><button class="sm" onclick="loadFromDrivePdf('${cat.id}','${cat.id}')">PDF 불러오기</button></div>
+      <p style="font-size:.75rem;color:var(--text2);margin:.5rem 0 0;line-height:1.5">폴더 안의 <strong style="color:var(--text)">PDF 파일</strong>을 자동으로 가져옵니다. 기존 항목에 추가됩니다.<br>※ 구글 드라이브 폴더 및 파일은 <strong style="color:var(--text)">"링크가 있는 모든 사용자"</strong>에게 공유 설정 필요.</p>`;
+    g.appendChild(pdfDriveDiv);
   }
 
   function buildCard(item,idx){
@@ -748,6 +748,28 @@ async function loadFromDrive(catId,inputSuffix){
     renderDesignEditor(cat);markDirty();
     showLoading(false);
     alert(`✅ ${r.files.length}개 이미지를 불러왔습니다. 하단 [🚀 덮어쓰기] 버튼을 눌러 저장하세요.`);
+  }catch(e){showLoading(false);alert('오류: '+e.message);}
+}
+
+async function loadFromDrivePdf(catId,inputSuffix){
+  const folderInput=document.getElementById('drive-folder-'+inputSuffix);
+  const folderId=folderInput?folderInput.value.trim():'';
+  if(!folderId)return alert('폴더 ID를 입력해주세요.');
+  const cat=categories.find(c=>c.id===catId);if(!cat)return;
+  showLoading('Google Drive 폴더에서 PDF 불러오는 중...');
+  try{
+    const url=`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType='application/pdf'&fields=files(id,name)&orderBy=name&key=${YT_API_KEY}`;
+    const r=await(await fetch(url)).json();
+    if(r.error)throw new Error(r.error.message);
+    if(!r.files||r.files.length===0){showLoading(false);alert('PDF 파일을 찾을 수 없습니다.\n폴더 ID와 공유 설정(링크가 있는 모든 사용자)을 확인하세요.');return;}
+    r.files.forEach(f=>{
+      const pdfUrl=`https://drive.google.com/file/d/${f.id}/view`;
+      cat.items.push({title:f.name.replace(/\.pdf$/i,''),img:'',desc:'',link:pdfUrl});
+    });
+    videoData.categories=categories;
+    renderDesignEditor(cat);markDirty();
+    showLoading(false);
+    alert(`✅ ${r.files.length}개 PDF를 불러왔습니다.\n하단 [🚀 덮어쓰기] 버튼을 눌러 저장하세요.`);
   }catch(e){showLoading(false);alert('오류: '+e.message);}
 }
 
