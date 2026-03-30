@@ -214,6 +214,14 @@
   "profileZoom": 1.38,
   "skills": [
     {
+      "label": "프리미어프로",
+      "value": "상급"
+    },
+    {
+      "label": "애프터 이펙트",
+      "value": "중상급"
+    },
+    {
       "label": "일본어",
       "value": "일상 회화 가능"
     },
