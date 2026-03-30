@@ -34,7 +34,9 @@
     "DRu7VuSp7gg": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
     "Bo50t7arAsI": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
     "Woa4hq3fvxA": "ROLE :  기획 / 편집 / 후보정 / 자막 및 모션 디자인 ",
-    "DpO-VPC_mm4": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 자막 및 모션 디자인\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING"
+    "DpO-VPC_mm4": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 자막 및 모션 디자인\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING",
+    "g8yJNDLhyLc": "ROLE : 연출 / 촬영 (서브캠) / 편집 / 후보정 / 자막 및 모션 디자인",
+    "7wNL_jCo3-M": "ROLE : 연출 / 촬영 (메인캠) / 편집 / 후보정 / 자막 및 모션 디자인"
   },
   "categories": [
     {
@@ -172,6 +174,12 @@
       "uQoM8WJ_yWc",
       "TpBP4R73rBM",
       "58oOw6L9K34"
+    ],
+    "sns": [
+      "AIHelUnH0bI",
+      "DRu7VuSp7gg",
+      "Bo50t7arAsI",
+      "Woa4hq3fvxA"
     ]
   },
   "pageContent": {
