@@ -203,5 +203,12 @@
       "desc": "촬영 / 편집 / 인아웃트로 및 채널아트등 영상 요소 디자인"
     }
   ],
-  "profileZoom": 1.38
+  "profileZoom": 1.38,
+  "skills": [
+    {
+      "label": "일본어",
+      "value": ""
+    }
+  ],
+  "clients": {}
 }
