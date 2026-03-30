@@ -34,44 +34,59 @@
     "DRu7VuSp7gg": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
     "Bo50t7arAsI": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
     "Woa4hq3fvxA": "ROLE :  기획 / 편집 / 후보정 / 자막 및 모션 디자인 ",
-    "DpO-VPC_mm4": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 자막 및 모션 디자인\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING"
+    "DpO-VPC_mm4": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 자막 및 모션 디자인\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING",
+    "7wNL_jCo3-M": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
+    "g8yJNDLhyLc": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 "
   },
   "categories": [
     {
       "id": "ai-ad",
       "name": "AI 광고 영상",
       "playlistId": "PLmtMXxa-X5LOoF9lgqsTcpLvB1i7cPTr1",
-      "thumb": "4CRpNu_7W50"
+      "thumb": "4CRpNu_7W50",
+      "tag": "AI-AD"
     },
     {
       "id": "brand-film",
       "name": "브랜드 필름 & 광고영상",
       "playlistId": "PLmtMXxa-X5LOBKuTEDk1xfeEZ9X7C8iF1",
-      "thumb": "Lef23mcbrB0"
+      "thumb": "Lef23mcbrB0",
+      "tag": "BRAND FILM & AD"
     },
     {
       "id": "motion",
       "name": "모션 그래픽",
       "playlistId": "PLmtMXxa-X5LP6y5_Zla5kjHCwJPoD1RRx",
-      "thumb": "8qrFOiRAWws"
+      "thumb": "8qrFOiRAWws",
+      "tag": "MOTION GRAPHICS"
     },
     {
       "id": "sketch",
-      "name": "스케치영상",
+      "name": "행사 스케치",
       "playlistId": "PLmtMXxa-X5LOXL0ynNWX6JSkrb_2bDQBs",
-      "thumb": "LZHPmL2maQQ"
+      "thumb": "LZHPmL2maQQ",
+      "tag": "SKETCH VIDEO"
     },
     {
       "id": "youtube",
-      "name": "유튜브",
+      "name": "유튜브 예능",
       "playlistId": "PLmtMXxa-X5LPTjy8L1gmGzbcdRXa_3prv",
-      "thumb": "XlS5Cv6im0M"
+      "thumb": "XlS5Cv6im0M",
+      "tag": "YOUTUBE VARIETY CONTENT"
     },
     {
       "id": "sns",
       "name": "SNS광고",
       "playlistId": "PLmtMXxa-X5LNUBSYSq6N9u1x9KCn4vArF",
-      "thumb": "Woa4hq3fvxA"
+      "thumb": "Woa4hq3fvxA",
+      "tag": "SNS AD"
+    },
+    {
+      "id": "cat-mncmy6w2",
+      "name": "인터뷰",
+      "playlistId": "PLmtMXxa-X5LMnbTdqD2vIZ1Faadf-dZgb",
+      "tag": "INTERVIEW",
+      "thumb": "g8yJNDLhyLc"
     },
     {
       "id": "design",
@@ -86,7 +101,8 @@
         }
       ],
       "thumb": "https://github.com/h001715-cpu/portfolio/blob/main/%ED%95%98%EC%8A%B9%EC%A7%84-%EC%9C%A0%ED%8A%9C%EB%B8%8C-%EC%B1%84%EB%84%90%EC%95%84%ED%8A%B8_230407.png?raw=true",
-      "thumbImg": "https://drive.google.com/thumbnail?id=1u-LbU-0S618LTWYNzIvndfTgP2UenBag&sz=w1200"
+      "thumbImg": "https://drive.google.com/thumbnail?id=1u-LbU-0S618LTWYNzIvndfTgP2UenBag&sz=w1200",
+      "tag": "GRAPHIC DESIGN"
     },
     {
       "id": "planning",
@@ -125,7 +141,8 @@
         }
       ],
       "thumbImg": "",
-      "folderId": "1PafGWxSizjB2kfB7a-r6eSTeiuCX9K53"
+      "folderId": "1PafGWxSizjB2kfB7a-r6eSTeiuCX9K53",
+      "tag": "PLANNING"
     }
   ],
   "sortOrder": {
@@ -203,5 +220,6 @@
       "desc": "촬영 / 편집 / 인아웃트로 및 채널아트등 영상 요소 디자인"
     }
   ],
-  "profileZoom": 1.38
+  "profileZoom": 1.38,
+  "skills": []
 }
