@@ -59,13 +59,13 @@
     },
     {
       "id": "sketch",
-      "name": "스케치영상",
+      "name": "행사 스케치",
       "playlistId": "PLmtMXxa-X5LOXL0ynNWX6JSkrb_2bDQBs",
       "thumb": "LZHPmL2maQQ"
     },
     {
       "id": "youtube",
-      "name": "유튜브",
+      "name": "유튜브 예능",
       "playlistId": "PLmtMXxa-X5LPTjy8L1gmGzbcdRXa_3prv",
       "thumb": "XlS5Cv6im0M"
     },
@@ -183,7 +183,8 @@
     "aboutTitle": "오리지널리티를 추구하는 제작자,\n한태민입니다.",
     "stat1Num": "100",
     "stat1Suf": "+",
-    "stat1Label": "완성 프로젝트"
+    "stat1Label": "완성 프로젝트",
+    "aboutP2": "제가 추구하는 영상은 단순한 움직임이 아닌"
   },
   "career": [
     {
