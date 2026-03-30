@@ -143,6 +143,7 @@ input[type=range]{width:100%;height:4px;accent-color:var(--red);cursor:pointer;m
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:1rem">
       <div class="tabs" id="cat-tabs" style="margin-bottom:0;padding-bottom:0;flex:1"></div>
       <button class="sm" style="background:#222;border:1px solid #444;color:var(--text2)" onclick="toggleCatEdit()">✏ 카테고리명 수정</button>
+      <button class="sm" style="background:rgba(0,180,136,.12);border:1px solid rgba(0,180,136,.35);color:#00b488" onclick="showAddCategoryForm()">➕ 카테고리 추가</button>
     </div>
 
     <div id="cat-edit-panel" style="display:none;background:rgba(0,0,0,.5);border:1px solid var(--border);padding:1.5rem;border-radius:6px;margin-bottom:2rem">
@@ -347,6 +348,29 @@ input[type=range]{width:100%;height:4px;accent-color:var(--red);cursor:pointer;m
   </div><!-- /editor-section -->
 </div>
 
+<!-- 카테고리 추가 모달 -->
+<div id="add-cat-modal" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.85);align-items:center;justify-content:center;padding:2rem">
+  <div style="background:#1a1a1a;border:1px solid #444;border-radius:10px;padding:2rem;width:100%;max-width:460px;position:relative">
+    <h3 style="margin:0 0 1.5rem;font-size:1.1rem">➕ 새 카테고리 추가</h3>
+    <label>카테고리 이름 <span style="color:var(--red)">*</span></label>
+    <input type="text" id="new-cat-name" placeholder="예: 인터뷰 영상">
+    <label>종류</label>
+    <select id="new-cat-type" onchange="onNewCatTypeChange()" style="width:100%;box-sizing:border-box;background:rgba(0,0,0,.5);border:1px solid #444;color:#fff;padding:.75rem 1rem;font-size:.95rem;font-family:'Pretendard',sans-serif;border-radius:4px;margin-bottom:1rem;cursor:pointer">
+      <option value="video">🎬 영상 (YouTube 플레이리스트)</option>
+      <option value="design">🖼 디자인 (이미지 갤러리)</option>
+      <option value="planning">📄 기획안 (PDF)</option>
+    </select>
+    <div id="new-cat-playlist-row">
+      <label>유튜브 플레이리스트 ID <span style="color:var(--text2);font-size:.75rem">(나중에 입력해도 됨)</span></label>
+      <input type="text" id="new-cat-playlist" placeholder="PLmtMXxa-... 형태">
+    </div>
+    <div style="display:flex;gap:.8rem;margin-top:1.2rem">
+      <button class="primary" style="flex:1" onclick="confirmAddCategory()">추가하기</button>
+      <button onclick="hideAddCategoryForm()" style="width:auto;padding:.8rem 1.5rem;background:transparent;border:1px solid #444;color:#aaa;border-radius:4px">취소</button>
+    </div>
+  </div>
+</div>
+
 <div class="fixed-save" id="fixed-save">
   <p>★ <strong>'GitHub 덮어쓰기'</strong>는 역할·설명·순서만 저장 &nbsp;|&nbsp; <strong>'전체 배포'</strong>는 HTML 코드까지 전부 반영<span class="unsaved-badge" id="unsaved-badge" style="display:none">미저장</span></p>
   <div style="display:flex;gap:.7rem;flex-wrap:wrap;justify-content:flex-end">
@@ -520,18 +544,42 @@ function toggleCatEdit(){
     const list=document.getElementById('cat-edit-list');list.innerHTML='';
     categories.forEach(cat=>{
       const thumbId=cat.thumb||'';const thumbImg=cat.thumbImg||'';
-      const isDesign=cat.type==='design'||cat.type==='planning';
+      const isPlanning=cat.type==='planning';
+      const isDesign=cat.type==='design';
+      let thumbHtml='';
+      if(isPlanning){
+        thumbHtml=`<div style="padding:.7rem .9rem;background:rgba(0,180,136,.07);border:1px solid rgba(0,180,136,.2);border-radius:6px;font-size:.78rem;line-height:1.65">
+          <div style="color:#00b488;font-weight:700;margin-bottom:.3rem">✅ 썸네일 자동 설정</div>
+          <div style="color:var(--text2)">Drive 폴더의 첫 번째 PDF 이미지가 카테고리 카드에 자동 표시됩니다. 직접 지정하려면 아래에 URL 입력 (비우면 자동).</div>
+          <div style="display:flex;gap:.8rem;align-items:center;margin-top:.6rem">
+            <input type="text" id="thumbimg-input-${cat.id}" value="${thumbImg}" placeholder="https://... (선택사항)" style="flex:1;margin-bottom:0;background:rgba(255,255,255,.05)" oninput="previewThumbImg('${cat.id}')">
+            <img id="thumbimg-preview-${cat.id}" src="${thumbImg||''}" style="width:80px;height:45px;object-fit:cover;border-radius:3px;border:1px solid var(--border);background:#000;${thumbImg?'':'display:none'}">
+          </div>
+        </div>`;
+      }else if(isDesign){
+        thumbHtml=`<div><label style="margin-bottom:.3rem">썸네일 이미지 URL <span style="color:var(--text2);font-size:.72rem">(비우면 첫 번째 작품 자동 사용)</span></label><div style="display:flex;gap:.8rem;align-items:center"><input type="text" id="thumbimg-input-${cat.id}" value="${thumbImg}" placeholder="https://..." style="flex:1;margin-bottom:0;background:rgba(255,255,255,.05)" oninput="previewThumbImg('${cat.id}')"><img id="thumbimg-preview-${cat.id}" src="${thumbImg||''}" style="width:80px;height:45px;object-fit:cover;border-radius:3px;border:1px solid var(--border);background:#000;${thumbImg?'':'display:none'}"></div></div>`;
+      }else{
+        thumbHtml=`<div style="display:flex;gap:1.5rem;align-items:flex-start"><div style="flex:1"><label style="margin-bottom:.3rem">썸네일 유튜브 영상 ID <span style="color:var(--text2);font-size:.72rem">(비워두면 플레이리스트 첫 영상)</span></label><input type="text" id="thumb-input-${cat.id}" value="${thumbId}" placeholder="예: dQw4w9WgXcQ" style="margin-bottom:0;background:rgba(255,255,255,.05)" oninput="previewThumb('${cat.id}')"></div><div style="flex-shrink:0;width:120px"><label style="margin-bottom:.3rem">미리보기</label><div style="position:relative;width:120px;padding-bottom:67px;background:#000;border:1px solid var(--border);border-radius:4px;overflow:hidden"><img id="thumb-preview-${cat.id}" src="${thumbId?'https://img.youtube.com/vi/'+thumbId+'/mqdefault.jpg':''}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;${thumbId?'':'display:none'}"><span id="thumb-empty-${cat.id}" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.65rem;color:var(--text2);text-align:center;${thumbId?'display:none':''}">미리보기 없음</span></div></div></div>`;
+      }
       list.innerHTML+=`<div style="margin-bottom:1.8rem;padding-bottom:1.8rem;border-bottom:1px solid var(--border)">
         <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem">
-          <span style="color:var(--text2);width:90px;font-size:.82rem;font-family:'Space Grotesk',sans-serif;flex-shrink:0">ID: ${cat.id}</span>
+          <span style="color:var(--text2);width:90px;font-size:.78rem;font-family:'Space Grotesk',sans-serif;flex-shrink:0;line-height:1.4">ID:<br>${cat.id}</span>
           <div style="flex:1"><label style="margin-bottom:.3rem">카테고리 이름</label><input type="text" id="cat-input-${cat.id}" value="${cat.name.replace(/"/g,'&quot;')}" style="margin-bottom:0;background:rgba(255,255,255,.05)"></div>
+          <button class="sm danger" style="flex-shrink:0;align-self:flex-end" onclick="removeCategoryById('${cat.id}')">삭제</button>
         </div>
-        ${isDesign?`<div><label style="margin-bottom:.3rem">썸네일 이미지 URL <span style="color:var(--text2);font-size:.72rem">(직접 이미지 URL — GitHub raw, Imgur 등)</span></label><div style="display:flex;gap:.8rem;align-items:center"><input type="text" id="thumbimg-input-${cat.id}" value="${thumbImg}" placeholder="https://..." style="flex:1;margin-bottom:0;background:rgba(255,255,255,.05)" oninput="previewThumbImg('${cat.id}')"><img id="thumbimg-preview-${cat.id}" src="${thumbImg||''}" style="width:80px;height:45px;object-fit:cover;border-radius:3px;border:1px solid var(--border);background:#000;${thumbImg?'':'display:none'}"></div></div>`
-        :`<div style="display:flex;gap:1.5rem;align-items:flex-start"><div style="flex:1"><label style="margin-bottom:.3rem">썸네일 유튜브 영상 ID <span style="color:var(--text2);font-size:.72rem">(비워두면 플레이리스트 첫 영상)</span></label><input type="text" id="thumb-input-${cat.id}" value="${thumbId}" placeholder="예: dQw4w9WgXcQ" style="margin-bottom:0;background:rgba(255,255,255,.05)" oninput="previewThumb('${cat.id}')"></div><div style="flex-shrink:0;width:120px"><label style="margin-bottom:.3rem">미리보기</label><div style="position:relative;width:120px;padding-bottom:67px;background:#000;border:1px solid var(--border);border-radius:4px;overflow:hidden"><img id="thumb-preview-${cat.id}" src="${thumbId?'https://img.youtube.com/vi/'+thumbId+'/mqdefault.jpg':''}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;${thumbId?'':'display:none'}"><span id="thumb-empty-${cat.id}" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.65rem;color:var(--text2);text-align:center;${thumbId?'display:none':''}">미리보기 없음</span></div></div></div>`}
+        ${thumbHtml}
       </div>`;
     });
     p.style.display='block';
   }else{p.style.display='none';}
+}
+
+function removeCategoryById(catId){
+  const cat=categories.find(c=>c.id===catId);
+  if(!cat)return;
+  if(!confirm('"'+cat.name+'" 카테고리를 삭제할까요?\n삭제 후 [🚀 덮어쓰기] 버튼을 눌러야 실제 반영됩니다.'))return;
+  const idx=categories.findIndex(c=>c.id===catId);
+  if(idx>-1){categories.splice(idx,1);videoData.categories=categories;renderTabs();markDirty();toggleCatEdit();}
 }
 
 function previewThumb(catId){const val=document.getElementById('thumb-input-'+catId).value.trim();const img=document.getElementById('thumb-preview-'+catId);const empty=document.getElementById('thumb-empty-'+catId);if(val){img.src='https://img.youtube.com/vi/'+val+'/mqdefault.jpg';img.style.display='';if(empty)empty.style.display='none';}else{img.src='';img.style.display='none';if(empty)empty.style.display='';}}
@@ -728,10 +776,13 @@ function renderDesignEditor(cat){
     }
     return card;
   }
-  cat.items.forEach((item,idx)=>g.appendChild(buildCard(item,idx)));
-  const addBtn=document.createElement('button');addBtn.className='add-design-btn';addBtn.textContent=isPlanningCat?'+ 새 기획안 추가':'+ 새 작품 추가';
-  addBtn.onclick=()=>{cat.items.push({title:'',img:'',desc:'',link:''});videoData.categories=categories;renderDesignEditor(cat);markDirty();};
-  g.appendChild(addBtn);
+  // 드라이브 폴더 연동 시: 수동 항목 숨김 (Drive가 우선)
+  if(!cat.folderId){
+    (cat.items||[]).forEach((item,idx)=>g.appendChild(buildCard(item,idx)));
+    const addBtn=document.createElement('button');addBtn.className='add-design-btn';addBtn.textContent=isPlanningCat?'+ 새 기획안 추가':'+ 새 작품 추가';
+    addBtn.onclick=()=>{if(!cat.items)cat.items=[];cat.items.push({title:'',img:'',desc:'',link:''});videoData.categories=categories;renderDesignEditor(cat);markDirty();};
+    g.appendChild(addBtn);
+  }
 }
 
 function refreshPdfPreview(input){
@@ -778,6 +829,45 @@ async function applyFolderId(catId){
   // 저장 후 폴더 미리보기 갱신
   previewDriveFolder(catId);
 }
+
+// ── 카테고리 추가 ─────────────────────────────────────────────────────────────
+function showAddCategoryForm(){
+  const m=document.getElementById('add-cat-modal');
+  m.style.display='flex';
+  document.getElementById('new-cat-name').value='';
+  document.getElementById('new-cat-type').value='video';
+  document.getElementById('new-cat-playlist').value='';
+  onNewCatTypeChange();
+  setTimeout(()=>document.getElementById('new-cat-name').focus(),100);
+}
+function hideAddCategoryForm(){
+  document.getElementById('add-cat-modal').style.display='none';
+}
+function onNewCatTypeChange(){
+  const type=document.getElementById('new-cat-type').value;
+  document.getElementById('new-cat-playlist-row').style.display=type==='video'?'block':'none';
+}
+function confirmAddCategory(){
+  const name=document.getElementById('new-cat-name').value.trim();
+  if(!name){alert('카테고리 이름을 입력해주세요.');return;}
+  const type=document.getElementById('new-cat-type').value;
+  const playlistId=document.getElementById('new-cat-playlist').value.trim();
+  // 고유 ID 자동 생성
+  const id='cat-'+Date.now().toString(36);
+  const newCat={id,name};
+  if(type==='design'){newCat.type='design';newCat.items=[];}
+  else if(type==='planning'){newCat.type='planning';newCat.items=[];}
+  else{if(playlistId)newCat.playlistId=playlistId;}
+  categories.push(newCat);
+  videoData.categories=categories;
+  renderTabs();
+  markDirty();
+  hideAddCategoryForm();
+  openCat(id);
+  alert('"'+name+'" 카테고리가 추가됐습니다!\n하단 [🚀 GitHub 덮어쓰기]로 저장하세요.');
+}
+// 모달 바깥 클릭 시 닫기
+document.getElementById('add-cat-modal').addEventListener('click',function(e){if(e.target===this)hideAddCategoryForm();});
 
 function updateDesignItem(catId,idx,field,value){const cat=categories.find(c=>c.id===catId);if(!cat||!cat.items||!cat.items[idx])return;cat.items[idx][field]=value;videoData.categories=categories;markDirty();}
 function removeDesignItem(catId,idx){const cat=categories.find(c=>c.id===catId);if(!cat||!cat.items)return;cat.items.splice(idx,1);videoData.categories=categories;renderDesignEditor(cat);markDirty();}
