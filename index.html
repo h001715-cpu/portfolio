@@ -486,6 +486,7 @@ function buildPlanningGrid(items){
   items.forEach(function(item){
     var pdfUrl=item.link||'';
     var thumbUrl=item.img||'';
+    if(!thumbUrl&&pdfUrl){var _m=pdfUrl.match(/\/file\/d\/([^/?]+)/)||pdfUrl.match(/[?&]id=([^&]+)/);if(_m&&_m[1])thumbUrl='https://drive.google.com/thumbnail?id='+_m[1]+'&sz=w800';}
     var el=document.createElement('div');el.className='plan-item rv-s';
     var descHtml=item.desc?'<div class="plan-desc">'+item.desc.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>':'';
     var ctaHtml=pdfUrl?'<span class="plan-cta"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 5.5h9M5.5 1l4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> PDF 보기</span>':'<span style="font-size:.72rem;color:var(--text3)">PDF 미등록</span>';
