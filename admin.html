@@ -669,13 +669,14 @@ function renderDesignEditor(cat){
       <span style="font-size:.88rem;font-weight:600;color:var(--text)">📁 Google Drive 폴더 자동 연동</span>
       <span style="font-size:.68rem;font-weight:700;background:rgba(0,180,136,.15);border:1px solid rgba(0,180,136,.35);border-radius:3px;padding:.15rem .5rem;color:#00b488;letter-spacing:.04em">자동 반영</span>
     </div>
-    <div class="drive-row">
-      <input type="text" id="folder-id-${cat.id}" value="${currentFolderId.replace(/"/g,'&quot;')}" placeholder="Google Drive 폴더 ID (URL의 .../folders/XXX 부분)" style="font-size:.88rem" oninput="saveFolderId('${cat.id}',this.value)">
+    <div class="drive-row" style="align-items:stretch">
+      <input type="text" id="folder-id-${cat.id}" value="${currentFolderId.replace(/"/g,'&quot;')}" placeholder="Google Drive 폴더 ID (URL의 .../folders/XXX 부분)" style="font-size:.88rem">
+      <button class="sm primary" style="width:auto;padding:.65rem 1.3rem;white-space:nowrap;flex-shrink:0;font-size:.85rem" onclick="applyFolderId('${cat.id}')">✓ 저장하기</button>
     </div>
     <p style="font-size:.78rem;color:var(--text2);margin:.7rem 0 0;line-height:1.7">
-      폴더 ID를 입력하면 메인 사이트에서 <strong style="color:var(--text)">${fileTypeLabel}</strong>을 <strong style="color:var(--text)">실시간으로 자동 불러옵니다.</strong><br>
-      Drive 폴더에 파일을 추가·삭제하면 🚀 덮어쓰기 없이도 사이트에 바로 반영됩니다.<br>
-      <span style="color:var(--text3)">※ 폴더와 파일 모두 <strong style="color:var(--text2)">"링크가 있는 모든 사용자"</strong> 공유 설정 필요 &nbsp;·&nbsp; 폴더 URL 예시: drive.google.com/drive/folders/<strong style="color:var(--text2)">여기가 ID</strong></span>
+      폴더 ID 입력 후 <strong style="color:var(--text)">저장하기</strong>를 누르면 메인 사이트에서 <strong style="color:var(--text)">${fileTypeLabel}</strong>을 실시간으로 자동 불러옵니다.<br>
+      이후 Drive 폴더에 파일을 추가·삭제하면 <strong style="color:var(--text)">자동 반영</strong>됩니다. (매번 저장 불필요)<br>
+      <span style="color:var(--text3)">※ 폴더와 파일 모두 <strong style="color:var(--text2)">"링크가 있는 모든 사용자"</strong> 공유 설정 필요</span>
     </p>
     ${currentFolderId?`<div style="margin-top:.8rem;padding:.5rem .8rem;background:rgba(0,180,136,.08);border:1px solid rgba(0,180,136,.2);border-radius:4px;font-size:.78rem;color:#00b488">✓ 폴더 ID 설정됨 — 메인 사이트에서 자동 반영 중</div>`:''}`;
   g.appendChild(folderSection);
@@ -738,6 +739,15 @@ function saveFolderId(catId,value){
   cat.folderId=value.trim();
   videoData.categories=categories;
   markDirty();
+}
+
+async function applyFolderId(catId){
+  const input=document.getElementById('folder-id-'+catId);
+  if(!input)return;
+  const value=input.value.trim();
+  if(!value){alert('폴더 ID를 입력해주세요.');return;}
+  saveFolderId(catId,value);
+  await saveToGithub();
 }
 
 function updateDesignItem(catId,idx,field,value){const cat=categories.find(c=>c.id===catId);if(!cat||!cat.items||!cat.items[idx])return;cat.items[idx][field]=value;videoData.categories=categories;markDirty();}
