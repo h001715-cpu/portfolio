@@ -348,8 +348,11 @@ input[type=range]{width:100%;height:4px;accent-color:var(--red);cursor:pointer;m
 </div>
 
 <div class="fixed-save" id="fixed-save">
-  <p>★ <strong>'GitHub에 덮어쓰기'</strong> 버튼을 눌러야 메인 사이트에 반영됩니다 (약 5초 소요)<span class="unsaved-badge" id="unsaved-badge" style="display:none">미저장</span></p>
-  <button class="primary" style="width:auto;padding:.8rem 2rem" onclick="saveToGithub()">🚀 GitHub에 덮어쓰기</button>
+  <p>★ <strong>'GitHub 덮어쓰기'</strong>는 역할·설명·순서만 저장 &nbsp;|&nbsp; <strong>'전체 배포'</strong>는 HTML 코드까지 전부 반영<span class="unsaved-badge" id="unsaved-badge" style="display:none">미저장</span></p>
+  <div style="display:flex;gap:.7rem;flex-wrap:wrap;justify-content:flex-end">
+    <button style="width:auto;padding:.8rem 1.6rem;background:#1e1e1e;border:1px solid #555;color:#ccc;border-radius:4px;font-size:.9rem;font-weight:600;cursor:pointer" onclick="deployAll()" title="index.html + admin.html + videos.json 전체를 GitHub에 올립니다">🌐 전체 배포 (HTML 포함)</button>
+    <button class="primary" style="width:auto;padding:.8rem 2rem" onclick="saveToGithub()">🚀 GitHub 덮어쓰기</button>
+  </div>
 </div>
 
 <script>
@@ -854,6 +857,64 @@ function updateDriveOverride(catId,fileId,field,val){
   cat.driveOverrides[fileId][field]=val;
   videoData.categories=categories;
   markDirty();
+}
+
+// ── 전체 파일 GitHub 배포 (index.html + admin.html + videos.json) ─────────────
+let _deployDirHandle = null;
+
+async function deployAll(){
+  if(!ghToken){alert('먼저 GitHub 토큰으로 로그인해주세요.');return;}
+  if(!window.showDirectoryPicker){
+    alert('이 기능은 Chrome 브라우저에서만 사용할 수 있습니다.');return;
+  }
+  try{
+    // 폴더 선택 (한 번 선택하면 기억)
+    if(!_deployDirHandle){
+      _deployDirHandle=await window.showDirectoryPicker({mode:'read'});
+    }
+    showLoading('전체 파일 GitHub 배포 중...');
+    const files=['index.html','admin.html','videos.json'];
+    let ok=0, skip=[];
+    for(const filename of files){
+      try{
+        // 로컬 파일 읽기
+        const fh=await _deployDirHandle.getFileHandle(filename);
+        const file=await fh.getFile();
+        const content=await file.text();
+        // GitHub에서 현재 SHA 가져오기
+        const shaRes=await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filename}`,
+          {headers:{'Authorization':`token ${ghToken}`}}
+        );
+        let sha='';
+        if(shaRes.ok){const d=await shaRes.json();sha=d.sha;}
+        // GitHub에 업로드
+        const pushRes=await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filename}`,
+          {method:'PUT',
+           headers:{'Authorization':`token ${ghToken}`,'Content-Type':'application/json'},
+           body:JSON.stringify({message:`전체 배포: ${filename}`,content:b64Enc(content),sha})}
+        );
+        if(pushRes.ok)ok++;
+        else skip.push(filename);
+      }catch(e){skip.push(filename+'('+e.message+')');}
+    }
+    showLoading(false);
+    if(skip.length>0){
+      alert(`⚠️ ${ok}개 성공, 실패: ${skip.join(', ')}\n\n폴더 안에 해당 파일이 있는지 확인해주세요.`);
+    }else{
+      _deployDirHandle=null; // 다음번엔 폴더 다시 선택
+      alert(`🎉 ${ok}개 파일 전체 배포 완료!\n약 10~30초 후 메인 사이트를 확인하세요.`);
+    }
+  }catch(e){
+    showLoading(false);
+    if(e.name==='AbortError')return; // 사용자가 취소
+    if(e.name==='SecurityError'||e.name==='NotAllowedError'){
+      _deployDirHandle=null;
+      alert('폴더 접근 권한이 필요합니다. 다시 시도해주세요.');return;
+    }
+    alert('오류: '+e.message);
+  }
 }
 
 async function saveToGithub(){
