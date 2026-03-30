@@ -76,6 +76,12 @@
       "thumb": "Woa4hq3fvxA"
     },
     {
+      "id": "cat-mncmhz1e",
+      "name": "인터뷰",
+      "playlistId": "PLmtMXxa-X5LMnbTdqD2vIZ1Faadf-dZgb",
+      "thumb": "g8yJNDLhyLc"
+    },
+    {
       "id": "design",
       "name": "디자인",
       "type": "design",
@@ -128,12 +134,6 @@
       ],
       "thumbImg": "",
       "folderId": "1PafGWxSizjB2kfB7a-r6eSTeiuCX9K53"
-    },
-    {
-      "id": "cat-mncmhz1e",
-      "name": "인터",
-      "playlistId": "PLmtMXxa-X5LMnbTdqD2vIZ1Faadf-dZgb",
-      "thumb": "g8yJNDLhyLc"
     }
   ],
   "sortOrder": {
@@ -212,5 +212,14 @@
     }
   ],
   "profileZoom": 1.38,
-  "skills": []
+  "skills": [
+    {
+      "label": "일본어",
+      "value": "일상 회화 가능"
+    },
+    {
+      "label": "바이브 코딩",
+      "value": "초중급 (사이트 및 프리미어 프로 플러그인 개발 가능)"
+    }
+  ]
 }
