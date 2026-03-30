@@ -86,7 +86,8 @@
         }
       ],
       "thumb": "https://github.com/h001715-cpu/portfolio/blob/main/%ED%95%98%EC%8A%B9%EC%A7%84-%EC%9C%A0%ED%8A%9C%EB%B8%8C-%EC%B1%84%EB%84%90%EC%95%84%ED%8A%B8_230407.png?raw=true",
-      "thumbImg": "https://drive.google.com/thumbnail?id=1u-LbU-0S618LTWYNzIvndfTgP2UenBag&sz=w1200"
+      "thumbImg": "https://drive.google.com/thumbnail?id=1u-LbU-0S618LTWYNzIvndfTgP2UenBag&sz=w1200",
+      "folderId": "1bbnKgZG8E_3MBaeuPfiogQGP_bZdd4vB"
     },
     {
       "id": "planning",
@@ -127,6 +128,11 @@
       "thumbImg": "",
       "folderId": "1XbwyCj8cVyDj-1irZWFq8_9fZOajNUwr",
       "driveOverrides": {}
+    },
+    {
+      "id": "cat-mnclybpm",
+      "name": "인터뷰",
+      "playlistId": "PLmtMXxa-X5LMnbTdqD2vIZ1Faadf-dZgb"
     }
   ],
   "sortOrder": {
