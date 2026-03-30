@@ -348,7 +348,18 @@ a, button, .cat-card, .vid-item, .ptab, .burger, .back-btn, input, textarea, .lb
     <span class="sec-label rv" style="display:block;margin-bottom:.8rem">Contact</span>
     <h2 class="sec-title rv" style="margin-bottom:1.2rem" id="contact-title">Contact</h2>
     <p class="ct-lead rv" id="contact-lead">새로운 프로젝트, 협업 제안 혹은 단순한 문의도 언제든지 환영합니다.</p>
-    <button class="ct-open-btn rv" onclick="openContactModal()">연락하기 <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 6.5h11M6.5 1l5.5 5.5-5.5 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+    <div class="rv" style="max-width:420px;margin:0 auto;text-align:left">
+      <div class="cmodal-row">
+        <div class="cmodal-ic"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 3h13v9H1V3zm0 0l6.5 5.5L14 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+        <span class="cmodal-val" id="contact-email">h001715@naver.com</span>
+        <button class="cmodal-copy" id="copy-email-sec" onclick="copyContactSection('email')">복사</button>
+      </div>
+      <div class="cmodal-row">
+        <div class="cmodal-ic"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 1.5h3l1.5 3.5-2 1.2a8.5 8.5 0 004.3 4.3L10.5 8.5l3.5 1.5V13a2 2 0 01-2 2A12.5 12.5 0 01.5 3.5a2 2 0 012-2z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+        <span class="cmodal-val" id="contact-phone">010-5719-1055</span>
+        <button class="cmodal-copy" id="copy-phone-sec" onclick="copyContactSection('phone')">복사</button>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -356,7 +367,7 @@ a, button, .cat-card, .vid-item, .ptab, .burger, .back-btn, input, textarea, .lb
   <div class="cmodal-box">
     <button class="cmodal-close" onclick="closeContactModal()">✕</button>
     <span class="sec-label">Contact</span>
-    <h3 class="cmodal-title">함께 만들어요</h3>
+    <h3 class="cmodal-title">직통 연락처</h3>
     <p class="cmodal-lead" id="cmodal-lead">새로운 프로젝트, 협업 제안 혹은 단순한 문의도 언제든지 환영합니다.</p>
     <div class="cmodal-row">
       <div class="cmodal-ic"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 3h13v9H1V3zm0 0l6.5 5.5L14 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div>
@@ -432,6 +443,8 @@ fetch('videos.json?t='+Date.now())
     setText('stat4l',pc.stat4Label);
     if(pc.contactLead){setText('cmodal-lead',pc.contactLead);setText('contact-lead',pc.contactLead);}
     setText('cmodal-email',pc.contactEmail);setText('cmodal-phone',pc.contactPhone);
+    if(pc.contactEmail){setText('contact-email',pc.contactEmail);}
+    if(pc.contactPhone){setText('contact-phone',pc.contactPhone);}
     setText('ft-name',pc.footerName);setText('ft-year',pc.footerYear);
     if(data.career&&data.career.length>0)buildCareer(data.career);
     if(data.skills&&data.skills.length>0)buildSkills(data.skills);
@@ -454,7 +467,7 @@ mobNav.querySelectorAll('a').forEach(function(a){a.addEventListener('click',func
 
 var rvObs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');rvObs.unobserve(e.target)}})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
 function observeRv(){document.querySelectorAll('.rv:not(.on),.rv-s:not(.on)').forEach(function(el){rvObs.observe(el)})}
-function buildCatGrid(){var g=document.getElementById('cat-grid');g.innerHTML='';categories.forEach(function(cat){var c=document.createElement('div');c.className='cat-card rv-s';var thumbVid=cat.thumb||'';c.innerHTML='<img class="cat-thumb-img" src="" alt="'+cat.name+'"><div class="cat-vid-layer" id="cvl-'+cat.id+'"></div><div class="cat-content-overlay"><div class="cat-name">'+cat.name+'</div><span class="cat-tag">'+cat.id.replace('-',' ')+'</span></div>';c.addEventListener('click',function(){openCat(cat.id,cat.name)});g.appendChild(c);var img=c.querySelector('.cat-thumb-img');if(cat.thumbImg){img.src=cat.thumbImg;}else if(thumbVid){img.src='https://img.youtube.com/vi/'+thumbVid+'/maxresdefault.jpg';img.onerror=function(){this.src='https://img.youtube.com/vi/'+thumbVid+'/hqdefault.jpg'};}else if(cat.playlistId){fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=5&playlistId='+cat.playlistId+'&key='+YT_API_KEY).then(function(r){return r.json()}).then(function(d){if(d.items){var v=d.items.filter(function(i){return i.snippet&&i.snippet.resourceId&&i.snippet.resourceId.videoId&&i.snippet.title!=='Deleted video'&&i.snippet.title!=='Private video'&&i.snippet.title!=='삭제된 동영상'&&i.snippet.title!=='비공개 동영상'});if(v.length>0){var vid=v[0].snippet.resourceId.videoId;img.src='https://img.youtube.com/vi/'+vid+'/maxresdefault.jpg';img.onerror=function(){this.src='https://img.youtube.com/vi/'+vid+'/hqdefault.jpg'};if(!thumbVid)thumbVid=vid;}}});}else if(cat.type==='planning'||cat.type==='design'){(function(){var _tryItems=function(){var fi=cat.items&&cat.items[0];if(!fi)return false;if(cat.type==='planning'&&fi.link){var _m=fi.link.match(/\/file\/d\/([^/?]+)/)||fi.link.match(/[?&]id=([^&]+)/);if(_m&&_m[1]){img.src='https://drive.google.com/thumbnail?id='+_m[1]+'&sz=w800';return true;}}else if(cat.type==='design'&&fi.img){img.src=fi.img;return true;}return false;};if(!_tryItems()&&cat.folderId){var _fq="'"+cat.folderId+"'+in+parents+and+"+(cat.type==='planning'?"mimeType='application/pdf'":"mimeType+contains+'image/'");fetch('https://www.googleapis.com/drive/v3/files?q='+_fq+'&fields=files(id)&orderBy=name&pageSize=1&key='+YT_API_KEY).then(function(r){return r.json()}).then(function(d){if(d.files&&d.files.length>0)img.src='https://drive.google.com/thumbnail?id='+d.files[0].id+'&sz=w800';});}})();}(function(tv){if(tv&&cat.type!=='design'&&cat.type!=='planning'){c.addEventListener('mouseenter',function(){var vl=document.getElementById('cvl-'+cat.id);if(vl.innerHTML==='')vl.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+tv+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+tv+'&rel=0" allow="autoplay" frameborder="0"></iframe>';vl.classList.add('on');});c.addEventListener('mouseleave',function(){document.getElementById('cvl-'+cat.id).classList.remove('on');});}})(thumbVid);});observeRv();}
+function buildCatGrid(){var g=document.getElementById('cat-grid');g.innerHTML='';categories.forEach(function(cat){var c=document.createElement('div');c.className='cat-card rv-s';var thumbVid=cat.thumb||'';var tagHtml=cat.tag?'<span class="cat-tag">'+cat.tag+'</span>':'';c.innerHTML='<img class="cat-thumb-img" src="" alt="'+cat.name+'"><div class="cat-vid-layer" id="cvl-'+cat.id+'"></div><div class="cat-content-overlay"><div class="cat-name">'+cat.name+'</div>'+tagHtml+'</div>';c.addEventListener('click',function(){openCat(cat.id,cat.name)});g.appendChild(c);var img=c.querySelector('.cat-thumb-img');if(cat.thumbImg){img.src=cat.thumbImg;}else if(thumbVid){img.src='https://img.youtube.com/vi/'+thumbVid+'/maxresdefault.jpg';img.onerror=function(){this.src='https://img.youtube.com/vi/'+thumbVid+'/hqdefault.jpg'};}else if(cat.playlistId){fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=5&playlistId='+cat.playlistId+'&key='+YT_API_KEY).then(function(r){return r.json()}).then(function(d){if(d.items){var v=d.items.filter(function(i){return i.snippet&&i.snippet.resourceId&&i.snippet.resourceId.videoId&&i.snippet.title!=='Deleted video'&&i.snippet.title!=='Private video'&&i.snippet.title!=='삭제된 동영상'&&i.snippet.title!=='비공개 동영상'});if(v.length>0){var vid=v[0].snippet.resourceId.videoId;img.src='https://img.youtube.com/vi/'+vid+'/maxresdefault.jpg';img.onerror=function(){this.src='https://img.youtube.com/vi/'+vid+'/hqdefault.jpg'};if(!thumbVid)thumbVid=vid;}}});}else if(cat.type==='planning'||cat.type==='design'){(function(){var _tryItems=function(){var fi=cat.items&&cat.items[0];if(!fi)return false;if(cat.type==='planning'&&fi.link){var _m=fi.link.match(/\/file\/d\/([^/?]+)/)||fi.link.match(/[?&]id=([^&]+)/);if(_m&&_m[1]){img.src='https://drive.google.com/thumbnail?id='+_m[1]+'&sz=w800';return true;}}else if(cat.type==='design'&&fi.img){img.src=fi.img;return true;}return false;};if(!_tryItems()&&cat.folderId){var _fq="'"+cat.folderId+"'+in+parents+and+"+(cat.type==='planning'?"mimeType='application/pdf'":"mimeType+contains+'image/'");fetch('https://www.googleapis.com/drive/v3/files?q='+_fq+'&fields=files(id)&orderBy=name&pageSize=1&key='+YT_API_KEY).then(function(r){return r.json()}).then(function(d){if(d.files&&d.files.length>0)img.src='https://drive.google.com/thumbnail?id='+d.files[0].id+'&sz=w800';});}})();}(function(tv){if(tv&&cat.type!=='design'&&cat.type!=='planning'){c.addEventListener('mouseenter',function(){var vl=document.getElementById('cvl-'+cat.id);if(vl.innerHTML==='')vl.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+tv+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+tv+'&rel=0" allow="autoplay" frameborder="0"></iframe>';vl.classList.add('on');});c.addEventListener('mouseleave',function(){document.getElementById('cvl-'+cat.id).classList.remove('on');});}})(thumbVid);});observeRv();}
 
 
 function openCat(id,name,fromState){if(!fromState)history.pushState({view:'cat',id:id,name:name},'','#'+id);var cat=categories.find(function(c){return c.id===id});document.getElementById('cat-grid').classList.add('hidden');document.getElementById('vid-wrap').classList.add('show');document.getElementById('wt').style.display='none';document.getElementById('back-btn').classList.add('show');document.getElementById('ctd').textContent=name;document.getElementById('ctd').classList.add('show');document.getElementById('vid-grid').style.display='';document.getElementById('design-grid').style.display='none';if(cat&&(cat.type==='design'||cat.type==='planning')){
@@ -593,6 +606,13 @@ function buildSkills(skills){
 function openContactModal(){document.getElementById('cmodal').classList.add('on');document.body.style.overflow='hidden';}
 function closeContactModal(){document.getElementById('cmodal').classList.remove('on');document.body.style.overflow='';}
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeContactModal();}});
+
+function copyContactSection(type){
+  var el=document.getElementById(type==='email'?'contact-email':'contact-phone');
+  var btn=document.getElementById(type==='email'?'copy-email-sec':'copy-phone-sec');
+  if(!el||!btn)return;
+  navigator.clipboard.writeText(el.textContent.trim()).then(function(){btn.textContent='✓ 복사됨';btn.classList.add('copied');setTimeout(function(){btn.textContent='복사';btn.classList.remove('copied');},2000);}).catch(function(){var ta=document.createElement('textarea');ta.value=el.textContent.trim();document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent='✓ 복사됨';btn.classList.add('copied');setTimeout(function(){btn.textContent='복사';btn.classList.remove('copied');},2000);});
+}
 
 function copyContact(type){
   var el=document.getElementById(type==='email'?'cmodal-email':'cmodal-phone');
