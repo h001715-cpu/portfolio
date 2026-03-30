@@ -433,7 +433,7 @@ window.addEventListener('popstate', function(e){
     }
 });
 
-fetch('videos.json?t='+Date.now())
+fetch('https://raw.githubusercontent.com/h001715-cpu/portfolio/main/videos.json?t='+Date.now())
   .then(function(r){return r.json()})
   .then(function(data){
     YT_API_KEY=data.apiKey;
