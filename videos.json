@@ -27,66 +27,51 @@
     "LAepL0ZMmL4": "ROLE :  촬영 / 편집 / 후보정 / 자막 및 모션 디자인",
     "TpBP4R73rBM": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인",
     "XlS5Cv6im0M": "ROLE :  기획 / 출연자 섭외 / 촬영 / 편집 / 후보정 / 자막 및 모션 디자인 / 썸네일 디자인",
-    "Gqegk5psVP0": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 (모션 그래픽 인트로 제외)",
+    "Gqegk5psVP0": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
     "58oOw6L9K34": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
     "uQoM8WJ_yWc": "ROLE :  촬영 / 편집 / 후보정 / 자막 및 모션 디자인 ",
     "AIHelUnH0bI": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
     "DRu7VuSp7gg": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
     "Bo50t7arAsI": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
     "Woa4hq3fvxA": "ROLE :  기획 / 편집 / 후보정 / 자막 및 모션 디자인 ",
-    "DpO-VPC_mm4": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 자막 및 모션 디자인\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING",
-    "7wNL_jCo3-M": "ROLE :  연출 / 촬영 (메인캠 담당) / 편집 / 후보정 / 자막 및 모션 디자인",
-    "g8yJNDLhyLc": "ROLE :  연출 / 촬영 (서브캠 담당) / 편집 / 후보정 / 자막 및 모션 디자인"
+    "DpO-VPC_mm4": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 자막 및 모션 디자인\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING"
   },
   "categories": [
     {
       "id": "ai-ad",
       "name": "AI 광고 영상",
       "playlistId": "PLmtMXxa-X5LOoF9lgqsTcpLvB1i7cPTr1",
-      "thumb": "4CRpNu_7W50",
-      "tag": "AI-AD"
+      "thumb": "4CRpNu_7W50"
     },
     {
       "id": "brand-film",
       "name": "브랜드 필름 & 광고영상",
       "playlistId": "PLmtMXxa-X5LOBKuTEDk1xfeEZ9X7C8iF1",
-      "thumb": "Lef23mcbrB0",
-      "tag": "BRAND FILM & AD"
+      "thumb": "Lef23mcbrB0"
     },
     {
       "id": "motion",
       "name": "모션 그래픽",
       "playlistId": "PLmtMXxa-X5LP6y5_Zla5kjHCwJPoD1RRx",
-      "thumb": "8qrFOiRAWws",
-      "tag": "MOTION GRAPHICS"
+      "thumb": "8qrFOiRAWws"
     },
     {
       "id": "sketch",
-      "name": "행사 스케치",
+      "name": "스케치영상",
       "playlistId": "PLmtMXxa-X5LOXL0ynNWX6JSkrb_2bDQBs",
-      "thumb": "LZHPmL2maQQ",
-      "tag": "SKETCH VIDEO"
+      "thumb": "LZHPmL2maQQ"
     },
     {
       "id": "youtube",
-      "name": "유튜브 예능",
+      "name": "유튜브",
       "playlistId": "PLmtMXxa-X5LPTjy8L1gmGzbcdRXa_3prv",
-      "thumb": "XlS5Cv6im0M",
-      "tag": "YOUTUBE VARIETY CONTENT"
+      "thumb": "XlS5Cv6im0M"
     },
     {
       "id": "sns",
       "name": "SNS광고",
       "playlistId": "PLmtMXxa-X5LNUBSYSq6N9u1x9KCn4vArF",
-      "thumb": "Woa4hq3fvxA",
-      "tag": "SNS AD"
-    },
-    {
-      "id": "cat-mncmy6w2",
-      "name": "인터뷰",
-      "playlistId": "PLmtMXxa-X5LMnbTdqD2vIZ1Faadf-dZgb",
-      "tag": "INTERVIEW",
-      "thumb": "g8yJNDLhyLc"
+      "thumb": "Woa4hq3fvxA"
     },
     {
       "id": "design",
@@ -101,8 +86,7 @@
         }
       ],
       "thumb": "https://github.com/h001715-cpu/portfolio/blob/main/%ED%95%98%EC%8A%B9%EC%A7%84-%EC%9C%A0%ED%8A%9C%EB%B8%8C-%EC%B1%84%EB%84%90%EC%95%84%ED%8A%B8_230407.png?raw=true",
-      "thumbImg": "https://drive.google.com/thumbnail?id=1u-LbU-0S618LTWYNzIvndfTgP2UenBag&sz=w1200",
-      "tag": "GRAPHIC DESIGN"
+      "thumbImg": "https://drive.google.com/thumbnail?id=1u-LbU-0S618LTWYNzIvndfTgP2UenBag&sz=w1200"
     },
     {
       "id": "planning",
@@ -141,8 +125,7 @@
         }
       ],
       "thumbImg": "",
-      "folderId": "1PafGWxSizjB2kfB7a-r6eSTeiuCX9K53",
-      "tag": "PLANNING"
+      "folderId": "1PafGWxSizjB2kfB7a-r6eSTeiuCX9K53"
     }
   ],
   "sortOrder": {
@@ -185,15 +168,14 @@
     "contactPhone": "01057191055",
     "footerYear": "2026",
     "footerName": "Han Taemin",
-    "contactLead": "많은 연락바랍니다",
+    "contactLead": "직통 연락처",
     "navName": "한태민",
     "navRole": "PD",
-    "aboutP1": "AI로 간편화된 영상제작, 하지만 단순히 간편함만을 추구한다면 그저 잊혀지는 움직임에 불과합니다.\n창작자의 독창성 즉 오리지널리티는 AI ",
+    "aboutP1": "AI로 간편화된 영상제작, 하지만 단순히 간편함만을 추구한다면 그저 잊혀지는 움직임에 불과합니다.",
     "aboutTitle": "오리지널리티를 추구하는 제작자,\n한태민입니다.",
-    "stat1Num": "300",
+    "stat1Num": "100",
     "stat1Suf": "+",
-    "stat1Label": "완성 영상 프로젝트",
-    "aboutP2": "저만의 오리지널리티로 클라이언트의 메세지를 확실하게 전달하겠습니다."
+    "stat1Label": "완성 프로젝트"
   },
   "career": [
     {
@@ -221,23 +203,5 @@
       "desc": "촬영 / 편집 / 인아웃트로 및 채널아트등 영상 요소 디자인"
     }
   ],
-  "profileZoom": 1.38,
-  "skills": [
-    {
-      "label": "프리미어 프로",
-      "value": "상급"
-    },
-    {
-      "label": "애프터 이펙트",
-      "value": "중상급"
-    },
-    {
-      "label": "일본어",
-      "value": "일상회화 가능"
-    },
-    {
-      "label": "바이브 코딩",
-      "value": "중급 (사이트 제작 및 프리미어 프로 플러그인 개발 가능)"
-    }
-  ]
+  "profileZoom": 1.38
 }
