@@ -643,9 +643,13 @@ function toggleCatEdit(){
       const body=document.createElement('div');
       body.style.flex='1';
       body.innerHTML=`
-        <div style="display:flex;gap:1rem;align-items:center;margin-bottom:.8rem">
+        <div style="display:flex;gap:1rem;align-items:center;margin-bottom:.6rem">
           <span style="color:var(--text2);width:80px;font-size:.75rem;font-family:'Space Grotesk',sans-serif;flex-shrink:0;line-height:1.4">ID:<br>${cat.id}</span>
           <div style="flex:1"><label style="margin-bottom:.3rem">카테고리 이름</label><input type="text" id="cat-input-${cat.id}" value="${cat.name.replace(/"/g,'&quot;')}" style="margin-bottom:0;background:rgba(255,255,255,.05)"></div>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:center;margin-bottom:.8rem">
+          <span style="width:80px;flex-shrink:0"></span>
+          <div style="flex:1"><label style="margin-bottom:.3rem">카드 태그 <span style="color:var(--text2);font-size:.72rem">(카드 하단 작은 뱃지 — 비우면 숨김)</span></label><input type="text" id="cat-tag-input-${cat.id}" value="${(cat.tag||'').replace(/"/g,'&quot;')}" placeholder="예: Director · Editor" style="margin-bottom:0;background:rgba(255,255,255,.05)"></div>
         </div>
         ${buildCatEditThumbHtml(cat)}`;
       const delBtn=document.createElement('button');
@@ -696,10 +700,12 @@ function applyCatNames(){
     categories=reordered;
     videoData.categories=categories;
   }
-  // apply names & thumbnails
+  // apply names, tags & thumbnails
   categories.forEach(cat=>{
     const nameInput=document.getElementById('cat-input-'+cat.id);
     if(nameInput){const n=nameInput.value.trim();if(n)cat.name=n;}
+    const tagInput=document.getElementById('cat-tag-input-'+cat.id);
+    if(tagInput){const t=tagInput.value.trim();if(t)cat.tag=t;else delete cat.tag;}
     const isDesign=cat.type==='design'||cat.type==='planning';
     if(isDesign){
       const ti=document.getElementById('thumbimg-input-'+cat.id);
