@@ -154,7 +154,24 @@
       ],
       "thumbImg": "",
       "folderId": "1XbwyCj8cVyDj-1irZWFq8_9fZOajNUwr",
-      "tag": "PLANNING"
+      "tag": "PLANNING",
+      "driveOverrides": {
+        "1ixtBY3udaBFEQMVjchUFfsNo8jttrZ3V": {
+          "title": "[모그라미] 모달드로즈 좋은 속옷 AI광고 스토리보드"
+        },
+        "1cJt89wZIXccwNVj2NVxyjJDYVkzVqKuE": {
+          "title": "[모그라미] 유튜브 정기 콘텐츠 제안서"
+        },
+        "1xfqTQr4oqLCm8E8ywvtj7qsqQJHzib29": {
+          "title": "[세남자바스켓] 멍보틀 브랜드필름 스토리보드"
+        },
+        "1BZ-dVgLj8XDI66_zOWJL9Vr7-yTJMCIl": {
+          "title": "[줄리엔강 유튜브] 줄리엔강 건기식 브랜드 런칭 콘텐츠 기획안"
+        },
+        "1nVZROGGG0UGniUNJ4nIyRcU1W7xrCWij": {
+          "title": "[줄리엔강 유튜브] 줄리엔강x오킹 사격내기 콘텐츠 기획안"
+        }
+      }
     }
   ],
   "sortOrder": {
