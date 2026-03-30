@@ -204,6 +204,11 @@
     }
   ],
   "profileZoom": 1.38,
-  "skills": [],
+  "skills": [
+    {
+      "label": "일어 회화",
+      "value": ""
+    }
+  ],
   "clients": {}
 }
