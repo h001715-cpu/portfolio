@@ -1182,7 +1182,7 @@ async function deployAll(){
       _deployDirHandle=await window.showDirectoryPicker({mode:'read'});
     }
     showLoading('전체 파일 GitHub 배포 중...');
-    const files=['index.html','admin.html','videos.json'];
+    const files=['index.html','admin.html'];
     let ok=0, skip=[];
     for(const filename of files){
       try{
