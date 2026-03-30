@@ -132,6 +132,12 @@ section{padding:7rem 5vw}
 .career-company{font-size:.95rem;font-weight:600;color:var(--text)}
 .career-role{font-size:.78rem;color:var(--text2);margin-top:.2rem}
 .career-desc{font-size:.8rem;color:var(--text2);margin-top:.3rem;line-height:1.55}
+.skills-wrap{margin-top:2.5rem}
+.skills-lbl{display:block;font-family:'Space Grotesk',sans-serif;font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--red);margin-bottom:1rem}
+.skill-row{display:flex;gap:1.2rem;padding:.75rem 0;border-bottom:1px solid var(--border);align-items:baseline}
+.skill-row:first-child{border-top:1px solid var(--border)}
+.skill-lbl{font-family:'Space Grotesk',sans-serif;font-size:.72rem;font-weight:600;color:var(--text);width:80px;flex-shrink:0;letter-spacing:.04em;text-transform:uppercase}
+.skill-val{font-size:.88rem;color:var(--text2);flex:1;line-height:1.6}
 .ct-open-btn{display:inline-flex;align-items:center;gap:.7rem;font-weight:600;font-size:.88rem;letter-spacing:.06em;color:#fff;background:var(--red);padding:.95rem 2.4rem;border:none;cursor:pointer;transition:background .3s,transform .3s}
 .ct-open-btn:hover{background:var(--red-h);transform:translateY(-2px)}
 .cmodal-overlay{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;padding:2rem;backdrop-filter:blur(6px)}
@@ -294,6 +300,10 @@ a, button, .cat-card, .vid-item, .ptab, .burger, .back-btn, input, textarea, .lb
         <span class="career-lbl">Experience</span>
         <div id="career-list"></div>
       </div>
+      <div class="skills-wrap rv" id="skills-wrap" style="display:none">
+        <span class="skills-lbl">Skills</span>
+        <div id="skills-list"></div>
+      </div>
     </div>
     <div class="ab-vis rv-s"><div class="ab-box"><div class="ab-zoom-wrap" id="ab-zoom-wrap"><img src="assets/profile.jpg" alt="Han Taemin" class="ab-photo" id="ab-photo"></div></div><div class="ab-line"></div></div>
   </div>
@@ -424,6 +434,7 @@ fetch('videos.json?t='+Date.now())
     setText('cmodal-email',pc.contactEmail);setText('cmodal-phone',pc.contactPhone);
     setText('ft-name',pc.footerName);setText('ft-year',pc.footerYear);
     if(data.career&&data.career.length>0)buildCareer(data.career);
+    if(data.skills&&data.skills.length>0)buildSkills(data.skills);
     buildCatGrid();
     setTimeout(observeRv,300);
   })
@@ -563,6 +574,20 @@ function buildCareer(career){
     list.appendChild(d);
   });
   wrap.style.display='';
+}
+
+function buildSkills(skills){
+  var wrap=document.getElementById('skills-wrap');
+  var list=document.getElementById('skills-list');
+  if(!wrap||!list||!skills||!skills.length)return;
+  list.innerHTML='';
+  skills.forEach(function(item){
+    if(!item.label&&!item.value)return;
+    var d=document.createElement('div');d.className='skill-row';
+    d.innerHTML='<div class="skill-lbl">'+(item.label||'')+'</div><div class="skill-val">'+(item.value||'')+'</div>';
+    list.appendChild(d);
+  });
+  if(list.children.length>0)wrap.style.display='';
 }
 
 function openContactModal(){document.getElementById('cmodal').classList.add('on');document.body.style.overflow='hidden';}
