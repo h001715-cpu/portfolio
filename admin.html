@@ -457,10 +457,9 @@ function renderCareerAdmin(){
   (videoData.career||[]).forEach((item,idx)=>{
     const card=document.createElement('div');
     card.className='career-card';
-    card.draggable=true;
     card.dataset.idx=idx;
     card.innerHTML=`
-      <div class="drag-handle">☰</div>
+      <div class="drag-handle" title="드래그하여 순서 변경">☰</div>
       <div class="cf">
         <input type="text" value="${(item.year||'').replace(/"/g,'&quot;')}" placeholder="연도" oninput="updateCareerField(${idx},'year',this.value)">
         <input type="text" value="${(item.company||'').replace(/"/g,'&quot;')}" placeholder="회사/소속" oninput="updateCareerField(${idx},'company',this.value)">
@@ -468,8 +467,9 @@ function renderCareerAdmin(){
         <div class="cf-desc"><textarea placeholder="설명 (선택)" oninput="updateCareerField(${idx},'desc',this.value)">${(item.desc||'').replace(/</g,'&lt;')}</textarea></div>
       </div>
       <button class="sm danger" onclick="removeCareerItem(${idx})">삭제</button>`;
+    card.querySelector('.drag-handle').addEventListener('mousedown',()=>{card.draggable=true;});
     card.addEventListener('dragstart',()=>card.classList.add('dragging'));
-    card.addEventListener('dragend',()=>{card.classList.remove('dragging');syncCareerOrder();});
+    card.addEventListener('dragend',()=>{card.classList.remove('dragging');card.draggable=false;syncCareerOrder();});
     card.addEventListener('dragover',e=>{e.preventDefault();const drag=document.querySelector('.dragging');if(drag&&drag!==card){const box=card.getBoundingClientRect();const after=(e.clientY>box.top+box.height/2);card.parentNode.insertBefore(drag,after?card.nextSibling:card);}});
     list.appendChild(card);
   });
@@ -591,10 +591,11 @@ async function openCat(id){
       const vid=item.snippet.resourceId.videoId;
       const title=item.snippet.title;
       const savedRole=videoData.roles[vid]||'';
-      const card=document.createElement('div');card.className='vid-card';card.draggable=true;card.dataset.vid=vid;
-      card.innerHTML=`<div style="background:var(--border);color:var(--text);text-align:center;padding:.5rem;font-size:.8rem;cursor:grab;font-weight:600">✥ 드래그로 순서 변경 ✥</div><div class="vid-thumb"><img src="https://img.youtube.com/vi/${vid}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${vid}/hqdefault.jpg'"></div><div class="vid-info"><div class="vid-title" title="${title}">${title}</div><div style="font-size:.75rem;color:var(--text2);margin-top:.2rem">ID: ${vid}</div></div><div class="vid-role-area"><label>커스텀 설명 (유튜브 설명 대신 표시)</label><textarea placeholder="비워두면 유튜브 설명 사용" oninput="updateRole('${vid}',this.value)">${savedRole}</textarea></div>`;
+      const card=document.createElement('div');card.className='vid-card';card.dataset.vid=vid;
+      card.innerHTML=`<div class="vid-drag-handle" style="background:var(--border);color:var(--text);text-align:center;padding:.5rem;font-size:.8rem;cursor:grab;font-weight:600;user-select:none;display:flex;align-items:center;justify-content:center;gap:.5rem"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="1" y="2" width="12" height="1.5" rx=".75"/><rect x="1" y="6" width="12" height="1.5" rx=".75"/><rect x="1" y="10" width="12" height="1.5" rx=".75"/></svg> 이 영역을 드래그하여 순서 변경</div><div class="vid-thumb"><img src="https://img.youtube.com/vi/${vid}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${vid}/hqdefault.jpg'"></div><div class="vid-info"><div class="vid-title" title="${title}">${title}</div><div style="font-size:.75rem;color:var(--text2);margin-top:.2rem">ID: ${vid}</div></div><div class="vid-role-area"><label>커스텀 설명 (유튜브 설명 대신 표시)</label><textarea placeholder="비워두면 유튜브 설명 사용" oninput="updateRole('${vid}',this.value)">${savedRole}</textarea></div>`;
+      card.querySelector('.vid-drag-handle').addEventListener('mousedown',()=>{card.draggable=true;});
       card.addEventListener('dragstart',()=>card.classList.add('dragging'));
-      card.addEventListener('dragend',()=>{card.classList.remove('dragging');updateSortOrder();});
+      card.addEventListener('dragend',()=>{card.classList.remove('dragging');card.draggable=false;updateSortOrder();});
       card.addEventListener('dragover',e=>{e.preventDefault();const drag=document.querySelector('.dragging');if(drag&&drag!==card){const box=card.getBoundingClientRect();const after=(e.clientX>box.left+box.width/2)||(e.clientY>box.top+box.height/2);card.parentNode.insertBefore(drag,after?card.nextSibling:card);}});
       g.appendChild(card);
     });
@@ -656,32 +657,70 @@ function renderDesignEditor(cat){
   if(!cat.items)cat.items=[];
   const g=document.getElementById('vid-grid');g.innerHTML='';
 
-  // Google Drive sync section
-  const driveDiv=document.createElement('div');
-  driveDiv.style.cssText='background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:6px;padding:1.2rem;margin-bottom:1.5rem;grid-column:1/-1';
-  driveDiv.innerHTML=`<div style="font-size:.85rem;font-weight:600;margin-bottom:.8rem;color:var(--text2)">📁 Google Drive 폴더 자동 불러오기 <span style="font-size:.72rem;font-weight:400">(공개 폴더 + Drive API 활성화 필요)</span></div>
-    <div class="drive-row"><input type="text" id="drive-folder-${cat.id}" placeholder="Google Drive 폴더 ID (URL의 .../folders/XXX 부분)" style="font-size:.85rem"><button class="sm" onclick="loadFromDrive('${cat.id}','${cat.id}')">불러오기</button></div>
-    <p style="font-size:.75rem;color:var(--text2);margin:.5rem 0 0;line-height:1.5">폴더의 이미지 파일을 자동으로 가져옵니다. 기존 항목에 추가됩니다. ※ 구글 드라이브 파일은 "링크가 있는 모든 사용자"에게 공유 설정 필요.</p>`;
-  g.appendChild(driveDiv);
+  const isPlanningCat = cat.type==='planning';
+
+  if(!isPlanningCat){
+    // Google Drive sync section (디자인 카테고리 전용)
+    const driveDiv=document.createElement('div');
+    driveDiv.style.cssText='background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:6px;padding:1.2rem;margin-bottom:1.5rem;grid-column:1/-1';
+    driveDiv.innerHTML=`<div style="font-size:.85rem;font-weight:600;margin-bottom:.8rem;color:var(--text2)">📁 Google Drive 폴더 자동 불러오기 <span style="font-size:.72rem;font-weight:400">(공개 폴더 + Drive API 활성화 필요)</span></div>
+      <div class="drive-row"><input type="text" id="drive-folder-${cat.id}" placeholder="Google Drive 폴더 ID (URL의 .../folders/XXX 부분)" style="font-size:.85rem"><button class="sm" onclick="loadFromDrive('${cat.id}','${cat.id}')">불러오기</button></div>
+      <p style="font-size:.75rem;color:var(--text2);margin:.5rem 0 0;line-height:1.5">폴더의 이미지 파일을 자동으로 가져옵니다. 기존 항목에 추가됩니다. ※ 구글 드라이브 파일은 "링크가 있는 모든 사용자"에게 공유 설정 필요.</p>`;
+    g.appendChild(driveDiv);
+  } else {
+    // 기획안 안내
+    const pdfGuide=document.createElement('div');
+    pdfGuide.style.cssText='background:rgba(230,37,37,.07);border:1px solid rgba(230,37,37,.25);border-radius:6px;padding:1.2rem;margin-bottom:1.5rem;grid-column:1/-1';
+    pdfGuide.innerHTML=`<div style="font-size:.88rem;font-weight:600;margin-bottom:.5rem;color:var(--red)">📄 기획안 PDF 등록 방법</div>
+      <p style="font-size:.8rem;color:var(--text2);line-height:1.7;margin:0">① Google Drive에 PDF 업로드 → ② 파일 우클릭 → <strong style="color:var(--text)">링크가 있는 모든 사용자</strong>로 공유 설정 → ③ 공유 링크 복사 → ④ 아래 'PDF URL' 입력칸에 붙여넣기<br>
+      <span style="color:var(--text2);font-size:.75rem">※ 구글 드라이브 공유 링크 자동 변환 지원 (drive.google.com/file/d/...)</span></p>`;
+    g.appendChild(pdfGuide);
+  }
 
   function buildCard(item,idx){
     const card=document.createElement('div');card.className='design-item-card';
     const imgSrc=item.img||'';
-    card.innerHTML=`<div class="di-preview">${imgSrc?`<img src="${imgSrc}" onerror="this.style.display='none'" style="min-height:100px">`:'<div style="width:100%;height:100%;min-height:100px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text2)">이미지 없음</div>'}</div>
-      <div class="di-fields">
-        <label style="margin-bottom:.2rem;font-size:.78rem">제목</label><input type="text" value="${(item.title||'').replace(/"/g,'&quot;')}" placeholder="작품 제목" oninput="updateDesignItem('${cat.id}',${idx},'title',this.value)">
-        <label style="margin-bottom:.2rem;font-size:.78rem">이미지 URL <span style="color:var(--text2);font-size:.72rem">(GitHub raw, Drive 직접링크 등)</span></label>
-        <input type="text" value="${imgSrc.replace(/"/g,'&quot;')}" placeholder="https://..." oninput="updateDesignItem('${cat.id}',${idx},'img',this.value);refreshDiPreview(this)">
-        <label style="margin-bottom:.2rem;font-size:.78rem">설명 (선택)</label><textarea placeholder="작품 설명" oninput="updateDesignItem('${cat.id}',${idx},'desc',this.value)">${(item.desc||'').replace(/</g,'&lt;')}</textarea>
-        <label style="margin-bottom:.2rem;font-size:.78rem">파일 링크 (선택)</label><input type="text" value="${(item.link||'').replace(/"/g,'&quot;')}" placeholder="https://..." oninput="updateDesignItem('${cat.id}',${idx},'link',this.value)">
-        <div class="di-actions"><button class="sm danger" onclick="removeDesignItem('${cat.id}',${idx})">삭제</button></div>
-      </div>`;
+    const linkSrc=item.link||'';
+    if(isPlanningCat){
+      // PDF 기획안 카드
+      const hasPdf=!!linkSrc;
+      card.innerHTML=`<div class="di-preview" style="background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:100px">
+        ${hasPdf?`<span style="font-size:2.4rem">📄</span><span style="font-size:.7rem;color:var(--red);font-weight:700">PDF 등록됨</span>`:`<span style="font-size:2rem;opacity:.3">📄</span><span style="font-size:.68rem;color:var(--text2)">미등록</span>`}
+        </div>
+        <div class="di-fields">
+          <label style="margin-bottom:.2rem;font-size:.78rem">기획안 제목</label><input type="text" value="${(item.title||'').replace(/"/g,'&quot;')}" placeholder="기획안 제목" oninput="updateDesignItem('${cat.id}',${idx},'title',this.value)">
+          <label style="margin-bottom:.2rem;font-size:.78rem">PDF URL <span style="color:var(--text2);font-size:.72rem">(Google Drive 공유 링크 또는 직접 URL)</span></label>
+          <input type="text" value="${linkSrc.replace(/"/g,'&quot;')}" placeholder="https://drive.google.com/file/d/..." oninput="updateDesignItem('${cat.id}',${idx},'link',this.value);refreshPdfPreview(this)">
+          <label style="margin-bottom:.2rem;font-size:.78rem">설명 (선택)</label><textarea placeholder="기획안 설명" oninput="updateDesignItem('${cat.id}',${idx},'desc',this.value)">${(item.desc||'').replace(/</g,'&lt;')}</textarea>
+          <div class="di-actions"><button class="sm danger" onclick="removeDesignItem('${cat.id}',${idx})">삭제</button></div>
+        </div>`;
+    } else {
+      // 디자인 이미지 카드
+      card.innerHTML=`<div class="di-preview">${imgSrc?`<img src="${imgSrc}" onerror="this.style.display='none'" style="min-height:100px">`:'<div style="width:100%;height:100%;min-height:100px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text2)">이미지 없음</div>'}</div>
+        <div class="di-fields">
+          <label style="margin-bottom:.2rem;font-size:.78rem">제목</label><input type="text" value="${(item.title||'').replace(/"/g,'&quot;')}" placeholder="작품 제목" oninput="updateDesignItem('${cat.id}',${idx},'title',this.value)">
+          <label style="margin-bottom:.2rem;font-size:.78rem">이미지 URL <span style="color:var(--text2);font-size:.72rem">(GitHub raw, Drive 직접링크 등)</span></label>
+          <input type="text" value="${imgSrc.replace(/"/g,'&quot;')}" placeholder="https://..." oninput="updateDesignItem('${cat.id}',${idx},'img',this.value);refreshDiPreview(this)">
+          <label style="margin-bottom:.2rem;font-size:.78rem">설명 (선택)</label><textarea placeholder="작품 설명" oninput="updateDesignItem('${cat.id}',${idx},'desc',this.value)">${(item.desc||'').replace(/</g,'&lt;')}</textarea>
+          <label style="margin-bottom:.2rem;font-size:.78rem">파일 링크 (선택)</label><input type="text" value="${linkSrc.replace(/"/g,'&quot;')}" placeholder="https://..." oninput="updateDesignItem('${cat.id}',${idx},'link',this.value)">
+          <div class="di-actions"><button class="sm danger" onclick="removeDesignItem('${cat.id}',${idx})">삭제</button></div>
+        </div>`;
+    }
     return card;
   }
   cat.items.forEach((item,idx)=>g.appendChild(buildCard(item,idx)));
-  const addBtn=document.createElement('button');addBtn.className='add-design-btn';addBtn.textContent='+ 새 작품 추가';
+  const addBtn=document.createElement('button');addBtn.className='add-design-btn';addBtn.textContent=isPlanningCat?'+ 새 기획안 추가':'+ 새 작품 추가';
   addBtn.onclick=()=>{cat.items.push({title:'',img:'',desc:'',link:''});videoData.categories=categories;renderDesignEditor(cat);markDirty();};
   g.appendChild(addBtn);
+}
+
+function refreshPdfPreview(input){
+  const preview=input.closest('.design-item-card').querySelector('.di-preview');
+  if(!preview)return;const val=input.value.trim();
+  preview.innerHTML=val
+    ?'<span style="font-size:2.4rem">📄</span><span style="font-size:.7rem;color:var(--red);font-weight:700">PDF 등록됨</span>'
+    :'<span style="font-size:2rem;opacity:.3">📄</span><span style="font-size:.68rem;color:var(--text2)">미등록</span>';
+  preview.style.cssText='background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:100px';
 }
 
 function refreshDiPreview(input){
