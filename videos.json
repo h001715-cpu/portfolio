@@ -34,9 +34,7 @@
     "DRu7VuSp7gg": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
     "Bo50t7arAsI": "ROLE :  편집 / 후보정 / 자막 및 모션 디자인 ",
     "Woa4hq3fvxA": "ROLE :  기획 / 편집 / 후보정 / 자막 및 모션 디자인 ",
-    "DpO-VPC_mm4": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 자막 및 모션 디자인\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING",
-    "7wNL_jCo3-M": "ROLE : 촬영 (메인캠) / 편집 / 후보정 / 자막 및 모션 디자인 ",
-    "g8yJNDLhyLc": "ROLE : 연출 / 촬영 (서브캠) / 편집 / 후보정 / 자막 및 모션 디자인 "
+    "DpO-VPC_mm4": "ROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 자막 및 모션 디자인\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING"
   },
   "categories": [
     {
@@ -59,13 +57,13 @@
     },
     {
       "id": "sketch",
-      "name": "행사 스케치",
+      "name": "스케치영상",
       "playlistId": "PLmtMXxa-X5LOXL0ynNWX6JSkrb_2bDQBs",
       "thumb": "LZHPmL2maQQ"
     },
     {
       "id": "youtube",
-      "name": "유튜브 예능",
+      "name": "유튜브",
       "playlistId": "PLmtMXxa-X5LPTjy8L1gmGzbcdRXa_3prv",
       "thumb": "XlS5Cv6im0M"
     },
@@ -74,12 +72,6 @@
       "name": "SNS광고",
       "playlistId": "PLmtMXxa-X5LNUBSYSq6N9u1x9KCn4vArF",
       "thumb": "Woa4hq3fvxA"
-    },
-    {
-      "id": "cat-mncmhz1e",
-      "name": "인터뷰",
-      "playlistId": "PLmtMXxa-X5LMnbTdqD2vIZ1Faadf-dZgb",
-      "thumb": "g8yJNDLhyLc"
     },
     {
       "id": "design",
@@ -183,8 +175,7 @@
     "aboutTitle": "오리지널리티를 추구하는 제작자,\n한태민입니다.",
     "stat1Num": "100",
     "stat1Suf": "+",
-    "stat1Label": "완성 프로젝트",
-    "aboutP2": "제가 추구하는 영상은 단순한 움직임이 아닌"
+    "stat1Label": "완성 프로젝트"
   },
   "career": [
     {
@@ -212,23 +203,5 @@
       "desc": "촬영 / 편집 / 인아웃트로 및 채널아트등 영상 요소 디자인"
     }
   ],
-  "profileZoom": 1.38,
-  "skills": [
-    {
-      "label": "프리미어프로",
-      "value": "상급"
-    },
-    {
-      "label": "애프터 이펙트",
-      "value": "중상급"
-    },
-    {
-      "label": "일본어",
-      "value": "일상 회화 가능"
-    },
-    {
-      "label": "바이브 코딩",
-      "value": "초중급 (사이트 및 프리미어 프로 플러그인 개발 가능)"
-    }
-  ]
+  "profileZoom": 1.38
 }
