@@ -3,14 +3,14 @@
   "profilePosition": "48% 11%",
   "roles": {
     "EXAMPLE_ID_HERE": "이곳에 [영상 ID : 내가 한 역할 설명] 을 추가하시면 유튜브 설명 대신 이 설명이 우선적으로 노출됩니다!",
-    "XzzpdcjjzR8": " ROLE : 장면 디자인 / 모션 디자인",
-    "BxmnVg4tCF0": " ROLE : 장면 디자인 / 모션 디자인",
-    "afP7hYb7E4U": " ROLE : 장면 디자인 / 모션 디자인",
-    "YoINOQoeO8g": " ROLE : 장면 디자인 / 모션 디자인",
-    "ye087Tycn28": " ROLE : 장면 디자인 / 모션 디자인",
-    "PbMKTfQbGow": " ROLE : 장면 디자인 / 모션 디자인",
-    "iFUmjq_Gi3g": " ROLE : 장면 디자인 / 모션 디자인",
-    "8qrFOiRAWws": " ROLE : 기획 / 장면 디자인 / 모션 디자인",
+    "XzzpdcjjzR8": " ROLE : 장면 디자인 / 모션 디자인 / 사운드 디자인",
+    "BxmnVg4tCF0": " ROLE : 장면 디자인 / 모션 디자인/ 사운드 디자인",
+    "afP7hYb7E4U": " ROLE : 장면 디자인 / 모션 디자인 / 사운드 디자인",
+    "YoINOQoeO8g": " ROLE : 장면 디자인 / 모션 디자인 / 사운드 디자인",
+    "ye087Tycn28": " ROLE : 장면 디자인 / 모션 디자인 / 사운드 디자인",
+    "PbMKTfQbGow": " ROLE : 장면 디자인 / 모션 디자인 / 사운드 디자인",
+    "iFUmjq_Gi3g": " ROLE : 장면 디자인 / 모션 디자인 / 사운드 디자인",
+    "8qrFOiRAWws": " ROLE : 기획 / 장면 디자인 / 모션 디자인 / 사운드 디자인",
     "_1MmhUkNDu0": "ROLE : 기획 / AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 나레이션\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING",
     "4CRpNu_7W50": "ROLE : 기획 / AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정 / 자막 및 모션 디자인\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING",
     "qFIoYNS8XNk": "※초반 그래픽을 AI 그래픽으로 제작 \nROLE : AI 이미지 제작 / AI영상 클립 제작 / 편집 / 후보정\n사용 이미지 AI 모델 : 나노바나나 프로\n사용 영상 AI 모델 : KLING",
@@ -38,13 +38,14 @@
     "7wNL_jCo3-M": "ROLE : 연출 / 촬영 (메인캠) / 편집 / 후보정 / 자막 및 모션 디자인 ",
     "g8yJNDLhyLc": "ROLE : 연출 / 촬영 (서브캠) / 편집 / 후보정 / 자막 및 모션 디자인 ",
     "EQESl739LG4": "ROLE :  기획 / 녹화 / 대본작성 / 나레이션 / 편집 / 후보정 / 자막 및 모션 디자인 ",
-    "bFxz733K6mQ": " ROLE : 기획 / 장면 디자인 / 모션 디자인",
-    "N-MTU-mzwVo": " ROLE : 기획 / 장면 디자인 / 모션 디자인",
+    "bFxz733K6mQ": " ROLE : 기획 / 장면 디자인 / 모션 디자인 / 사운드 디자인",
+    "N-MTU-mzwVo": " ROLE : 기획 / 장면 디자인 / 모션 디자인 / 사운드 디자인",
     "rPqR3CfLwOk": "ROLE : 촬영 보조 / 후반 인포그래픽 모션 디자인",
     "pBJZJBj72X4": "ROLE : 연출 / 편집 / 후보정 / 자막 및 모션 디자인 ",
-    "T_abFxXjC8c": " ROLE : 기획 / 장면 디자인 / 모션 디자인",
+    "T_abFxXjC8c": " ROLE : 기획 / 장면 디자인 / 모션 디자인 / 사운드 디자인",
     "uPRsRYCC4Fk": "ROLE :  촬영 (서브캠) / 편집 / 후보정 / 자막 및 모션 디자인 ",
-    "gWWbNTTwXz4": " ROLE : 모션 디자인"
+    "gWWbNTTwXz4": " ROLE : 모션 디자인 / 사운드 디자인",
+    "cUOWZtQmNh0": " ROLE : 기획 / 장면 디자인 / 모션 디자인 / 사운드 디자인"
   },
   "categories": [
     {
@@ -196,6 +197,7 @@
       "T_abFxXjC8c",
       "8qrFOiRAWws",
       "PbMKTfQbGow",
+      "cUOWZtQmNh0",
       "XzzpdcjjzR8",
       "BxmnVg4tCF0",
       "afP7hYb7E4U",
@@ -203,7 +205,8 @@
       "ye087Tycn28",
       "iFUmjq_Gi3g",
       "bFxz733K6mQ",
-      "N-MTU-mzwVo"
+      "N-MTU-mzwVo",
+      "gWWbNTTwXz4"
     ],
     "ai-ad": [
       "4CRpNu_7W50",
